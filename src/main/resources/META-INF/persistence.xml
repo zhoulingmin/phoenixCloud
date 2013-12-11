@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence  
+    http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+	version="2.0">
+
+	<persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
+		
+		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+		<properties>
+			<property name="openjpa.ConnectionFactoryMode" value="managed" />
+			<property name="openjpa.jdbc.DBDictionary" value="mysql(TableType=InnoDB)" />
+			<property name="openjpa.DataCache" value="true" />
+			<property name="openjpa.Log" value="SQL=TRACE" />
+			<property name="openjpa.ClassLoadEnhancement" value="false" />
+			<property name="openjpa.DynamicEnhancementAgent" value="false" />
+			<property name="openjpa.RuntimeUnenhancedClasses" value="supported" />
+			<property name="openjpa.Compatibility" value="StrictIdentityValues=false" />
+		</properties>
+
+	</persistence-unit>
+
+</persistence>

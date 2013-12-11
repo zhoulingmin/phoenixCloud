@@ -1,0 +1,24 @@
+li{ list-style-type:none}
+.main ul{ float:left; margin:0px; padding:0}
+.main li {float:left;position:relative; background:}
+.main ul ul {
+	visibility:hidden;
+	position:absolute;
+	left:9px;
+	top:34px;
+	width:81px;
+	background:#FFF;
+	border:#093 solid 0px;
+	border-top:none;
+	overflow: hidden;
+	z-index:5;
+}
+
+.main ul li:hover ul,
+.main ul a:hover ul{visibility:visible;}
+.main a{display:block;background:transparent;color:black;text-decoration:none;height:34px; line-height:34px; width:100px; text-align:center}
+.main a:hover{background:; color:#000}
+
+.main ul ul li {text-align: center;font-size:12px; width:81px; height:34px; line-height:34px;background:#FFF; margin-left:0px; margin-top:5px; margin-left:5px;margin-left:2px;}
+.main ul ul li a{display:block;width:70px;height:25px; line-height:25px;margin:0;border:0; text-align:center; }
+.main ul ul li a:hover{border:0; background:#F2F2F2}

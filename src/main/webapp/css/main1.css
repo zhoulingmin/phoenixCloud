@@ -1,0 +1,24 @@
+li{ list-style-type:none}
+.main1 ul{ float:left; margin:0px; padding:0}
+.main1 li {float:left;position:relative; background:}
+.main1 ul ul {
+	visibility:hidden;
+	position:absolute;
+	left:9px;
+	top:34px;
+	width:81px;
+	background:lightblue;
+	border:#093 solid 0px;
+	border-top:none;
+	overflow: hidden;
+	z-index:5;
+}
+
+.main1 ul li:hover ul,
+.main1 ul a:hover ul{visibility:visible;}
+.main1 a{display:block;background:transparent;color:black;text-decoration:none;height:34px; line-height:34px; width:100px; text-align:center}
+.main1 a:hover{background:; color:#000}
+
+.main1 ul ul li {text-align: center;font-size:12px; width:81px; height:34px; line-height:34px;background:lightblue; margin-left:0px; margin-top:5px; margin-left:5px;margin-left:2px;}
+.main1 ul ul li a{display:block;width:80px;height:25px; line-height:25px;margin:0;border:0; text-align:center; }
+.main1 ul ul li a:hover{border:0; background:#F2F2F2}
