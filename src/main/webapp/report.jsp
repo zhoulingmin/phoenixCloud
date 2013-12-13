@@ -1,29 +1,204 @@
-﻿<div class="widget-box">
-	<div class="widget-content">
-		<form class="form-horizontal" method="get" action="#">
-			条件1&nbsp;<input type="text" name="criteria1" id="criteria1" style="width: 50px; display: inline" />&nbsp;&nbsp;&nbsp;&nbsp;
-			条件2&nbsp;<input type="text" name="criteria2" id="criteria2" style="width: 50px; display: inline" />&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;<button class="btn">搜索</button>
-		</form>
-	</div>
-</div>
-
-<div class="widget-box">
-	<div class="widget-content">
-		<button class="btn">创建</button>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn">重命名</button>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn">剪切</button>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn">复制</button>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn">粘贴</button>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn">删除</button>
-	</div>
-</div>
-
-<div class="widget-box">
-	<div class="widget-content">
-		<a href="#">【展开所有】</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">【收缩所有】</a>
-		<div id="tree3"></div>
-	</div>
-</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn">保存</button> 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn">取消</button>
+﻿
+			<div id="content-header">
+			</div>
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<div class="span12">
+						<div class="widget-box widget-plain">
+							<div class="widget-content center">
+								<ul class="stats-plain">
+									<li>										
+										<h4>36094</h4>
+										<span>书籍总数</span>
+									</li>
+									<li>										
+										<h4>1433</h4>
+										<span>下载总数</span>
+									</li>
+									<li>										
+										<h4>10</h4>
+										<span>用户数</span>
+									</li>
+									<li>										
+										<h4>29</h4>
+										<span>机构数</span>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span12">
+						<div class="widget-box">
+							<div class="widget-title">
+								<span class="icon">
+									<i class="icon-signal"></i>
+								</span>
+								<h5>Line chart</h5>
+							</div>
+							<div class="widget-content">
+								<div class="chart"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span6">
+						<div class="widget-box">
+							<div class="widget-title">
+								<span class="icon">
+									<i class="icon-signal"></i>
+								</span>
+								<h5>Bar chart</h5>
+							</div>
+							<div class="widget-content">
+								<div class="bars"></div>
+							</div>
+						</div>
+					</div>
+					<div class="span6">
+						<div class="widget-box">
+							<div class="widget-title">
+								<span class="icon">
+									<i class="icon-signal"></i>
+								</span>
+								<h5>Pie chart</h5>
+							</div>
+							<div class="widget-content">
+								<div class="pie"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span4">
+						<div class="widget-box">
+							<div class="widget-title">
+								<span class="icon">
+									<i class="icon-eye-open"></i>
+								</span>
+								<h5>Browsers</h5>
+							</div>
+							<div class="widget-content nopadding">
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<th>Browser</th>
+											<th>Visits</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Chrome</td>
+											<td>8775</td>
+										</tr>
+										<tr>
+											<td>Firefox</td>
+											<td>5692</td>
+										</tr>
+										<tr>
+											<td>Internet Explorer</td>
+											<td>4030</td>
+										</tr>
+										<tr>
+											<td>Opera</td>
+											<td>1674</td>
+										</tr>
+										<tr>
+											<td>Safari</td>
+											<td>1166</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="span4">
+						<div class="widget-box">
+							<div class="widget-title">
+								<span class="icon">
+									<i class="icon-arrow-right"></i>
+								</span>
+								<h5>Refferers</h5>
+							</div>
+							<div class="widget-content nopadding">
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<th>Site</th>
+											<th>Visits</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td><a href="#">http://google.com</a></td>
+											<td>12679</td>
+										</tr>
+										<tr>
+											<td><a href="#">http://bing.com</a></td>
+											<td>11444</td>
+										</tr>
+										<tr>
+											<td><a href="#">http://yahoo.com</a></td>
+											<td>8595</td>
+										</tr>
+										<tr>
+											<td><a href="#">http://www.something.com</a></td>
+											<td>4445</td>
+										</tr>
+										<tr>
+											<td><a href="#">http://else.com</a></td>
+											<td>2094</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="span4">
+						<div class="widget-box">
+							<div class="widget-title">
+								<span class="icon">
+									<i class="icon-file"></i>
+								</span>
+								<h5>Most Visited Pages</h5>
+							</div>
+							<div class="widget-content nopadding">
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<th>Page</th>
+											<th>Visits</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td><a href="#">Shopping cart</a></td>
+											<td>9440</td>
+										</tr>
+										<tr>
+											<td><a href="#">Blog</a></td>
+											<td>6974</td>
+										</tr>
+										<tr>
+											<td><a href="#">jQuery UI tips</a></td>
+											<td>5377</td>
+										</tr>
+										<tr>
+											<td><a href="#">100+ Free Icon Sets</a></td>
+											<td>4990</td>
+										</tr>
+										<tr>
+											<td><a href="#">How to use a Google Web Tools</a></td>
+											<td>4834</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	
+		

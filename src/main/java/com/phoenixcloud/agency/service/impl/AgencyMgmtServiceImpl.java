@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Component;
 
@@ -16,6 +19,9 @@ import com.phoenixcloud.dao.PubOrgDao;
 @Component
 public class AgencyMgmtServiceImpl implements IAgencyMgmtService {
 
+	@PersistenceContext
+	private EntityManager entityManager;
+	
 	@Resource
 	private PubOrgCataDao pubOrgCataDao;
 	
@@ -31,9 +37,9 @@ public class AgencyMgmtServiceImpl implements IAgencyMgmtService {
 	}
 	
 	@Override
-	public List<PubOrgCata> getAllOrgCata() {
+	public List<PubOrgCata> getAllOrgCataByParentCataId(long parentId) {
 		// TODO Auto-generated method stub
-		List<PubOrgCata> list = pubOrgCataDao.findAll();
+		List<PubOrgCata> list = pubOrgCataDao.findAllByParentId(parentId);
 		if (null == list) {
 			list = new ArrayList<PubOrgCata>();
 		}
@@ -49,17 +55,16 @@ public class AgencyMgmtServiceImpl implements IAgencyMgmtService {
 		}
 		return list;
 	}
-
-//	@Override
-//	public PubOrgCata findOrgCataById(long orgCataId) {
-//		// TODO Auto-generated method stub
-//		return pubOrgCataDao.find(orgCataId);
-//	}
-//
-//	@Override
-//	public PubOrg findOrgById(long orgId) {
-//		// TODO Auto-generated method stub
-//		return pubOrgDao.find(orgId);
-//	}
-
+	@Override
+	public List<PubOrgCata> searchOrgCata(String orgCataName, String orgName) {
+		Query query = entityManager.createQuery("select pubOrgCata from PubOrgCata pubOrgCata left outer join PubOrg pubOrg on pubOrgCata.orgCataId=pubOrg.orgCataId where pubOrgCata.orgCataName like :code1 or pubOrg.orgName like :code2");
+		query.setParameter("code1", "%" + orgCataName + "%");
+		query.setParameter("code2", "%" + orgName + "%");
+		@SuppressWarnings("unchecked")
+		List<PubOrgCata> list = query.getResultList();
+		if (null == list) {
+			list = new ArrayList<PubOrgCata>();
+		}
+		return list;
+	}
 }

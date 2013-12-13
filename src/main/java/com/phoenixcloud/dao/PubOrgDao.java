@@ -21,4 +21,5 @@ public class PubOrgDao extends AbstractDao<PubOrg>{
 		query.setParameter(1, orgCataId);
 		return query.getResultList();
 	}
+	
 }

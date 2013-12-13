@@ -27,9 +27,9 @@
 			</div>
 			<div id="breadcrumb">
 				<a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>&nbsp;主菜单</a>
-				<a href="#" class="current">报表</a>
+				<a href="#" class="current">登录管理</a>
 			</div>
-			<jsp:include page="report.jsp" flush="true"></jsp:include>
+			<jsp:include page="logininfo.jsp" flush="true"></jsp:include>
 			<jsp:include page="footer.jsp" flush="true" />
 			</div>
 		</div>

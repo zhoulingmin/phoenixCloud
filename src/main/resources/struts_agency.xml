@@ -6,5 +6,8 @@
 		<action name="listAllCata" method="listAllCata" class="agencyMgmtAction">
 			<result name="success">/agency_mgmt.jsp</result>
 		</action>
+		<action name="listAllCata" method="searchCata" class="agencyMgmtAction">
+			<result name="success">/agency_mgmt.jsp</result>
+		</action>
 	</package>
 </struts>

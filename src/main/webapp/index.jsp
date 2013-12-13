@@ -7,7 +7,7 @@
 	String msg = (String)request.getAttribute("msg");
 %>
 <head>
-<title>凤凰书城</title>
+<title>凤凰云端管理 </title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" href="<%=ctx%>/css/bootstrap.min.css" />
@@ -111,7 +111,7 @@
 </head>
 <body onload="init();">
 	<div id="logo" align="center">
-		<p><font size="6px" color="red">凤凰书城</font></p>
+		<p><font size="6px" color="red">凤凰云端后台管理系统</font></p>
 	</div>
 
 	<div id="loginbox">
@@ -140,9 +140,9 @@
 			<div class="form-actions">
 				<span class="pull-left"><a href="#" class="flip-link"
 					id="to-recover" onclick="register();">注册</a>&nbsp;&nbsp;&nbsp;</span><span
-					class="pull-left"><a href="#" onclick="setInfo(this);" >忘记密码？</a></span> <span
+					class="pull-left"><a href="#" onclick="setInfo(this);" >忘记密码?</a></span> <span
 					class="pull-right"><input type="submit"
-					class="btn btn-inverse" value="登录" /></span>
+					class="btn btn-inverse" value="登陆" /></span>
 			</div>
 		</form>
 	</div>
