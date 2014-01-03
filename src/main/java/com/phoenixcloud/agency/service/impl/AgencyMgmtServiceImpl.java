@@ -1,14 +1,13 @@
 package com.phoenixcloud.agency.service.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.phoenixcloud.agency.service.IAgencyMgmtService;
 import com.phoenixcloud.bean.PubOrg;
@@ -19,9 +18,6 @@ import com.phoenixcloud.dao.PubOrgDao;
 @Component
 public class AgencyMgmtServiceImpl implements IAgencyMgmtService {
 
-	@PersistenceContext
-	private EntityManager entityManager;
-	
 	@Resource
 	private PubOrgCataDao pubOrgCataDao;
 	
@@ -37,7 +33,7 @@ public class AgencyMgmtServiceImpl implements IAgencyMgmtService {
 	}
 	
 	@Override
-	public List<PubOrgCata> getAllOrgCataByParentCataId(long parentId) {
+	public List<PubOrgCata> getAllOrgCataByParentCataId(BigInteger parentId) {
 		// TODO Auto-generated method stub
 		List<PubOrgCata> list = pubOrgCataDao.findAllByParentId(parentId);
 		if (null == list) {
@@ -47,7 +43,7 @@ public class AgencyMgmtServiceImpl implements IAgencyMgmtService {
 	}
 
 	@Override
-	public List<PubOrg> getAllOrgByCataId(long orgCataId) {
+	public List<PubOrg> getAllOrgByCataId(String orgCataId) {
 		// TODO Auto-generated method stub
 		List<PubOrg> list = pubOrgDao.findByOrgCataId(orgCataId);
 		if (null == list) {
@@ -56,15 +52,66 @@ public class AgencyMgmtServiceImpl implements IAgencyMgmtService {
 		return list;
 	}
 	@Override
-	public List<PubOrgCata> searchOrgCata(String orgCataName, String orgName) {
-		Query query = entityManager.createQuery("select pubOrgCata from PubOrgCata pubOrgCata left outer join PubOrg pubOrg on pubOrgCata.orgCataId=pubOrg.orgCataId where pubOrgCata.orgCataName like :code1 or pubOrg.orgName like :code2");
-		query.setParameter("code1", "%" + orgCataName + "%");
-		query.setParameter("code2", "%" + orgName + "%");
-		@SuppressWarnings("unchecked")
-		List<PubOrgCata> list = query.getResultList();
+	public List<PubOrgCata> searchOrgCata(String orgCataName) {
+		List<PubOrgCata> list = pubOrgCataDao.findByCataName(orgCataName);
 		if (null == list) {
 			list = new ArrayList<PubOrgCata>();
 		}
 		return list;
+	}
+	
+	@Override
+	public List<PubOrg> searchOrg(String orgName) {
+		List<PubOrg> list = pubOrgDao.findByOrgName(orgName);
+		if (null == list) {
+			list = new ArrayList<PubOrg>();
+		}
+		return list;
+	}
+	
+	@Override
+	public PubOrgCata findOrgCataById(String orgCataId){
+		return pubOrgCataDao.find(orgCataId);
+	}
+	
+	@Override
+	public PubOrg findOrgById(String orgId){
+		return pubOrgDao.find(orgId);
+	}
+	
+	@Override
+	public void saveCata(PubOrgCata orgCata) {
+		if (orgCata.getId() == null || orgCata.getId() == "0") {
+			pubOrgCataDao.persist(orgCata);
+		} else {
+			pubOrgCataDao.merge(orgCata);
+		}
+	}
+	
+	private void removeChild(String orgCataId) {
+		List<PubOrgCata> childCata = pubOrgCataDao.findAllByParentId(BigInteger.valueOf(Long.parseLong(orgCataId)));
+		for (PubOrgCata cata : childCata) {
+			removeChild(cata.getId());
+		}
+		pubOrgDao.removeByOrgCataId(orgCataId);
+		pubOrgCataDao.remove(orgCataId);
+	}
+
+	@Transactional
+	@Override
+	public void removeCata(String orgCataId) {
+		removeChild(orgCataId);
+	}
+	
+	public void saveOrg(PubOrg orgNew) {
+		if (orgNew.getId() == null || orgNew.getId() == "0") {
+			pubOrgDao.persist(orgNew);
+		} else {
+			pubOrgDao.merge(orgNew);
+		}
+	}
+	
+	public void removeOrg(String orgId) {
+		pubOrgDao.remove(orgId);
 	}
 }

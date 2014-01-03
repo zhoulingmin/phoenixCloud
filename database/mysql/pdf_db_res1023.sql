@@ -20,25 +20,25 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `r_book`;
 CREATE TABLE `r_book` (
-  `BOOK_ID` decimal(12,0) NOT NULL,
-  `ORG_ID` decimal(12,0) NOT NULL,
-  `NAME` decimal(12,0) NOT NULL,
-  `PRESS_ID` decimal(12,0) NOT NULL,
-  `SUBJECT_ID` decimal(12,0) NOT NULL COMMENT '²ÎÕÕPUB_DDV±í',
-  `STU_SEG_ID` decimal(12,0) NOT NULL COMMENT 'Ó×¶ù¡¢Ð¡Ñ§¡¢³õÖÐ¡¢¸ßÖÐ£¬²ÎÕÕPUB_DDV±í',
-  `CLASS_ID` decimal(12,0) NOT NULL COMMENT '²ÎÕÕPUB_DDV±í',
-  `KIND_ID` decimal(12,0) NOT NULL COMMENT '²ÎÕÕPUB_DDV±í',
-  `CATA_ADDR_ID` decimal(12,0) DEFAULT NULL COMMENT '²ÎÕÕPUB_DDV±í',
-  `IP_ADDR` varchar(15) DEFAULT NULL,
+  `BOOK_ID` bigint(12) NOT NULL AUTO_INCREMENT,
+  `ORG_ID` bigint(12) NOT NULL,
+  `NAME` varchar(255) NOT NULL,
+  `PRESS_ID` bigint(12) NOT NULL,
+  `SUBJECT_ID` bigint(12) NOT NULL COMMENT '',
+  `STU_SEG_ID` bigint(12) NOT NULL COMMENT '',
+  `CLASS_ID` bigint(12) NOT NULL COMMENT '',
+  `KIND_ID` bigint(12) NOT NULL COMMENT '',
+  `CATA_ADDR_ID` bigint(12) DEFAULT NULL COMMENT '',
+  `IP_ADDR` varchar(16) DEFAULT NULL,
   `ALL_ADDR` varchar(60) DEFAULT NULL,
-  `IS_UPLOAD` int(11) NOT NULL COMMENT '1£ºÊÇ£¬0£º·ñ',
+  `IS_UPLOAD` tinyint(1) NOT NULL COMMENT '',
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
-  `DELETE_STATE` int(11) NOT NULL COMMENT '1±íÊ¾É¾³ý£¬0±êÊ¶Õý³£',
-  `STAFF_ID` decimal(12,0) NOT NULL,
+  `DELETE_STATE` tinyint(1) NOT NULL COMMENT '',
+  `STAFF_ID` bigint(12) NOT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`BOOK_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of r_book
@@ -49,19 +49,19 @@ CREATE TABLE `r_book` (
 -- ----------------------------
 DROP TABLE IF EXISTS `r_book_dire`;
 CREATE TABLE `r_book_dire` (
-  `DIRE_ID` decimal(12,0) NOT NULL,
-  `BOOK_ID` decimal(12,0) NOT NULL,
+  `DIRE_ID` bigint(12) NOT NULL AUTO_INCREMENT,
+  `BOOK_ID` bigint(12) NOT NULL,
   `NAME` varchar(60) NOT NULL,
-  `B_PAGE_NUM` int(11) NOT NULL,
-  `E_PAGE_NUM` int(11) NOT NULL,
-  `LEVEL` int(11) NOT NULL COMMENT '0,1,2,3',
+  `B_PAGE_NUM` bigint(12) NOT NULL,
+  `E_PAGE_NUM` bigint(12) NOT NULL,
+  `LEVEL` tinyint(1) NOT NULL COMMENT '0,1,2,3',
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
-  `DELETE_STATE` int(11) NOT NULL COMMENT '1±íÊ¾É¾³ý£¬0±êÊ¶Õý³£',
+  `DELETE_STATE` tinyint(1) NOT NULL COMMENT '',
   `NOTES` varchar(255) DEFAULT NULL,
-  `STAFF_ID` decimal(12,0) NOT NULL,
+  `STAFF_ID` bigint(12) NOT NULL,
   PRIMARY KEY (`DIRE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of r_book_dire
@@ -72,17 +72,17 @@ CREATE TABLE `r_book_dire` (
 -- ----------------------------
 DROP TABLE IF EXISTS `r_book_log`;
 CREATE TABLE `r_book_log` (
-  `LOG_ID` decimal(18,0) NOT NULL,
-  `BOOK_ID` decimal(12,0) DEFAULT NULL,
-  `LOG_TYPE_ID` decimal(12,0) NOT NULL COMMENT '²ÎÕÕPUB_DDV±í',
-  `FUNCTION_ID` decimal(12,0) NOT NULL COMMENT '²ÎÕÕPUB_DDV±í',
-  `CONTENT` varchar(1000) CHARACTER SET gbk COLLATE gbk_bin DEFAULT NULL,
-  `STAFF_ID` decimal(12,0) NOT NULL,
+  `LOG_ID` bigint(18) NOT NULL PRIMARY KEY,
+  `BOOK_ID` bigint(12) DEFAULT NULL,
+  `LOG_TYPE_ID` bigint(12) NOT NULL COMMENT '',
+  `FUNCTION_ID` bigint(12) NOT NULL COMMENT '',
+  `CONTENT` varchar(1000) DEFAULT NULL,
+  `STAFF_ID` bigint(12) NOT NULL,
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
-  `DELETE_STATE` int(11) NOT NULL COMMENT '1±íÊ¾É¾³ý£¬0±êÊ¶Õý³£',
+  `DELETE_STATE` tinyint(1) NOT NULL COMMENT '',
   `NOTES` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of r_book_log
@@ -93,24 +93,24 @@ CREATE TABLE `r_book_log` (
 -- ----------------------------
 DROP TABLE IF EXISTS `r_book_res`;
 CREATE TABLE `r_book_res` (
-  `RES_ID` decimal(12,0) NOT NULL,
-  `BOOK_ID` decimal(12,0) NOT NULL,
+  `RES_ID` bigint(12) NOT NULL,
+  `BOOK_ID` bigint(12) NOT NULL,
   `NAME` varchar(60) NOT NULL,
-  `FORMAT` decimal(12,0) NOT NULL,
-  `PARENT_RES_ID` decimal(12,0) DEFAULT NULL,
-  `IP_ADDR` varchar(15) DEFAULT NULL,
-  `CATA_ADDR` varchar(255) DEFAULT NULL COMMENT '²ÎÕÕPUB_DDV±í',
+  `FORMAT` bigint(12) NOT NULL,
+  `PARENT_RES_ID` bigint(12) DEFAULT NULL,
+  `IP_ADDR` varchar(16) DEFAULT NULL,
+  `CATA_ADDR` varchar(255) DEFAULT NULL COMMENT '',
   `ALL_ADDR` varchar(60) DEFAULT NULL,
-  `IS_UPLOAD` int(11) NOT NULL COMMENT '1£ºÊÇ£¬0£º·ñ',
+  `IS_UPLOAD` tinyint(1) NOT NULL COMMENT '',
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
-  `DELETE_STATE` int(11) NOT NULL COMMENT '1±íÊ¾É¾³ý£¬0±êÊ¶Õý³£',
-  `IS_AUDIT` int(11) NOT NULL COMMENT '-1Î´ÉóºË£¬1ÉóºËÍ¨¹ý£¬0ÉóºË²»Í¨¹ý',
-  `AUDIT_STAFF_ID` decimal(12,0) NOT NULL,
-  `STAFF_ID` decimal(12,0) NOT NULL,
+  `DELETE_STATE` tinyint(1) NOT NULL COMMENT '',
+  `IS_AUDIT` tinyint(1) NOT NULL COMMENT '',
+  `AUDIT_STAFF_ID` bigint(12) NOT NULL,
+  `STAFF_ID` bigint(12) NOT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`RES_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of r_book_res
@@ -121,18 +121,18 @@ CREATE TABLE `r_book_res` (
 -- ----------------------------
 DROP TABLE IF EXISTS `r_reg_code`;
 CREATE TABLE `r_reg_code` (
-  `REG_CODE_ID` decimal(12,0) NOT NULL,
-  `BOOK_ID` decimal(12,0) NOT NULL,
+  `REG_CODE_ID` bigint(12) NOT NULL,
+  `BOOK_ID` bigint(12) NOT NULL,
   `CODE` varchar(60) NOT NULL,
-  `IS_VALID` int(11) NOT NULL COMMENT '1£ºÊÇ£¬0£º·ñ',
+  `IS_VALID` tinyint(1) NOT NULL COMMENT '',
   `VALID_DATE` date DEFAULT NULL,
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
-  `DELETE_STATE` int(11) NOT NULL COMMENT '1±íÊ¾É¾³ý£¬0±êÊ¶Õý³£',
-  `STAFF_ID` decimal(12,0) NOT NULL,
+  `DELETE_STATE` tinyint(1) NOT NULL COMMENT '',
+  `STAFF_ID` bigint(12) NOT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`REG_CODE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of r_reg_code

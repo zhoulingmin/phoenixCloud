@@ -10,14 +10,14 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-		<java.home>D:\Program Files\Java\jdk1.6.0_37</java.home>
+		<java.home>d:\Program Files\Java\jdk1.6.0_37</java.home>
 		<!-- <java.home>/usr/lib/jvm/java-6-sun-1.6.0.2</java.home> -->
 		<cxf.version>2.7.6</cxf.version>
 		<openjpa.version>2.2.1</openjpa.version>
 		<org.springframework.version>3.1.0.RELEASE</org.springframework.version>
 		<version.jersey>1.9.1</version.jersey>
 	</properties>
-	
+
 	<repositories>
 		<repository>
 		    <id>snapshot-repository.java.net</id>
@@ -33,6 +33,11 @@
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.5.6</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -52,12 +57,19 @@
 			<version>1.2.16</version>
 		</dependency>
 
+		<!-- JSON -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>1.1</version>
 		</dependency>
-
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>2.4</version>
+			<classifier>jdk15</classifier>
+		</dependency>
+	    
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-core</artifactId>
@@ -111,7 +123,23 @@
 			<artifactId>ant</artifactId>
 			<version>1.9.1</version>
 		</dependency>
-
+		
+		<!-- hibernate / sql -->
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.22</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>3.4.0.GA</version>
+		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
@@ -140,32 +168,6 @@
 			<version>${cxf.version}</version>
 		</dependency>
 
-		<!-- openjpa/sql -->
-		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-			<version>1.5.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.openjpa</groupId>
-			<artifactId>openjpa</artifactId>
-			<version>${openjpa.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.22</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-			<version>10.8.2.2</version>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.directory.studio</groupId>
 			<artifactId>org.apache.commons.io</artifactId>
@@ -271,23 +273,6 @@
 				<version>2.0</version>
 			</plugin>
 			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<configuration>
-							<tasks>
-								<java classname="org.apache.openjpa.enhance.PCEnhancer"
-									classpathref="maven.runtime.classpath" dir="target/classes" fork="true" />
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.1.1</version>
@@ -302,8 +287,17 @@
 					</webResources>
 				</configuration>
 			</plugin>
-
 		</plugins>
+		<!-- 
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.properties</include>
+				</includes> 
+			</resource>
+		</resources>
+		-->
 	</build>
 
 </project>

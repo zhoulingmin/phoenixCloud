@@ -115,8 +115,8 @@
 	</div>
 
 	<div id="loginbox">
-		<form id="loginform" class="form-vertical" method="post"
-			onSubmit="return check();" action="<%=ctx%>/agency/listAllCata.do?method=listAllCata">
+		<form id="loginform" class="form-vertical" method="GET"
+			onSubmit="return check();" action="<%=ctx%>/agencyMgmt.jsp">
 			<span style="color:red"><%=msg==null?"":msg%></span>
 			<br>
 			<br>

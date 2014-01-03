@@ -1200,7 +1200,7 @@ div.dataTables_wrapper .ui-widget-header {
 
 .table th {
 	height: auto;
-	font-size: 10px;
+	font-size: 13px;
 	padding: 5px 10px 2px;
 	border-bottom: 0;
 	text-align: center;
@@ -1253,11 +1253,11 @@ div.dataTables_wrapper .ui-widget-header {
 .thumbnails li:hover .actions {
 	opacity: 1;
 }
-.line {
+/*.line {
     background: url("../img/line.png") repeat-x scroll 0 0 transparent;
     display: block;
     height: 8px;
-}
+}*/
 .modal {
 	z-index: 99999 !important;
 }

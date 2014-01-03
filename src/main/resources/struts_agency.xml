@@ -3,11 +3,8 @@
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<package name="agency" extends="struts-default" namespace="/agency">
-		<action name="listAllCata" method="listAllCata" class="agencyMgmtAction">
-			<result name="success">/agency_mgmt.jsp</result>
-		</action>
-		<action name="listAllCata" method="searchCata" class="agencyMgmtAction">
-			<result name="success">/agency_mgmt.jsp</result>
-		</action>
+	    <action name="agencyMgmt" method="{1}" class="agencyMgmtAction">
+	    	<result name="success">/agency_mgmt.jsp</result>
+	    </action>
 	</package>
 </struts>

@@ -1,5 +1,6 @@
 package com.phoenixcloud.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -16,10 +17,30 @@ public class PubOrgDao extends AbstractDao<PubOrg>{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<PubOrg> findByOrgCataId(long orgCataId) {
-		Query query = entityManager.createQuery("select pubOrg from PubOrg pubOrg where pubOrg.orgCataId = ?1");
+	public List<PubOrg> findByOrgCataId(String orgCataId) {
+		Query query = entityManager.createQuery("select pubOrg from PubOrg pubOrg where pubOrg.pubOrgCata.orgCataId = ?1 and pubOrg.deleteState = 0");
 		query.setParameter(1, orgCataId);
 		return query.getResultList();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<PubOrg> findByOrgName(String orgName) {
+		Query query = entityManager.createQuery("select org from PubOrg org where org.orgName like :code and org.deleteState = 0");
+		query.setParameter("code", "%" + orgName + "%");
+		return query.getResultList();
+	}
+	
+	@Override
+	public void remove(PubOrg org) {
+		org.setDeleteState((byte)1);
+		org.setUpdateTime(new Date());
+		entityManager.merge(org);
+	}
+	
+	public void removeByOrgCataId(String orgCataId) {
+		Query query = entityManager.createQuery("update PubOrg set deleteState = 1, updateTime = ?1 where pubOrgCata.orgCataId = ?2 and deleteState = 0");
+		query.setParameter(1, new Date());
+		query.setParameter(2, orgCataId);
+		query.executeUpdate();
+	}
 }

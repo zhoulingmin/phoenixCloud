@@ -1,14 +1,18 @@
 package com.phoenixcloud.bean;
 
+import static javax.persistence.CascadeType.ALL;
+
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,13 +24,13 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name="pub_org_cata")
-public class PubOrgCata extends AbstractModel<Long> implements Serializable {
+public class PubOrgCata extends AbstractModel<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="ORG_CATA_ID", unique=true, nullable=false, precision=10)
-	private long orgCataId;
+	@Column(name="ORG_CATA_ID", unique=true, nullable=false, length=12)
+	private String orgCataId;
 
 	@Column(name="CATA_NAME", nullable=false, length=60)
 	private String cataName;
@@ -36,26 +40,29 @@ public class PubOrgCata extends AbstractModel<Long> implements Serializable {
 	private Date createTime;
 
 	@Column(name="DELETE_STATE", nullable=false)
-	private int deleteState;
+	private byte deleteState;
 
 	@Column(length=255)
 	private String notes;
 
-	@Column(name="PARENT_CATA_ID", precision=10)
-	private BigDecimal parentCataId;
+	@Column(name="PARENT_CATA_ID", length=12)
+	private BigInteger parentCataId;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="UPDATE_TIME", nullable=false)
 	private Date updateTime;
+	
+	@OneToMany(mappedBy="pubOrgCata", cascade = ALL)
+	private List<PubOrg> pubOrgs;
 
 	public PubOrgCata() {
 	}
 
-	public long getOrgCataId() {
+	public String getOrgCataId() {
 		return this.orgCataId;
 	}
 
-	public void setOrgCataId(long orgCataId) {
+	public void setOrgCataId(String orgCataId) {
 		this.orgCataId = orgCataId;
 	}
 
@@ -75,11 +82,11 @@ public class PubOrgCata extends AbstractModel<Long> implements Serializable {
 		this.createTime = createTime;
 	}
 
-	public int getDeleteState() {
+	public byte getDeleteState() {
 		return this.deleteState;
 	}
 
-	public void setDeleteState(int deleteState) {
+	public void setDeleteState(byte deleteState) {
 		this.deleteState = deleteState;
 	}
 
@@ -91,11 +98,11 @@ public class PubOrgCata extends AbstractModel<Long> implements Serializable {
 		this.notes = notes;
 	}
 
-	public BigDecimal getParentCataId() {
+	public BigInteger getParentCataId() {
 		return this.parentCataId;
 	}
 
-	public void setParentCataId(BigDecimal parentCataId) {
+	public void setParentCataId(BigInteger parentCataId) {
 		this.parentCataId = parentCataId;
 	}
 
@@ -108,8 +115,16 @@ public class PubOrgCata extends AbstractModel<Long> implements Serializable {
 	}
 
 	@Override
-	public Long getId() {
+	public String getId() {
 		// TODO Auto-generated method stub
 		return orgCataId;
+	}
+
+	public List<PubOrg> getPubOrgs() {
+		return pubOrgs;
+	}
+
+	public void setPubOrgs(List<PubOrg> pubOrgs) {
+		this.pubOrgs = pubOrgs;
 	}
 }
