@@ -55,6 +55,7 @@ CREATE TABLE `r_book_dire` (
   `B_PAGE_NUM` bigint(12) NOT NULL,
   `E_PAGE_NUM` bigint(12) NOT NULL,
   `LEVEL` tinyint(1) NOT NULL COMMENT '0,1,2,3',
+  `PARENT_DIRE_ID` bigint(12),
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '',

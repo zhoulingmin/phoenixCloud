@@ -72,7 +72,7 @@ String parentId = request.getParameter("parentId");
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label">账号Id<label>
+						<label class="control-label">账号Id</label>
 						<div class="controls">
 							<input type="text" name="bookDire.staffId">
 						</div>

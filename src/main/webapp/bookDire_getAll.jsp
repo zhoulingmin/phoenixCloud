@@ -65,8 +65,8 @@ RBook book = (RBook)request.getAttribute("book");
 		<div class="widget-box">
 			<div class="widget-box">
 				<div class="widget-content">
-					&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addBook();" value="新建"/>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeBooks();" value="删除"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addDire()" onclick="addBook();" value="新建"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeBooks();" value="删除" style="display:none"/>
 				</div>
 			</div>
 		</div>
@@ -95,8 +95,13 @@ setting = {
 },
 zTreeNodes = [];
 
+function addDire() {
+	location.href = "<%=ctx%>/addBookDire.jsp?bookId=<%=book.getId()%>&parentId=0";	
+}
+
 
 var $contextMenu = $("#contextMenu");
+var $curTreeNode;
 
 function OnRightClick(event, treeId, treeNode) {
 	if (treeNode == null) {
@@ -107,6 +112,7 @@ function OnRightClick(event, treeId, treeNode) {
 	      left: event.clientX,
 	      top: event.clientY
 	});
+	$curTreeNode = treeNode;
 }
 
 // 初始化，手动初始化
@@ -115,6 +121,37 @@ $(document).ready(function(){
 	zTreeObj = $.fn.zTree.init($("#direTree"), setting, zTreeNodes);
 	$(document).click(function () {
 	    $contextMenu.hide();
+	});
+	
+	$("#contextMenu").on("click", "a", function(e) {
+		var tabIndex = e.target.getAttribute("tabindex");
+		switch (parseInt(tabIndex)) {
+		case 1: // 新建
+			location.href = "<%=ctx%>/addBookDire.jsp?bookId=<%=book.getId()%>&parentId=" + $curTreeNode.direId;
+			break;
+		case 2: // 修改
+			
+			break;
+		case 3: // 删除
+			jQuery.ajax({
+				url: "<%=ctx%>/book/bookDire_removeDire.do",
+				type: "post",
+				async: "false",
+				data: {bookId:"<%=book.getId()%>", direId:$curTreeNode.direId},
+				timeout: 30000,
+				success: function() {
+					alert("删除书籍目录成功！");
+					location.reload(true);
+				},
+				error: function() {
+					alert("删除书籍目录失败！");
+				}
+			});
+			break;
+		case 4: // 刷新
+			break;
+		}
+		$contextMenu.hide();
 	});
 });
 

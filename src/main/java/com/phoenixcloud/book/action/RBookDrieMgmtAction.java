@@ -181,4 +181,17 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 		return null;
 	}
 	
+	public String addDire() {
+		if (bookDire == null) {
+			return null;
+		}
+		
+		Date date = new Date();
+		bookDire.setCreateTime(date);
+		bookDire.setUpdateTime(date);
+		iBookService.saveBookDire(bookDire);
+		
+		return null;
+	}
+	
 }
