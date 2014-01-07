@@ -23,4 +23,12 @@ public class RBookDireDao extends AbstractDao<RBookDire>{
 		query.setParameter(2, parentId);
 		return query.getResultList();
 	}
+	
+	public void remove(BigInteger direId) {
+		RBookDire dire = find(direId.toString());
+		if (dire != null) {
+			dire.setDeleteState((byte)1);
+		}
+		entityManager.merge(dire);
+	}
 }

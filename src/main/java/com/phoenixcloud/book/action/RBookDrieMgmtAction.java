@@ -34,6 +34,7 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 	
 	private BigInteger direId;
 	private RBookDire bookDire;
+	private boolean isView;
 	
 	
 	public IRBookMgmtService getiBookService() {
@@ -78,6 +79,14 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 
 	public void setBookDire(RBookDire bookDire) {
 		this.bookDire = bookDire;
+	}
+
+	public boolean getIsView() {
+		return isView;
+	}
+
+	public void setIsView(boolean isView) {
+		this.isView = isView;
 	}
 
 	public String getAll() {
@@ -175,7 +184,7 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
         	MiscUtils.getLogger().info(e.toString());
         }
         
-		direId = BigInteger.ZERO;
+		direId = null;
 		bookId = null;
 		
 		return null;
@@ -190,8 +199,41 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 		bookDire.setCreateTime(date);
 		bookDire.setUpdateTime(date);
 		iBookService.saveBookDire(bookDire);
-		
+		bookDire = null;
 		return null;
 	}
 	
+	public String saveDire() {
+		if (bookDire == null) {
+			MiscUtils.getLogger().info("无法更新书籍目录信息！");
+			return null;
+		}
+		bookDire.setUpdateTime(new Date());
+		iBookService.saveBookDire(bookDire);
+		bookDire = null;
+		return null;
+	}
+	
+	public String editDire() {
+		bookDire = iBookService.findBookDire(direId.toString());
+		if (bookDire == null) {
+			MiscUtils.getLogger().info("数据库中没有找到要编辑的书籍目录！");
+			return null;
+		}
+		request.put("isView", isView);
+		isView = false;
+		direId = null;
+		return "success";
+	}
+	
+	public void removeDire() {
+		// bookId direId
+		if (bookId == null || direId == null) {
+			MiscUtils.getLogger().info("删除书籍目录出现错误！");
+			return;
+		}
+		iBookService.removeDire(bookId, direId);
+		bookId = null;
+		direId = null;
+	}
 }

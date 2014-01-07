@@ -143,7 +143,7 @@ String ctx = (String) request.getContextPath();
 				
 					<div class="form-actions">
 						<button class="btn btn-primary" type="button"  onclick="saveBook();">保存</button>
-						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();">返回</button>
+						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">返回</button>
 					</div>
 				</form>
 			</div>

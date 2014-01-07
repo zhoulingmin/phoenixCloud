@@ -5,12 +5,7 @@
 
 <%
 String ctx = request.getContextPath();
-boolean isView = false;
-try {
-	isView = Boolean.parseBoolean((String)request.getParameter("isView"));
-} catch (Exception e) {
-	MiscUtils.getLogger().info(e.toString());
-}
+Boolean isView = (Boolean)request.getAttribute("isView");
 %>
 
 <html>
@@ -48,8 +43,10 @@ try {
 				<h5>输入书籍目录信息</h5>
 			</div>
 			<div class="widget-content nopadding">
-				<form id="addDire" class="form-horizontal" method="POST" action="#">
-					
+				<form id="editDire" class="form-horizontal" method="POST" action="#">
+					<input type="hidden" name="bookDire.direId" value="<s:property value="bookDire.direId"/>"/>
+					<input type="hidden" name="bookDire.bookId" value="<s:property value="bookDire.bookId"/>"/>
+					<input type="hidden" name="bookDire.parentDireId" value="<s:property value="bookDire.parentDireId"/>"/>
 					<div class="control-group">
 						<label class="control-label">目录名称</label>
 						<div class="controls">
@@ -86,38 +83,46 @@ try {
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label">账号Id<label>
+						<label class="control-label">账号Id</label>
 						<div class="controls">
 							<input type="text" name="bookDire.staffId" value="<s:property value="bookDire.staffId"/>">
 						</div>
 					</div>
 					
-					<div id="datetimepicker1" class="control-group input-append date">
-						<label class="control-label">创建时间</label>
-						<div class="controls">
-							<input data-format="yyyy/MM/dd hh:mm:ss" type="text" name="bookDire.createTime" value="<s:date name="bookDire.createTime" format="yyyy/MM/dd HH:mm:ss" />">
-							<span class="add-on">
-						      <i data-time-icon="icon-time" data-date-icon="icon-calendar">
-						      </i>
-						    </span>
+					<div class="control-group">
+						<div id="datetimepicker1" class="input-append date">
+							<label class="control-label">创建时间</label>
+							<div class="controls">
+								<input data-format="yyyy/MM/dd hh:mm:ss" type="text" name="bookDire.createTime" value="<s:date name="bookDire.createTime" format="yyyy/MM/dd HH:mm:ss" />">
+								<span class="add-on">
+							      <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+							      </i>
+							    </span>
+							</div>
 						</div>
 					</div>
 					
 					<%if (isView) {%>
-					<div id="datetimepicker1" class="control-group input-append date">
-						<label class="control-label">创建时间</label>
-						<div class="controls">
-							<input data-format="yyyy/MM/dd hh:mm:ss" type="text" name="bookDire.updateTime" value="<s:date name="bookDire.updateTime" format="yyyy/MM/dd HH:mm:ss" />">
-							<span class="add-on">
-						      <i data-time-icon="icon-time" data-date-icon="icon-calendar">
-						      </i>
-						    </span>
+					<div class="control-group">
+						<div id="datetimepicker2" class="input-append date">
+							<label class="control-label">更新时间</label>
+							<div class="controls">
+								<input data-format="yyyy/MM/dd hh:mm:ss" type="text" name="bookDire.updateTime" value="<s:date name="bookDire.updateTime" format="yyyy/MM/dd HH:mm:ss" />">
+								<span class="add-on">
+							      <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+							      </i>
+							    </span>
+							</div>
 						</div>
 					</div>
 					<%} %>
 					<div class="form-actions">
-						<button class="btn btn-primary" type="button"  onclick="addDire();">创建</button>
-						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();">取消</button>
+					<%if (!isView) {%>
+						<button class="btn btn-primary" type="button"  onclick="saveDire();">保存</button>
+						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">返回</button>
+					<%} else { %>
+						<button class="btn btn-primary" onclick="cancel();return false;">返回</button>
+					<%} %>
 					</div>
 					
 				</form>
@@ -125,4 +130,45 @@ try {
 		</div>
 	</div>
 </body>
+
+<script type="text/javascript">
+
+function saveDire() {
+	jQuery.ajax({
+		url: "<%=ctx%>/book/bookDire_saveDire.do",
+		type: "POST",
+		async: "false",
+		data: jQuery("#editDire").serialize(),
+		timeout: 30000,
+		success: function() {
+			alert("书籍目录修改成功！");
+			location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=" +  jQuery("input[name='bookDire.bookId']").val();
+		},
+		error: function() {
+			alert("书籍目录修改失败！");
+		}
+	});	
+}
+
+function cancel() {
+	location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=" +  jQuery("input[name='bookDire.bookId']").val();
+}
+
+$(document).ready(function(){
+	$('#datetimepicker1').datetimepicker({
+		language : 'pt-BR'
+	});
+	$('#datetimepicker2').datetimepicker({
+		language : 'pt-BR'
+	});
+	
+	$($(".add-on")[0]).on("click", "i", function(e){
+		$($(".bootstrap-datetimepicker-widget")[0]).css("top", $(e.target.parentNode).offset().top);
+		$($(".bootstrap-datetimepicker-widget")[0]).css("left", $(e.target.parentNode).offset().left + $(e.target.parentNode).width());
+	});
+});
+
+
+</script>
+
 </html>

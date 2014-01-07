@@ -94,4 +94,23 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 			bookDireDao.merge(bookDire);
 		}
 	}
+	
+	public RBookDire findBookDire(String direId) {
+		return bookDireDao.find(direId);
+	}
+	
+	private void removeSubDire(String bookId, BigInteger direId){
+		List<RBookDire> direList = bookDireDao.findSubDires(BigInteger.valueOf(Long.parseLong(bookId)), direId);
+		for (RBookDire dire : direList) {
+			removeSubDire(bookId, BigInteger.valueOf(Long.parseLong(dire.getId())));
+			dire.setDeleteState((byte)1);
+			bookDireDao.merge(dire);
+		}
+	}
+	
+	public void removeDire(String bookId, BigInteger direId) {
+		// 递归删除子节点
+		removeSubDire(bookId, direId);
+		bookDireDao.remove(direId);
+	}
 }

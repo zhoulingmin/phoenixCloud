@@ -27,6 +27,7 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 	private RBook bookInfo;
 	private String bookIdArr; // used to remove book
 	
+	
 	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		// TODO Auto-generated method stub
@@ -74,13 +75,13 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 	public void setBookIdArr(String bookIdArr) {
 		this.bookIdArr = bookIdArr;
 	}
-	
+
 	public String getAll() {
 		List<RBook> bookList = iBookService.getAllBooks();
 		this.request.put("bookList", bookList);
 		return "success";
 	}
-	
+
 	public String addBook() {
 		Date date = new Date();
 		bookInfo.setCreateTime(date);
@@ -117,5 +118,4 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 		
 		return null;
 	}
-
 }

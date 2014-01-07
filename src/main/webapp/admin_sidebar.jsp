@@ -22,7 +22,7 @@
 		<li id="search_menu" onclick="javascript:void(0);" class="submenu"><a href="#"><i class="icon icon-search"></i> <span>书籍管理</span></a>
 			<ul>
 				<li><a href="<%=request.getContextPath()%>/book/book_getAll.do">书籍信息管理</a></li>
-				<li><a href="#">书籍目录管理</a></li>
+				<li style="display:none"><a href="#">书籍目录管理</a></li>
 				<li><a href="#">书籍上传管理</a></li>
 				<li><a href="#">资源上传管理</a></li>
 				<li><a href="#">资源审核管理</a></li>

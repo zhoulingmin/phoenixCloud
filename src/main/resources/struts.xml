@@ -8,7 +8,8 @@
 	<constant name="struts.custom.i18n.resources" value="message" />
 	<constant name="struts.ui.theme" value="simple" />
 	<constant name="struts.devMode" value="true" />
-	<constant name="struts.date.format" value="yyyy-MM-dd HH:mm:ss"></constant>
+	<constant name="struts.date.format" value="yyyy-MM-dd HH:mm:ss" />
+	<constant name="struts.multipart.maxSize" value="104857600" />
 	<!-- 定义全局result --> 
 	<package name="test" extends="struts-default">
     <global-results>
