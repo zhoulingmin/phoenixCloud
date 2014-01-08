@@ -11,8 +11,11 @@ public interface IRBookMgmtService {
 	void saveBook(RBook book);
 	RBook findBook(String bookId);
 	void removeBook(String bookId);
+	
 	List<RBookDire> getBookDires(BigInteger bookId, BigInteger parentId);
 	void saveBookDire(RBookDire bookDire);
 	RBookDire findBookDire(String direId);
 	void removeDire(String bookId, BigInteger direId);
+	
+	List<BigInteger> getBookIdsHaveRes();
 }

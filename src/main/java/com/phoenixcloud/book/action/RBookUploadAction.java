@@ -80,8 +80,6 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 
 	public String uploadBook() throws Exception {
 		
-		ActionContext.getContext().getParameters();
-		
 		if (bookFile == null) {
 			throw new Exception("上传文件出错！");
 		}

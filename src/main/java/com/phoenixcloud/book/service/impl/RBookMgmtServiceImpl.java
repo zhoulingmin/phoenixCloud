@@ -113,4 +113,8 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 		removeSubDire(bookId, direId);
 		bookDireDao.remove(direId);
 	}
+	
+	public List<BigInteger> getBookIdsHaveRes() {
+		return bookReDao.getAllBookIds();
+	}
 }

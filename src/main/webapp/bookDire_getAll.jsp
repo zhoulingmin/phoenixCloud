@@ -65,26 +65,26 @@ RBook book = (RBook)request.getAttribute("book");
 			<h1>凤凰云端</h1>
 		</div>
 		<div class="widget-box">
-			<div class="widget-box">
-				<div class="widget-content">
-					&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBookDire" onclick="addBookDire();" value="新建"/>
-					<div class="fileinput fileinput-new" data-provides="fileinput" style="margin-right:800px;border:1px dotted #0000FF">
-						<form id="uploadBookFrm" action="<%=ctx%>/book/uploadBook.do" method="POST" enctype="multipart/form-data">
-							<span class="btn btn-default btn-file">
-								<span class="fileinput-new">选择书籍文件</span>
-								<span class="fileinput-exists">重新选择书籍文件</span>
-								<input id="bookFile" type="file" name="bookFile">
-							</span>
-							<span class="fileinput-filename"></span>
-							<a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
-							<input type="hidden" name="bookId" value="<%=book.getId()%>" />
-							<%if (book.getIsUpload() == (byte)0) {%>
-							<input type="submit" name="submit" value="上传"/>
-							<%} else {%>
-							<input type="submit" clsss="btn" name="submit" value="更新" />
-							<%} %>
-						</form>
-					</div>
+			<div class="widget-content">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBookDire" onclick="addBookDire();" value="新建"/>
+				
+				<!-- 上传书籍文件 -->
+				<div class="fileinput fileinput-new" data-provides="fileinput" style="margin-right:800px;border:1px dotted #0000FF">
+					<form id="uploadBookFrm" action="<%=ctx%>/book/uploadBook.do" method="POST" enctype="multipart/form-data">
+						<span class="btn btn-default btn-file">
+							<span class="fileinput-new">选择书籍文件</span>
+							<span class="fileinput-exists">重新选择书籍文件</span>
+							<input id="bookFile" type="file" name="bookFile">
+						</span>
+						<span class="fileinput-filename"></span>
+						<a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+						<input type="hidden" name="bookId" value="<%=book.getId()%>" />
+						<%if (book.getIsUpload() == (byte)0) {%>
+						<input type="submit" class="btn" name="submit" value="上传"/>
+						<%} else {%>
+						<input type="submit" class="btn" name="submit" value="更新" />
+						<%} %>
+					</form>
 				</div>
 			</div>
 		</div>

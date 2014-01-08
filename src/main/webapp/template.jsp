@@ -10,20 +10,15 @@ String ctx = (String) request.getContextPath();
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="stylesheet" href="<%=ctx%>/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/bootstrap-responsive.min.css" />
-	<link rel="stylesheet" href="<%=ctx%>/css/fullcalendar.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
-	<link rel="stylesheet" href="<%=ctx%>/css/select2.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.grey.css" class="skin-color" />
 	
-	<script src="<%=ctx%>/js/excanvas.min.js"></script>
 	<script src="<%=ctx%>/js/jquery.min.js"></script>
 	<script src="<%=ctx%>/js/jquery.uniform.js"></script>
 	<script src="<%=ctx%>/js/jquery.ui.custom.js"></script>
 	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
-	<script src="<%=ctx%>/js/select2.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.js"></script>
 	<script src="<%=ctx%>/js/jquery.dataTables.min.js"></script>
-	<script src="<%=ctx%>/js/global.js"></script>
 	
 <title>书籍管理界面</title>
 </head>
@@ -31,9 +26,9 @@ String ctx = (String) request.getContextPath();
 	<jsp:include page="header.jsp" flush="true"></jsp:include>
 	<jsp:include page="admin_sidebar.jsp" flush="true"></jsp:include>
 	<div id="content">
-	<div id="content-header">
-		<h1>凤凰云端</h1>
-	</div>
+		<div id="content-header">
+			<h1>凤凰云端</h1>
+		</div>
 	</div>
 	<jsp:include page="footer.jsp" flush="true" />
 </body>
