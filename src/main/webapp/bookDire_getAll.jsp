@@ -69,7 +69,7 @@ RBook book = (RBook)request.getAttribute("book");
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBookDire" onclick="addBookDire();" value="新建"/>
 				
 				<!-- 上传书籍文件 -->
-				<div class="fileinput fileinput-new" data-provides="fileinput" style="margin-right:800px;border:1px dotted #0000FF">
+				<div class="fileinput fileinput-new" data-provides="fileinput" style="border:1px dotted #0000FF">
 					<form id="uploadBookFrm" action="<%=ctx%>/book/uploadBook.do" method="POST" enctype="multipart/form-data">
 						<span class="btn btn-default btn-file">
 							<span class="fileinput-new">选择书籍文件</span>

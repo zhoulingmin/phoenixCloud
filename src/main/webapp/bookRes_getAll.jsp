@@ -49,7 +49,7 @@ String ctx = request.getContextPath();
 		
 		%>
 		
-		<div class="widget-box" style="width:80%">
+		<div class="widget-box">
 			<table style="border: 1px solid #AAAAAA;border-collapse: collapse;width:100%">
 				<thead  style="background:#EEEEEE;">
 					<tr>
