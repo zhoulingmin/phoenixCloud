@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -18,13 +19,14 @@ import org.springframework.stereotype.Component;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.PhoenixProperties;
+import com.phoenixcloud.util.MiscUtils;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
-@Component
+@Component("bookUploadAction")
 public class RBookUploadAction extends ActionSupport implements RequestAware, ServletResponseAware{
-	
+	private static final long serialVersionUID = -3430678334134919673L;
 	private RequestMap request;
 	private HttpServletResponse response;
 
@@ -50,6 +52,7 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	public void setBookFile(File bookFile) {
 		this.bookFile = bookFile;
 	}
+
 
 	public String getBookFileContentType() {
 		return bookFileContentType;
@@ -97,8 +100,17 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 		
 		outPath.append(book.getBookId());
 		outPath.append(File.separator);
-		outPath.append(bookFileFileName);
 		
+		File bookFolder = new File(outPath.toString());
+		if (!bookFolder.exists()) {
+			try {
+				bookFolder.mkdirs();
+			} catch (SecurityException e) {
+				MiscUtils.getLogger().info(e.toString());
+			}
+		}
+		
+		outPath.append(bookFileFileName);
 		
 		File file = new File(outPath.toString());
 		try {
@@ -119,7 +131,11 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
+			// 上传成功后，更新书籍存放地址
+			book.setAllAddr(outPath.toString());
+			book.setUpdateTime(new Date());
+			book.setIsUpload((byte)1);
+			iBookService.saveBook(book);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} finally {
@@ -134,7 +150,7 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 				e.printStackTrace();
 			}
 		}
-
+		
 		return "success";
 	}
 
@@ -148,5 +164,18 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	public void setRequest(Map<String, Object> request) {
 		// TODO Auto-generated method stub
 		this.request = (RequestMap) request;
+	}
+	
+	public void addActionError(String anErrorMessage) {
+		MiscUtils.getLogger().info(anErrorMessage);
+	}
+	
+	public void addActionMessage(String aMessage) {
+		MiscUtils.getLogger().info(aMessage);
+	}
+	
+	public void addFieldError(String fieldName, String errorMessage) {
+		MiscUtils.getLogger().info(fieldName);
+		MiscUtils.getLogger().info(errorMessage);
 	}
 }

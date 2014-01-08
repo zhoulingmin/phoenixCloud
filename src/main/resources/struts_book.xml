@@ -3,15 +3,12 @@
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<package name="book" extends="struts-default" namespace="/book">
-		<action name="*_*" class="{1}MgmtAction" method="{2}" >
-			<result name="success">/{1}_{2}.jsp</result>
+		<action name="uploadBook" class="bookUploadAction" method="uploadBook">
+			<result name="success" type="redirect">/book/bookDire_getAll.do?bookId=${bookId}</result>
 		</action>
 		
-		<action name="uploadBook" class="com.phoenixcloud.book.action.RBookUploadAction" method="uploadBook">
-			<interceptor-ref name="fileUpload">  
-				<param name="maximumSize">104857600</param>
-			</interceptor-ref>
-			<result name="success" type="redirect">/book/bookDire_getAll.do?bookId=${bookId}</result>
+		<action name="*_*" class="{1}MgmtAction" method="{2}" >
+			<result name="success">/{1}_{2}.jsp</result>
 		</action>
 	</package>
 </struts>

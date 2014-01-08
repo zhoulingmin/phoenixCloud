@@ -68,8 +68,7 @@ RBook book = (RBook)request.getAttribute("book");
 			<div class="widget-box">
 				<div class="widget-content">
 					&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBookDire" onclick="addBookDire();" value="新建"/>
-					<%if (book.getIsUpload() == (byte)0) {%>
-					<div class="fileinput fileinput-new" data-provides="fileinput">
+					<div class="fileinput fileinput-new" data-provides="fileinput" style="margin-right:800px;border:1px dotted #0000FF">
 						<form id="uploadBookFrm" action="<%=ctx%>/book/uploadBook.do" method="POST" enctype="multipart/form-data">
 							<span class="btn btn-default btn-file">
 								<span class="fileinput-new">选择书籍文件</span>
@@ -78,11 +77,14 @@ RBook book = (RBook)request.getAttribute("book");
 							</span>
 							<span class="fileinput-filename"></span>
 							<a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
-							<input type="hidden" name="bookId" value="<%=book.getId()%>>" />
-							<input type="submit" name="submit" value="submit"/>
+							<input type="hidden" name="bookId" value="<%=book.getId()%>" />
+							<%if (book.getIsUpload() == (byte)0) {%>
+							<input type="submit" name="submit" value="上传"/>
+							<%} else {%>
+							<input type="submit" clsss="btn" name="submit" value="更新" />
+							<%} %>
 						</form>
 					</div>
-					<%} %>
 				</div>
 			</div>
 		</div>
