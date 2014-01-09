@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookDire;
+import com.phoenixcloud.bean.RBookRe;
 
 public interface IRBookMgmtService {
 	List<RBook> getAllBooks();
@@ -17,5 +18,9 @@ public interface IRBookMgmtService {
 	RBookDire findBookDire(String direId);
 	void removeDire(String bookId, BigInteger direId);
 	
+	RBookRe findBookRes(String resId);
 	List<BigInteger> getBookIdsHaveRes();
+	List<RBookRe> getResByBookId(String bookId);
+	void saveBookRes(RBookRe bookRes);
+	void removeRes(String resId);
 }

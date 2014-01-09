@@ -2,6 +2,7 @@ package com.phoenixcloud.book.service.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookDire;
+import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.dao.RBookDao;
 import com.phoenixcloud.dao.RBookDireDao;
@@ -116,5 +118,25 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 	
 	public List<BigInteger> getBookIdsHaveRes() {
 		return bookReDao.getAllBookIds();
+	}
+	
+	public List<RBookRe> getResByBookId(String bookId) {
+		return bookReDao.getAllResByBookId(bookId);
+	}
+	
+	public RBookRe findBookRes(String resId) {
+		return bookReDao.find(resId);
+	}
+	
+	public void removeRes(String resId) {
+		RBookRe bookRes = bookReDao.find(resId);
+		bookRes.setDeleteState((byte)1);
+		bookRes.setUpdateTime(new Date());
+		bookReDao.merge(bookRes);
+	}
+	
+	public void saveBookRes(RBookRe bookRes) {
+		bookRes.setUpdateTime(new Date());
+		bookReDao.merge(bookRes);
 	}
 }

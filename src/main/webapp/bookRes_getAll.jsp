@@ -1,8 +1,29 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%@ page import="java.math.*" %>
+<%@ page import="com.phoenixcloud.book.vo.BookResNode" %>
+<%@page import="org.springframework.web.context.WebApplicationContext" %>
+<%@page import="com.phoenixcloud.agency.service.IAgencyMgmtService" %>
+<%@page import="com.phoenixcloud.bean.*"%>
+<%@page import="com.phoenixcloud.book.service.IRBookMgmtService" %>
+    
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%
 String ctx = request.getContextPath();
+Integer maxLevel = (Integer)request.getAttribute("maxLevel");
+if (maxLevel == null) {
+	maxLevel = 1;
+}
+Map<String,BookResNode> resNodeMap = (HashMap<String,BookResNode>)request.getAttribute("resNodeMap");
+if (resNodeMap == null) {
+	resNodeMap = new HashMap<String,BookResNode>();
+}
+List<String> children = resNodeMap.get("root").getChildren();
+WebApplicationContext context = (WebApplicationContext)this.getServletContext().getAttribute(
+		WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+IRBookMgmtService iBookService = (IRBookMgmtService)context.getBean("bookMgmtServiceImpl");
+IAgencyMgmtService iAgencyMgmt = (IAgencyMgmtService)context.getBean("agencyMgmtServiceImpl");
+
 %>
 
 <html>
@@ -33,6 +54,9 @@ String ctx = request.getContextPath();
 	.emptyCol{
 	width:3%;
 	}
+	.passAnchor{}
+	.rejectAnchor{}
+	.removeAnchor{}
 	</style>
 </head>
 <body>
@@ -53,95 +77,102 @@ String ctx = request.getContextPath();
 			<table style="border: 1px solid #AAAAAA;border-collapse: collapse;width:100%">
 				<thead  style="background:#EEEEEE;">
 					<tr>
-						<th colspan="4">机构根节点</th>
+						<th colspan="<%=(maxLevel+1)%>">机构根节点</th>
 						<th>电子书名称</th>
 						<th>资源名称</th>
 						<th>状态</th>
-						<th colspan="3">操作</th>
+						<th colspan="3" style="text-align:center">操作</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td></td>
-						<td colspan="3">机构目录1</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td colspan="2">机构目录11</td>
-						<td></td>
-						<td></td>
-						<td ></td>
-						<td ></td>
-						<td ></td>
-					</tr>
-					<tr>
-						<td ></td>
-						<td ></td>
-						<td ></td>
-						<td >南京</td>
-						<td >电子书1</td>
-						<td >未审核</td>
-						<td ><a href="#">通过</a></td>
-						<td ><a href="#">不通过</a></td>
-						<td ><a href="#">删除</a></td>
-					</tr>
-					<tr>
-						<td ></td>
-						<td ></td>
-						<td ></td>
-						<td >苏州</td>
-						<td >电子书2</td>
-						<td >未审核</td>
-						<td ><a href="#">通过</a></td>
-						<td ><a href="#">不通过</a></td>
-						<td ><a href="#">删除</a></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td colspan="3">机构目录2</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td ></td>
-						<td ></td>
-						<td ></td>
-						<td >南京</td>
-						<td >电子书1</td>
-						<td >未审核</td>
-						<td ><a href="#">通过</a></td>
-						<td ><a href="#">不通过</a></td>
-						<td ><a href="#">删除</a></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td colspan="2">机构目录21</td>
-						<td></td>
-						<td></td>
-						<td ></td>
-						<td ></td>
-						<td ></td>
-					</tr>
-					<tr>
-						<td ></td>
-						<td ></td>
-						<td ></td>
-						<td >xx</td>
-						<td >电子书2</td>
-						<td >未审核</td>
-						<td ><a href="#">通过</a></td>
-						<td ><a href="#">不通过</a></td>
-						<td ><a href="#">删除</a></td>
-					</tr>
+				<%!
+				void showChild(Map<String,BookResNode> resNodeMap, String child, 
+						javax.servlet.jsp.JspWriter out,
+						IAgencyMgmtService iAgencyMgmt,
+						IRBookMgmtService iBookService,
+						int maxLevel,
+						String ctx) throws java.io.IOException{
+	
+					BookResNode resNode = resNodeMap.get(child);
+					if ("cata".equals(resNode.getType())) {
+						out.print("<tr>");
+						for (int i = 0; i < resNode.getLevel(); i++) {
+							out.print("<td></td>");
+						}
+						
+						PubOrgCata cata = iAgencyMgmt.findOrgCataById(resNode.getId());
+
+						// 输出机构目录名称
+						out.print("<td colspan=\"" + (maxLevel - resNode.getLevel() + 1) + "\">" + cata.getCataName() + "</td>");
+						
+						// 电子书名称
+						out.print("<td></td>");
+						
+						// 资源名称
+						out.print("<td></td>");
+						
+						// 状态
+						out.print("<td></td>");
+						
+						// 3个操作
+						out.print("<td></td>");
+						out.print("<td></td>");
+						out.print("<td></td>");
+						out.print("</tr>");
+						for (String childKey: resNode.getChildren()) {
+							showChild(resNodeMap, childKey, out, iAgencyMgmt, iBookService, maxLevel, ctx);
+						}
+					} else if ("org".equals(resNode.getType())) {
+						PubOrg org = iAgencyMgmt.findOrgById(resNode.getId());
+						// 循环输出有资源 书籍及其所有资源
+						for (String bookId : resNode.getBookIds()) {
+							RBook book = iBookService.findBook(bookId);
+							List<RBookRe> resList = iBookService.getResByBookId(bookId);
+							for (RBookRe res : resList) {
+								out.print("<tr>");
+								for (int i = 0; i < maxLevel; i++) {
+									out.print("<td></td>");
+								}
+								// 输出机构目录名称
+								out.print("<td>" + org.getOrgName() + "</td>");
+								
+								// 电子书名称
+								out.print("<td>" + book.getName() + "</td>");
+								
+								// 资源名称
+								out.print("<td>" + res.getName() + "</td>");
+								
+								// 状态
+								if (res.getIsAudit() == (byte)-1) {
+									out.print("<td>未审核</td>");
+									out.print("<td><a class=\"passAnchor\" href=\"" + ctx + "/book/bookRes_auditRes.do?flag=true&resId=" + res.getId() + "\">通过</a></td>");
+									out.print("<td><a class=\"rejectAnchor\" href=\"" + ctx + "/book/bookRes_auditRes.do?flag=false&resId=" + res.getId() + "\">不通过</a></td>");
+								} else if (res.getIsAudit() == (byte)0){
+									out.print("<td>审核未通过</td>");
+									out.print("<td></td>");
+									out.print("<td></td>");
+								} else if (res.getIsAudit() == (byte)0) {
+									out.print("<td>审核已通过</td>");
+									out.print("<td></td>");
+									out.print("<td></td>");
+								}
+								out.print("<td><a class=\"removeAnchor\" href=\""+ ctx + "/book/bookRes_removeRes.do?resId=" + res.getId() + "\">删除</a></td>");
+								out.print("</tr>");
+							}
+						}
+					}
+				}
+				
+				%>
+				<%
+				if (children.size() == 0) {
+					out.print("<tr><td>暂时没有可用的书籍资源！</td></tr>");
+				} else {
+					for (String child: children) {
+						showChild(resNodeMap, child, out, iAgencyMgmt, iBookService, maxLevel, ctx);
+					}
+				}
+				%>
 				</tbody>
 			</table>
 		</div>		
@@ -161,7 +192,6 @@ $(function(){
 			$(this).addClass("emptyCol");
 		}
 	});
-
 });
 </script>
 

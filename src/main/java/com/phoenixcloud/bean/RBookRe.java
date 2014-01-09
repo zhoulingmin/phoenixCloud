@@ -46,7 +46,7 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	private String ipAddr;
 
 	@Column(name="IS_AUDIT", nullable=false)
-	private byte isAudit;
+	private byte isAudit = (byte)-1;
 
 	@Column(name="IS_UPLOAD", nullable=false)
 	private byte isUpload;
