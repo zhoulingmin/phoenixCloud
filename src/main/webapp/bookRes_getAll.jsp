@@ -143,20 +143,25 @@ IAgencyMgmtService iAgencyMgmt = (IAgencyMgmtService)context.getBean("agencyMgmt
 								out.print("<td>" + res.getName() + "</td>");
 								
 								// 状态
-								if (res.getIsAudit() == (byte)-1) {
+								byte isAudit = res.getIsAudit();
+								if (isAudit == (byte)-1) {
 									out.print("<td>未审核</td>");
-									out.print("<td><a class=\"passAnchor\" href=\"" + ctx + "/book/bookRes_auditRes.do?flag=true&resId=" + res.getId() + "\">通过</a></td>");
-									out.print("<td><a class=\"rejectAnchor\" href=\"" + ctx + "/book/bookRes_auditRes.do?flag=false&resId=" + res.getId() + "\">不通过</a></td>");
-								} else if (res.getIsAudit() == (byte)0){
+									out.print("<td><a class=\"passAnchor\" resId=\"" + res.getId() + "\" href=\"#\">通过</a></td>");
+									out.print("<td><a class=\"rejectAnchor\" resId=\"" + res.getId() + "\" href=\"#\">不通过</a></td>");
+								} else if (isAudit == (byte)0){
 									out.print("<td>审核未通过</td>");
 									out.print("<td></td>");
 									out.print("<td></td>");
-								} else if (res.getIsAudit() == (byte)0) {
+								} else if (isAudit == (byte)1) {
 									out.print("<td>审核已通过</td>");
 									out.print("<td></td>");
 									out.print("<td></td>");
+								} else {
+									out.print("<td></td>");
+									out.print("<td></td>");
+									out.print("<td></td>");
 								}
-								out.print("<td><a class=\"removeAnchor\" href=\""+ ctx + "/book/bookRes_removeRes.do?resId=" + res.getId() + "\">删除</a></td>");
+								out.print("<td><a class=\"removeAnchor\" resId=\"" + res.getId() + "\" href=\"#\">删除</a></td>");
 								out.print("</tr>");
 							}
 						}
@@ -191,6 +196,54 @@ $(function(){
 		if ($(this).html().length == 0) {
 			$(this).addClass("emptyCol");
 		}
+	});
+	$(".passAnchor").on("click", function(event) {
+		$.ajax({
+			url: "<%=ctx%>/book/bookRes_auditRes.do",
+			type: "post",
+			async: "false",
+			timeout: 30000,
+			data: {flag:"true", resId:event.target.getAttribute("resId")},
+			success: function() {
+				location.reload(true);
+			},
+			error: function() {
+				alert("请重试！");
+			}
+		});
+		return false;
+	});
+	$(".rejectAnchor").on("click", function(event) {
+		$.ajax({
+			url: "<%=ctx%>/book/bookRes_auditRes.do",
+			type: "post",
+			async: "false",
+			timeout: 30000,
+			data: {flag:"false", resId:event.target.getAttribute("resId")},
+			success: function() {
+				location.reload(true);
+			},
+			error: function() {
+				alert("请重试！");
+			}
+		});
+		return false;
+	});
+	$(".removeAnchor").on("click", function(event) {
+		$.ajax({
+			url: "<%=ctx%>/book/bookRes_removeRes.do",
+			type: "post",
+			async: "false",
+			timeout: 30000,
+			data: {resId:event.target.getAttribute("resId")},
+			success: function() {
+				location.reload(true);
+			},
+			error: function() {
+				alert("请重试！");
+			}
+		});
+		return false;
 	});
 });
 </script>
