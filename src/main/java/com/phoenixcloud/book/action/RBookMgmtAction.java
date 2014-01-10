@@ -10,12 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 
+@Scope("prototype")
 @Component("bookMgmtAction")
 public class RBookMgmtAction extends ActionSupport implements RequestAware, ServletResponseAware{
 	private static final long serialVersionUID = -8183960496394408783L;

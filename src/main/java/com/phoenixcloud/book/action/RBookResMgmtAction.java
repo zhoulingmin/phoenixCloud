@@ -4,10 +4,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 
 import javax.annotation.Resource;
@@ -16,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -28,6 +27,7 @@ import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.book.vo.BookResNode;
 import com.phoenixcloud.util.MiscUtils;
 
+@Scope("prototype")
 @Component("bookResMgmtAction")
 public class RBookResMgmtAction extends ActionSupport implements RequestAware,ServletResponseAware{
 	private static final long serialVersionUID = 5600142681527501077L;

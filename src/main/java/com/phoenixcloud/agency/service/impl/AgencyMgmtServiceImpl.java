@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.phoenixcloud.agency.service.IAgencyMgmtService;
@@ -15,7 +15,7 @@ import com.phoenixcloud.bean.PubOrgCata;
 import com.phoenixcloud.dao.PubOrgCataDao;
 import com.phoenixcloud.dao.PubOrgDao;
 
-@Component
+@Service
 public class AgencyMgmtServiceImpl implements IAgencyMgmtService {
 
 	@Resource

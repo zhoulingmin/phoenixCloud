@@ -1,7 +1,6 @@
 package com.phoenixcloud.agency.action;
 
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,10 +14,9 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.struts2.dispatcher.RequestMap;
-import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
-import org.apache.struts2.interceptor.SessionAware;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -27,6 +25,7 @@ import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.PubOrgCata;
 import com.phoenixcloud.util.MiscUtils;
 
+@Scope("prototype")
 @Component
 public class AgencyMgmtAction extends ActionSupport implements RequestAware, ServletResponseAware {
 	private static final long serialVersionUID = 3155881995974380162L;

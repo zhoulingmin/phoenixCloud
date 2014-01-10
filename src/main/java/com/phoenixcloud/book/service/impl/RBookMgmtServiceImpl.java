@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookDire;
@@ -19,7 +19,7 @@ import com.phoenixcloud.dao.RBookLogDao;
 import com.phoenixcloud.dao.RBookReDao;
 import com.phoenixcloud.dao.RRegCodeDao;
 
-@Component("bookMgmtServiceImpl")
+@Service("bookMgmtServiceImpl")
 public class RBookMgmtServiceImpl implements IRBookMgmtService {
 	
 	@Resource

@@ -9,19 +9,23 @@
 	<constant name="struts.ui.theme" value="simple" />
 	<constant name="struts.devMode" value="true" />
 	<constant name="struts.date.format" value="yyyy-MM-dd HH:mm:ss" />
+	<!-- max 100MB -->
 	<constant name="struts.multipart.maxSize" value="104857600" />
+	
 	<!-- 定义全局result --> 
 	<package name="test" extends="struts-default">
-    <global-results>
-        <result name="exception">/exception.jsp</result>
-        <result name="tologin">/common/jsp/tologin.jsp</result>
-        <result name="noprim">/common/jsp/error.jsp</result>
-    </global-results>
-    <!-- 定义全局异常映射 --> 
-    <global-exception-mappings>
-        <exception-mapping result="exception" exception="java.lang.Exception"/>
-    </global-exception-mappings>
+	    <global-results>
+	        <result name="exception">/exception.jsp</result>
+	        <result name="tologin">/common/jsp/tologin.jsp</result>
+	        <result name="noprim">/common/jsp/error.jsp</result>
+	    </global-results>
+	    <!-- 定义全局异常映射 --> 
+	    <global-exception-mappings>
+	        <exception-mapping result="exception" exception="java.lang.Exception"/>
+	    </global-exception-mappings>
     </package>
+	
 	<include file="struts_agency.xml" />
 	<include file="struts_book.xml" />
+	<include file="struts_system.xml" />
 </struts>

@@ -14,16 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.util.MiscUtils;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-
+@Scope("prototype")
 @Component("bookUploadAction")
 public class RBookUploadAction extends ActionSupport implements RequestAware, ServletResponseAware{
 	private static final long serialVersionUID = -3430678334134919673L;

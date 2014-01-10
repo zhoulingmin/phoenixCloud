@@ -30,6 +30,7 @@ if (bookList == null) {
 	<link rel="stylesheet" href="<%=ctx%>/css/bootstrap-responsive.min.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/uniform.css" />
+	<link rel="stylesheet" href="<%=ctx%>/css/select2.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.grey.css" class="skin-color" />
 	
 	<script src="<%=ctx%>/js/jquery.min.js"></script>
@@ -37,6 +38,7 @@ if (bookList == null) {
 	<script src="<%=ctx%>/js/jquery.ui.custom.js"></script>
 	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.js"></script>
+	<script src="<%=ctx%>/js/select2.min.js"></script>
 	<script src="<%=ctx%>/js/jquery.dataTables.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.tables.js"></script>
 	
@@ -49,15 +51,15 @@ if (bookList == null) {
 		<div id="content-header">
 			<h1>凤凰云端</h1>
 		</div>
+		
 		<div class="widget-box">
-			<div class="widget-box">
-				<div class="widget-content">
-					&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addBook();" value="新建"/>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeBooks();" value="删除"/>
-				</div>
+			<div class="widget-content">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addBook();" value="新建"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeBooks();" value="删除"/>
 			</div>
+		</div>
 
-			<div><!-- this div node is just used to let $(this).parents('.widget-box') find only one node -->
+		<div><!-- this div node is just used to let $(this).parents('.widget-box') find only one node -->
 			<div class="widget-box">
 				<div class="widget-title">
 					<span class="icon"><i class="icon-eye-open"></i></span>
@@ -119,9 +121,9 @@ if (bookList == null) {
 					</table>
 				</div>
 			</div>
-			</div>
 		</div>
 	</div>
+
 	<jsp:include page="footer.jsp" flush="true" />
 </body>
 

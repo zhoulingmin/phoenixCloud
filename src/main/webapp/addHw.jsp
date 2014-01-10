@@ -1,14 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@page import="java.math.BigInteger" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-
+<html>
 <%
-String ctx = request.getContextPath();
-String bookId = request.getParameter("bookId");
-String parentId = request.getParameter("parentId");
+String ctx = (String) request.getContextPath();
 %>
 
-<html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,17 +13,16 @@ String parentId = request.getParameter("parentId");
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.grey.css" class="skin-color" />
 	
-	<script src="<%=ctx%>/js/jquery.min.js"></script>
-	<script src="<%=ctx%>/js/jquery.uniform.js"></script>
+	<script src="<%=ctx%>/js/jquery-2.0.3.js"></script>
 	<script src="<%=ctx%>/js/jquery.ui.custom.js"></script>
 	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.js"></script>
-	<title>创建书籍目录</title>
+	
+	<title>添加硬件</title>
 </head>
 <body>
 	<jsp:include page="header.jsp" flush="true"></jsp:include>
 	<jsp:include page="admin_sidebar.jsp" flush="true"></jsp:include>
-	
 	<div id="content">
 		<div id="content-header">
 			<h1>凤凰云端</h1>
@@ -35,84 +30,82 @@ String parentId = request.getParameter("parentId");
 		<div class="widget-box">
 			<div class="widget-title">
 				<span class="icon"><i class="icon-align-justify"></i></span>
-				<h5>输入书籍目录信息</h5>
+				<h5>录入硬件信息</h5>
 			</div>
 			<div class="widget-content nopadding">
-				<form id="addDire" class="form-horizontal" method="POST" action="#">
-					
-					<input type="hidden" name="bookDire.bookId" value="<%=bookId%>"/>
-					<input type="hidden" name="bookDire.parentDireId" value="<%=parentId%>"/>
-					
+				<form id="addHw" class="form-horizontal" method="POST" action="#">
 					<div class="control-group">
-						<label class="control-label">目录名称</label>
+						<label class="control-label">硬件类型</label>
 						<div class="controls">
-							<input type="text" name="bookDire.name">
+							<input type="text" name="hw.hwType">
 						</div>
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label">描述</label>
+						<label class="control-label">序列号</label>
 						<div class="controls">
-							<input type="text" name="bookDire.notes">
+							<input type="text" name="hw.code">
 						</div>
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label">起始页码</label>
+						<label class="control-label">绑定账号的ID</label>
 						<div class="controls">
-							<input type="text" name="bookDire.bPageNum">
+							<input type="text" name="hw.staffId">
 						</div>
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label">结束页码</label>
+						<label class="control-label">备注</label>
 						<div class="controls">
-							<input type="text" name="bookDire.ePageNum">
+							<input type="text" name="hw.notes">
 						</div>
 					</div>
 					
-					<div class="control-group">
-						<label class="control-label">账号Id</label>
+					<!-- 
+					<div id="datetimepicker1" class="control-group input-append date">
+						<label class="control-label">有效期</label>
 						<div class="controls">
-							<input type="text" name="bookDire.staffId">
+							<input data-format="yyyy/MM/dd hh:mm:ss" type="text" name="hw.validDate">
+							<span class="add-on">
+						      <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+						      </i>
+						    </span>
 						</div>
 					</div>
-					
+					 -->
+				
 					<div class="form-actions">
-						<button class="btn btn-primary" type="button"  onclick="addDire();">创建</button>
+						<button class="btn btn-primary" type="button"  onclick="addHw();">创建</button>
 						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">取消</button>
 					</div>
-					
 				</form>
 			</div>
 		</div>
 	</div>
+	<jsp:include page="footer.jsp" flush="true" />
 </body>
-
 <script type="text/javascript">
-
 function cancel() {
-	location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=<%=bookId%>";
+	location.href = "<%=ctx%>/system/system_getAllHw.do";
 }
 
-function addDire() {
+function addHw() {
 	jQuery.ajax({
-		url: "<%=ctx%>/book/bookDire_addDire.do",
-		type: "post",
-		data: jQuery("#addDire").serialize(),
+		url: "<%=ctx%>/system/system_addHw.do",
+		data: jQuery("#addHw").serialize(),
+		type: "POST",
 		async: "false",
 		timeout: 30000,
 		success: function() {
-			alert("创建目录成功！");
-			location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=<%=bookId%>";
+			alert("添加硬件成功！");
+			location.href = "<%=ctx%>/system/system_getAllHw.do";
 		},
 		error: function() {
-			alert("创建目录失败！");
+			alert("添加硬件失败！");
 		}
 	});
-	
 }
 
 </script>
-
 </html>

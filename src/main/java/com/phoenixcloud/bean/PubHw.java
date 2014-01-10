@@ -1,9 +1,17 @@
 package com.phoenixcloud.bean;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.math.BigInteger;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -12,7 +20,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name="pub_hardware")
-public class PubHardware extends AbstractModel<String> implements Serializable {
+public class PubHw extends AbstractModel<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -43,7 +51,7 @@ public class PubHardware extends AbstractModel<String> implements Serializable {
 	@Column(name="UPDATE_TIME", nullable=false)
 	private Date updateTime;
 
-	public PubHardware() {
+	public PubHw() {
 	}
 
 	public String getHwId() {

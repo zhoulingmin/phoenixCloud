@@ -15,6 +15,7 @@ import net.sf.json.JSONObject;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -23,6 +24,7 @@ import com.phoenixcloud.bean.RBookDire;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.util.MiscUtils;
 
+@Scope("prototype")
 @Component("bookDireMgmtAction")
 public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, ServletResponseAware{
 

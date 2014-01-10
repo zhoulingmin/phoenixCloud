@@ -30,10 +30,10 @@
 		</li>
 		<li id="favorite_menu" onclick="javascript:void(0);" class="submenu"><a href="#"><i class="icon icon-star"></i> <span>系统管理</span></a>
 			<ul>
-				<li><a href="#">账号管理</a></li>
+				<li><a href="<%=request.getContextPath()%>/system/system_getAllUser.do">账号管理</a></li>
 				<li><a href="#">权限管理</a></li>
-				<li><a href="#">硬件管理</a></li>
-				<li><a href="#">硬件绑定</a></li>
+				<li><a href="<%=request.getContextPath()%>/system/system_getAllHw.do">硬件管理</a></li>
+				<li style="display:none"><a href="#">硬件绑定</a></li>
 			</ul>
 		</li>
 		<li id="settings_menu" onclick="javascript:void(0);" class="submenu"><a href="#"><i class="icon icon-cog"></i> <span>注册码管理</span> </a>

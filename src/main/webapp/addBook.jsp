@@ -19,7 +19,7 @@ String ctx = (String) request.getContextPath();
 	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.js"></script>
 	
-<title>书籍管理界面</title>
+<title>新建书籍</title>
 </head>
 <body>
 	<jsp:include page="header.jsp" flush="true"></jsp:include>
@@ -143,7 +143,7 @@ String ctx = (String) request.getContextPath();
 				
 					<div class="form-actions">
 						<button class="btn btn-primary" type="button"  onclick="addBook();">创建</button>
-						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();">取消</button>
+						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">取消</button>
 					</div>
 				</form>
 			</div>

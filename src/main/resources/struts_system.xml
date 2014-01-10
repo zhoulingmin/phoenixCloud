@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="system" extends="struts-default" namespace="/system">
+		<action name="*_*" class="{1}MgmtAction" method="{2}" >
+			<result name="success">/{1}_{2}.jsp</result>
+		</action>
+	</package>
+</struts>
