@@ -15,7 +15,10 @@ import org.springframework.stereotype.Component;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.PubHw;
+import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
+import com.phoenixcloud.bean.SysStaffPurview;
+import com.phoenixcloud.bean.SysStaffRegCode;
 import com.phoenixcloud.system.service.ISysService;
 
 @Scope("prototype")
@@ -35,6 +38,17 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	
 	private PubHw hw;
 	private String hwIdArr;
+	
+	private SysPurview purview;
+	private String purIdArr;
+	
+	private SysStaffPurview staffPur;
+	private String staffPurIdArr;
+	
+	private SysStaffRegCode staffRegCode;
+	private String staffRegCodeIdArr;
+	
+	private String tabId;
 	
 	public void setiSysService(ISysService iSysService) {
 		this.iSysService = iSysService;
@@ -82,6 +96,62 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 
 	public void setHwIdArr(String hwIdArr) {
 		this.hwIdArr = hwIdArr;
+	}
+
+	public SysPurview getPurview() {
+		return purview;
+	}
+
+	public void setPurview(SysPurview purview) {
+		this.purview = purview;
+	}
+
+	public String getPurIdArr() {
+		return purIdArr;
+	}
+
+	public void setPurIdArr(String purIdArr) {
+		this.purIdArr = purIdArr;
+	}
+
+	public SysStaffPurview getStaffPur() {
+		return staffPur;
+	}
+
+	public void setStaffPur(SysStaffPurview staffPur) {
+		this.staffPur = staffPur;
+	}
+
+	public String getStaffPurIdArr() {
+		return staffPurIdArr;
+	}
+
+	public void setStaffPurIdArr(String staffPurIdArr) {
+		this.staffPurIdArr = staffPurIdArr;
+	}
+
+	public SysStaffRegCode getStaffRegCode() {
+		return staffRegCode;
+	}
+
+	public void setStaffRegCode(SysStaffRegCode staffRegCode) {
+		this.staffRegCode = staffRegCode;
+	}
+
+	public String getStaffRegCodeIdArr() {
+		return staffRegCodeIdArr;
+	}
+
+	public void setStaffRegCodeIdArr(String staffRegCodeIdArr) {
+		this.staffRegCodeIdArr = staffRegCodeIdArr;
+	}
+
+	public String getTabId() {
+		return tabId;
+	}
+
+	public void setTabId(String tabId) {
+		this.tabId = tabId;
 	}
 
 	public String getAllUser(){
@@ -156,4 +226,94 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		return null;
 	}
 
+	public String getAllPurview() {
+		List<SysPurview> purviewList = iSysService.getAllPurview();
+		request.put("purviewList", purviewList);
+		
+		List<SysStaffPurview> staffPurList = iSysService.getAllStaffPur();
+		request.put("staffPurList", staffPurList);
+		
+		List<SysStaffRegCode> staffRegCodeList = iSysService.getAllStaffRegCodeList();
+		request.put("staffRegCodeList", staffRegCodeList);
+		
+		request.put("tabId", tabId);
+		
+		return "success";
+	}
+	
+	public String editPurview() {
+		purview = iSysService.findPurviewById(purview.getId());
+		return "success";
+	}
+	
+	public String removePurview() {
+		if (purIdArr.length() == 0) {
+			return null;
+		}
+		String[] purId = purIdArr.split(",");
+		for (String id : purId) {
+			iSysService.removePurview(id);
+		}
+		return null;
+	}
+	
+	public String savePurview() {
+		purview.setUpdateTime(new Date());
+		iSysService.savePurview(purview);
+		return null;
+	}
+	
+	public String addPurview() {
+		Date curDate = new Date();
+		purview.setCreateTime(curDate);
+		purview.setUpdateTime(curDate);
+		iSysService.savePurview(purview);
+		return null;
+	}
+	
+	public String addStaffPur() {
+		Date curDate = new Date();
+		staffPur.setCreateTime(curDate);
+		staffPur.setUpdateTime(curDate);
+		iSysService.saveStaffPur(staffPur);
+		return null;
+	}
+	
+	public String editStaffPur() {
+		staffPur = iSysService.findStaffPurById(staffPur.getId());
+		return "success";
+	}
+	
+	public String saveStaffPur() {
+		staffPur.setUpdateTime(new Date());
+		iSysService.saveStaffPur(staffPur);
+		return null;
+	}
+	
+	public String removeStaffPur() {
+		if (staffPurIdArr.length() == 0) {
+			return null;
+		}
+		String[] staffPurId = staffPurIdArr.split(",");
+		for (String id : staffPurId) {
+			iSysService.removeStaffPur(id);
+		}
+		return null;
+	}
+		
+	public String addStaffRegCode() {
+		return null;
+	}
+	
+	public String editStaffRegCode() {
+		return "success";
+	}
+	
+	public String saveStaffRegCode() {
+		return null;
+	}
+	
+	public String removeStaffRegCode() {
+		return null;
+	}
 }

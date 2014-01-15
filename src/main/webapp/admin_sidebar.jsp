@@ -31,14 +31,14 @@
 		<li id="favorite_menu" onclick="javascript:void(0);" class="submenu"><a href="#"><i class="icon icon-star"></i> <span>系统管理</span></a>
 			<ul>
 				<li><a href="<%=request.getContextPath()%>/system/system_getAllUser.do">账号管理</a></li>
-				<li><a href="#">权限管理</a></li>
+				<li><a href="<%=request.getContextPath()%>/system/system_getAllPurview.do?tabId=purviewTab">权限管理</a></li>
 				<li><a href="<%=request.getContextPath()%>/system/system_getAllHw.do">硬件管理</a></li>
 				<li style="display:none"><a href="#">硬件绑定</a></li>
 			</ul>
 		</li>
 		<li id="settings_menu" onclick="javascript:void(0);" class="submenu"><a href="#"><i class="icon icon-cog"></i> <span>注册码管理</span> </a>
 			<ul>
-				<li><a href="#">书籍注册码</a></li>
+				<li><a href="<%=request.getContextPath()%>/book/bookRegCode_getAll.do">书籍注册码</a></li>
 			</ul>
 		</li>
 		<li id="settings_menu" style="display:none" onclick="javascript:void(0);" class="submenu"><a href="#"><i class="icon icon-cog"></i> <span>字典管理</span> <span class="label">2</span></a>

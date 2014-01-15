@@ -42,7 +42,7 @@ public class RRegCode extends AbstractModel<String> implements Serializable {
 	private byte deleteState;
 
 	@Column(name="IS_VALID", nullable=false)
-	private byte isValid;
+	private byte isValid = (byte)1;
 
 	@Column(length=255)
 	private String notes;

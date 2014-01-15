@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookDire;
 import com.phoenixcloud.bean.RBookRe;
+import com.phoenixcloud.bean.RRegCode;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.dao.RBookDao;
 import com.phoenixcloud.dao.RBookDireDao;
@@ -138,5 +139,34 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 	public void saveBookRes(RBookRe bookRes) {
 		bookRes.setUpdateTime(new Date());
 		bookReDao.merge(bookRes);
+	}
+	
+	public RRegCode findRegCode(String id) {
+		return regCodeDao.find(id);
+	}
+	
+	public List<RRegCode> getAllRegCodes() {
+		List<RRegCode> codeList = regCodeDao.getAll();
+		if (codeList == null) {
+			codeList = new ArrayList<RRegCode>();
+		}
+		return codeList;
+	}
+	
+	public void saveRegCode(RRegCode code) {
+		if (code.getId() == null || "0".equals(code.getId())) {
+			regCodeDao.persist(code);
+		} else {
+			regCodeDao.merge(code);
+		}
+	}
+	
+	public void removeRegCode(String id) {
+		RRegCode code = regCodeDao.find(id);
+		if (code != null) {
+			code.setUpdateTime(new Date());
+			code.setDeleteState((byte)1);
+			regCodeDao.merge(code);
+		}
 	}
 }

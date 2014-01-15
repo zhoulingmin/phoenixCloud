@@ -6,6 +6,7 @@ import java.util.List;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookDire;
 import com.phoenixcloud.bean.RBookRe;
+import com.phoenixcloud.bean.RRegCode;
 
 public interface IRBookMgmtService {
 	List<RBook> getAllBooks();
@@ -23,4 +24,9 @@ public interface IRBookMgmtService {
 	List<RBookRe> getResByBookId(String bookId);
 	void saveBookRes(RBookRe bookRes);
 	void removeRes(String resId);
+	
+	RRegCode findRegCode(String id);
+	List<RRegCode> getAllRegCodes();
+	void saveRegCode(RRegCode code);
+	void removeRegCode(String id);
 }

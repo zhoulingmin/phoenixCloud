@@ -3,7 +3,10 @@ package com.phoenixcloud.system.service;
 import java.util.List;
 
 import com.phoenixcloud.bean.PubHw;
+import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
+import com.phoenixcloud.bean.SysStaffPurview;
+import com.phoenixcloud.bean.SysStaffRegCode;
 
 public interface ISysService {
 	List<SysStaff> getAllStaff();
@@ -16,4 +19,18 @@ public interface ISysService {
 	void saveHw(PubHw hw);
 	PubHw findHwById(String id);
 	
+	List<SysPurview> getAllPurview();
+	void removePurview(String id);
+	void savePurview(SysPurview purview);
+	SysPurview findPurviewById(String id);
+	
+	List<SysStaffPurview> getAllStaffPur();
+	void removeStaffPur(String id);
+	void saveStaffPur(SysStaffPurview staffPur);
+	SysStaffPurview findStaffPurById(String id);
+	
+	List<SysStaffRegCode> getAllStaffRegCodeList();
+	void removeStaffRegCode(String id);
+	void saveStaffRegCode(SysStaffRegCode staffRegCode);
+	SysStaffRegCode findStaffRegCodeById(String id);
 }

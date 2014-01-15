@@ -16,13 +16,12 @@ String ctx = (String) request.getContextPath();
 	<link rel="stylesheet" href="<%=ctx%>/css/bootstrap-datetimepicker.min.css"/>
 	
 	<script src="<%=ctx%>/js/jquery-2.0.3.js"></script>
-	<script src="<%=ctx%>/js/jquery.uniform.js"></script>
+	<script src="<%=ctx%>/js/jquery.ui.custom.js"></script>
 	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.js"></script>
-	<script src="<%=ctx%>/js/jquery.dataTables.min.js"></script>
 	<script src="<%=ctx%>/js/bootstrap-datetimepicker.min.js"></script>
 	
-	<title>修改账号</title>
+	<title>修改注册码</title>
 </head>
 <body>
 	<jsp:include page="header.jsp" flush="true"></jsp:include>
@@ -34,51 +33,31 @@ String ctx = (String) request.getContextPath();
 		<div class="widget-box">
 			<div class="widget-title">
 				<span class="icon"><i class="icon-align-justify"></i></span>
-				<h5>修改账号信息</h5>
+				<h5>修改注册码</h5>
 			</div>
 			<div class="widget-content nopadding">
-				<form id="editUser" class="form-horizontal" method="POST" action="#">
-					<input type="hidden" name="staff.staffId" value="<s:property value="staff.staffId"/>" />
-					<input type="hidden" name="staff.createTime" value="<s:date name="staff.createTime" format="yyyy/MM/dd HH:mm:ss" />"/>
+				<form id="editRegCode" class="form-horizontal" method="POST" action="#">
+					<input type="hidden" name="regCode.regCodeId" value="<s:property value="regCode.regCodeId"/>" />
+					<input type="hidden" name="regCode.createTime" value="<s:date name="regCode.createTiem" format="yyyy/MM/dd HH:mm:ss"/>" />
+					
 					<div class="control-group">
-						<label class="control-label">账号名</label>
+						<label class="control-label">书籍标识</label>
 						<div class="controls">
-							<input type="text" name="staff.name" readonly="readonly" value="<s:property value="staff.name"/>">
+							<input type="text" name="regCode.bookId" value="<s:property value="regCode.bookId"/>">
 						</div>
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label">账号密码</label>
+						<label class="control-label">注册码</label>
 						<div class="controls">
-							<input type="text" name="staff.password" value="<s:property value="staff.password"/>">
-						</div>
-					</div>
-					
-					<div class="control-group">
-						<label class="control-label">机构标识</label>
-						<div class="controls">
-							<input type="text" name="staff.orgId" value="<s:property value="staff.orgId"/>">
-						</div>
-					</div>
-					
-					<div class="control-group">
-						<label class="control-label">账号类型标识</label>
-						<div class="controls">
-							<input type="text" name="staff.staffTypeId" value="<s:property value="staff.staffTypeId"/>">
-						</div>
-					</div>
-					
-					<div class="control-group">
-						<label class="control-label">账号编码</label>
-						<div class="controls">
-							<input type="text" name="staff.code" value="<s:property value="staff.code"/>">
+							<input type="text" name="regCode.code" value="<s:property value="regCode.code"/>">
 						</div>
 					</div>
 					
 					<div id="datetimepicker1" class="control-group input-append date">
 						<label class="control-label">有效期</label>
 						<div class="controls">
-							<input data-format="yyyy/MM/dd hh:mm:ss" type="text" name="staff.validDate" value="<s:property value="staff.validDate"/>" format="yyyy/MM/dd HH:mm:ss">
+							<input data-format="yyyy/MM/dd hh:mm:ss" type="text" name="regCode.validDate" value="<s:date name="regCode.validDate" format="yyyy/MM/dd"/>">
 							<span class="add-on">
 						      <i data-time-icon="icon-time" data-date-icon="icon-calendar">
 						      </i>
@@ -87,31 +66,21 @@ String ctx = (String) request.getContextPath();
 					</div>
 					
 					<div class="control-group">
+						<label class="control-label">账号标识</label>
+						<div class="controls">
+							<input type="text" name="regCode.staffId" value="<s:property value="regCode.staffId"/>">
+						</div>
+					</div>
+					
+					<div class="control-group">
 						<label class="control-label">备注</label>
 						<div class="controls">
-							<input type="text" name="staff.notes" value="<s:property value="staff.notes"/>">
+							<input type="text" name="regCode.notes" value="<s:property value="regCode.notes"/>">
 						</div>
 					</div>
 					
-					
-					<!--
-					<div class="control-group">
-						<label class="control-label">创建时间</label>
-						<div class="controls">
-							<input type="text" name="staff.orgId">
-						</div>
-					</div>
-					 
-					<div class="control-group">
-						<label class="control-label">更新时间</label>
-						<div class="controls">
-							<input type="text" name="staff.createTime">
-						</div>
-					</div>
-					-->
-				
 					<div class="form-actions">
-						<button class="btn btn-primary" type="button"  onclick="saveUser();">保存</button>
+						<button class="btn btn-primary" type="button"  onclick="saveRegCode();">保存</button>
 						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">取消</button>
 					</div>
 				</form>
@@ -122,28 +91,28 @@ String ctx = (String) request.getContextPath();
 </body>
 <script type="text/javascript">
 function cancel() {
-	location.href = "<%=ctx%>/system/system_getAllUser.do";
+	location.href = "<%=ctx%>/book/bookRegCode_getAll.do";
 }
 
-function saveUser() {
+function saveRegCode() {
 	jQuery.ajax({
-		url: "<%=ctx%>/system/system_saveUser.do",
-		data: jQuery("#editUser").serialize(),
+		url: "<%=ctx%>/book/bookRegCode_save.do",
+		data: jQuery("#editRegCode").serialize(),
 		type: "POST",
 		async: "false",
 		timeout: 30000,
 		success: function() {
-			alert("修改账号成功！");
-			location.href = "<%=ctx%>/system/system_getAllUser.do";
+			alert("修改注册码成功！");
+			location.href = "<%=ctx%>/book/bookRegCode_getAll.do";
 		},
 		error: function() {
-			alert("修改账号失败！");
+			alert("修改注册码失败！");
 		}
 	});
 }
 
-$(function() {
-	$("#datetimepicker1").datetimepicker({
+jQuery(document).ready(function() {
+	jQuery("#datetimepicker1").datetimepicker({
 		language : 'pt-BR'
 	});
 	$($(".add-on")[0]).on("click", "i", function(e){
@@ -151,6 +120,5 @@ $(function() {
 		$($(".bootstrap-datetimepicker-widget")[0]).css("left", $(e.target.parentNode).offset().left + $(e.target.parentNode).width());
 	});
 });
-
 </script>
 </html>

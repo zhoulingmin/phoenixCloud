@@ -15,12 +15,11 @@ String ctx = (String) request.getContextPath();
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.grey.css" class="skin-color" />
 	
 	<script src="<%=ctx%>/js/jquery-2.0.3.js"></script>
-	<script src="<%=ctx%>/js/jquery.uniform.js"></script>
+	<script src="<%=ctx%>/js/jquery.ui.custom.js"></script>
 	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.js"></script>
-	<script src="<%=ctx%>/js/jquery.dataTables.min.js"></script>
 	
-	<title>修改硬件信息</title>
+	<title>修改权限</title>
 </head>
 <body>
 	<jsp:include page="header.jsp" flush="true"></jsp:include>
@@ -32,42 +31,35 @@ String ctx = (String) request.getContextPath();
 		<div class="widget-box">
 			<div class="widget-title">
 				<span class="icon"><i class="icon-align-justify"></i></span>
-				<h5>修改硬件信息</h5>
+				<h5>权限信息</h5>
 			</div>
 			<div class="widget-content nopadding">
-				<form id="editHw" class="form-horizontal" method="POST" action="#">
-					<input type="hidden" name="hw.hwId" value="<s:property value="hw.hwId"/>" />
-					<input type="hidden" name="hw.createTime" value="<s:date name="hw.createTime" format="yyyy/MM/dd HH:mm:ss" />"/>
+				<form id="savePur" class="form-horizontal" method="POST" action="#">
+					<input type="hidden" name="purview.purviewId" value="<s:property value="purview.purviewId"/>"/>
+					<input type="hidden" name="purview.createTime" value="<s:date name="purview.createTime" format="yyyy/MM/dd HH:mm:ss" />"/>
 					<div class="control-group">
-						<label class="control-label">硬件类型</label>
+						<label class="control-label">权限名称</label>
 						<div class="controls">
-							<input type="text" name="hw.hwType" readonly="readonly" value="<s:property value="hw.hwType"/>">
+							<input type="text" name="purview.name" value="<s:property value="purview.name"/>">
 						</div>
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label">序列号</label>
+						<label class="control-label">编码</label>
 						<div class="controls">
-							<input type="text" name="hw.code" value="<s:property value="hw.code"/>">
-						</div>
-					</div>
-					
-					<div class="control-group">
-						<label class="control-label">绑定账号的ID</label>
-						<div class="controls">
-							<input type="text" name="hw.staffId" value="<s:property value="hw.staffId"/>">
+							<input type="text" name="purview.code" value="<s:property value="purview.code"/>">
 						</div>
 					</div>
 					
 					<div class="control-group">
 						<label class="control-label">备注</label>
 						<div class="controls">
-							<input type="text" name="hw.notes" value="<s:property value="hw.notes"/>">
+							<input type="text" name="purview.notes" value="<s:property value="purview.notes"/>">
 						</div>
 					</div>
-					
+
 					<div class="form-actions">
-						<button class="btn btn-primary" type="button"  onclick="saveHw();">保存</button>
+						<button class="btn btn-primary" type="button"  onclick="savePurview();">保存</button>
 						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">取消</button>
 					</div>
 				</form>
@@ -78,22 +70,22 @@ String ctx = (String) request.getContextPath();
 </body>
 <script type="text/javascript">
 function cancel() {
-	location.href = "<%=ctx%>/system/system_getAllHw.do";
+	location.href = "<%=ctx%>/system/system_getAllPurview.do?tabId=purviewTab";
 }
 
-function saveHw() {
+function savePurview() {
 	jQuery.ajax({
-		url: "<%=ctx%>/system/system_saveHw.do",
-		data: jQuery("#editHw").serialize(),
+		url: "<%=ctx%>/system/system_savePurview.do",
+		data: jQuery("#savePur").serialize(),
 		type: "POST",
 		async: "false",
 		timeout: 30000,
 		success: function() {
-			alert("修改硬件信息成功！");
-			location.href = "<%=ctx%>/system/system_getAllHw.do";
+			alert("修改权限成功！");
+			location.href = "<%=ctx%>/system/system_getAllPurview.do?tabId=purviewTab";
 		},
 		error: function() {
-			alert("修改硬件信息失败！");
+			alert("修改权限失败！");
 		}
 	});
 }

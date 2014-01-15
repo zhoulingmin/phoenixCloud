@@ -1,11 +1,10 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="s" uri="/struts-tags" %>
 <%@page import="org.springframework.web.context.WebApplicationContext" %>
-<%@page import="com.phoenixcloud.bean.PubOrg"%>
-<%@page import="com.phoenixcloud.agency.service.IAgencyMgmtService" %>
+<%@page import="com.phoenixcloud.book.service.IRBookMgmtService" %>
 <%@page import="java.util.List" %>
 <%@page import="java.util.ArrayList" %>
-<%@page import="com.phoenixcloud.bean.RBook" %>
+<%@page import="com.phoenixcloud.bean.RRegCode" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -13,12 +12,10 @@
 String ctx = (String) request.getContextPath();
 WebApplicationContext context = (WebApplicationContext)this.getServletContext().getAttribute(
 		WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-//IRBookMgmtService iBookService = (IRBookMgmtService)context.getBean("bookMgmtServiceImpl");
-IAgencyMgmtService iAgencyMgmt = (IAgencyMgmtService)context.getBean("agencyMgmtServiceImpl");
-
-List<RBook> bookList = (List<RBook>)request.getAttribute("bookList");
-if (bookList == null) {
-	bookList = new ArrayList<RBook>();
+IRBookMgmtService iBookService = (IRBookMgmtService)context.getBean("bookMgmtServiceImpl");
+List<RRegCode> codeList = (List<RRegCode>)request.getAttribute("codeList");
+if (codeList == null) {
+	codeList = new ArrayList<RRegCode>();
 }
 
 %>
@@ -42,7 +39,7 @@ if (bookList == null) {
 	<script src="<%=ctx%>/js/jquery.dataTables.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.tables.js"></script>
 	
-<title>书籍管理界面</title>
+<title>书籍注册码管理</title>
 </head>
 <body>
 	<jsp:include page="header.jsp" flush="true"></jsp:include>
@@ -54,19 +51,19 @@ if (bookList == null) {
 		
 		<div class="widget-box">
 			<div class="widget-content">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addBook();" value="新建"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeBooks();" value="删除"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addRegCode" onclick="addRegCode();" value="新建"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeCodes" onclick="removeCodes();" value="删除"/>
 			</div>
 		</div>
 
 		<div><!-- this div node is just used to let $(this).parents('.widget-box') find only one node -->
 			<div class="widget-box">
 				<div class="widget-title">
-					<span class="icon"><i class="icon-eye-open"></i></span>
-					<h5>书籍列表</h5>
+					<span class="icon"><i class="icon-list-alt"></i></span>
+					<h5>注册码列表</h5>
 				</div>
 				<div class="widget-content nopadding">
-					<table id="bookContent" class="table table-bordered data-table">
+					<table id="regCodeContent" class="table table-bordered data-table">
 						<thead>
 							<tr>
 							<th style="width:1%;">
@@ -77,44 +74,48 @@ if (bookList == null) {
 								</div>
 							</th>
 							<th style="width:5%;">标识</th>
-							<th>书籍名称</th>
-							<th>隶属机构</th>
-							<th>上传状态</th>
-							<th>备注</th>
+							<th>书籍标识</th>
+							<th>注册码</th>
+							<th>是否有效</th>
+							<th>失效日期</th>
 							<th>创建时间</th>
 							<th>更新时间</th>
+							<th>账号</th>
+							<th>备注</th>
 							<th>操作</th>
 							</tr>
 						</thead>
 						<tbody>
 							<%
 							SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-							for (RBook book : bookList) {
-								PubOrg org = iAgencyMgmt.findOrgById(book.getOrgId().toString());
-								String orgName = "无"; 
-								if (org != null) {
-									orgName = org.getOrgName();
+							for (RRegCode code : codeList) {
+								String createTime = sdf.format(code.getCreateTime());
+								String updateTime = sdf.format(code.getUpdateTime());
+								String expireDate = new SimpleDateFormat("yyyy/MM/dd").format(code.getValidDate());
+								String isValid = "否";
+								if (code.getIsValid() == (byte)1) {
+									isValid = "是";
 								}
-								String createTime = sdf.format(book.getCreateTime());
-								String updateTime = sdf.format(book.getUpdateTime());
 							%>
 							<tr>
 								<td style="width:1%">
 									<div id="uniform-undefined" class="checker">
 										<span class="">
-											<input type="checkbox" style="opacity: 0;" value="<%=book.getId()%>">
+											<input type="checkbox" style="opacity: 0;" value="<%=code.getId()%>">
 										</span>
 									</div>
 								</td>
-								<td style="width:5%;"><%=book.getId() %></td>
-								<td><a href="<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>"><%=book.getName() %></a></td>
-								<td><%=orgName %></td>
-								<td><%if (book.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
+								<td style="width:5%;"><%=code.getId() %></td>
+								<td><%=code.getBookId() %></td>
+								<td><%=code.getCode() %></td>
+								<td><%=isValid %></td>
+								<td><%=expireDate %></td>
 								<td><%=createTime%></td>
 								<td><%=updateTime%></td>
-								<td><%=book.getNotes() %></td>
+								<td><%=code.getStaffId() %></td>
+								<td><%=code.getNotes() %></td>
 								<td>
-									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/book_editBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-edit"></i></a>
+									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/bookRegCode_edit.do?regCode.regCodeId=<%=code.getId()%>"><i class="icon-edit"></i></a>
 									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
 								</td>
 							</tr>
@@ -131,16 +132,16 @@ if (bookList == null) {
 
 <script type="text/javascript">
 
-function addBook() {
-	window.location.href = "<%=ctx%>/addBook.jsp";
+function addRegCode() {
+	window.location.href = "<%=ctx%>/addRegCode.jsp";
 }
 
-function removeBooks() {
+function removeCodes() {
 	var ids = "";
 	
-	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
+	var checkedItems = jQuery("#regCodeContent tbody").find("input:checked");
 	if (checkedItems == null || checkedItems.length == 0) {
-		alert("请选择要删除的书籍！");
+		alert("请选择要删除的注册码！");
 		return;
 	}
 	for (var i = 0; i < checkedItems.length; i++) {
@@ -151,14 +152,14 @@ function removeBooks() {
 	}
 	
 	jQuery.ajax({
-		url: "<%=ctx%>/book/book_removeBook.do",
+		url: "<%=ctx%>/book/bookRegCode_remove.do",
 		type: "POST",
 		async: "false",
 		timeout: 30000,
-		data: {bookIdArr:ids},
+		data: {regCodeIdArr:ids},
 		success: function() {
 			alert("删除成功！");
-			window.location.href = "<%=ctx%>/book/book_getAll.do";
+			window.location.href = "<%=ctx%>/book/bookRegCode_getAll.do";
 		},
 		error: function() {
 			alert("删除失败！");
@@ -171,14 +172,14 @@ jQuery(document).ready(function() {
 	jQuery("td a.tip-top:nth-child(2)").on("click", function(e) {
 		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
 		jQuery.ajax({
-			url: "<%=ctx%>/book/book_removeBook.do",
+			url: "<%=ctx%>/book/bookRegCode_remove.do",
 			type: "POST",
 			async: "false",
 			timeout: 30000,
-			data: {bookIdArr: id},
+			data: {regCodeIdArr: id},
 			success: function() {
 				alert("删除成功！");
-				window.location.href = "<%=ctx%>/book/book_getAll.do";
+				window.location.href = "<%=ctx%>/book/bookRegCode_getAll.do";
 			},
 			error: function() {
 				alert("删除失败！");

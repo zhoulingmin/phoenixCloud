@@ -9,9 +9,15 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import com.phoenixcloud.bean.PubHw;
+import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
+import com.phoenixcloud.bean.SysStaffPurview;
+import com.phoenixcloud.bean.SysStaffRegCode;
 import com.phoenixcloud.dao.PubHwDao;
+import com.phoenixcloud.dao.SysPurviewDao;
 import com.phoenixcloud.dao.SysStaffDao;
+import com.phoenixcloud.dao.SysStaffPurviewDao;
+import com.phoenixcloud.dao.SysStaffRegCodeDao;
 import com.phoenixcloud.system.service.ISysService;
 
 @Service
@@ -23,6 +29,19 @@ public class SysServiceImpl implements ISysService{
 	@Resource
 	private PubHwDao hwDao;
 	
+	@Resource
+	private SysPurviewDao purviewDao;
+	
+	@Resource
+	private SysStaffPurviewDao staffPurDao;
+	
+	@Resource
+	private SysStaffRegCodeDao staffRegCodeDao;
+	
+	public void setPurviewDao(SysPurviewDao purviewDao) {
+		this.purviewDao = purviewDao;
+	}
+
 	public void setHwDao(PubHwDao hardwareDao) {
 		this.hwDao = hardwareDao;
 	}
@@ -31,6 +50,14 @@ public class SysServiceImpl implements ISysService{
 		this.staffDao = staffDao;
 	}
 
+	public void setStaffPurDao(SysStaffPurviewDao staffPurDao) {
+		this.staffPurDao = staffPurDao;
+	}
+
+	public void setStaffRegCodeDao(SysStaffRegCodeDao staffRegCodeDao) {
+		this.staffRegCodeDao = staffRegCodeDao;
+	}
+	
 	@Override
 	public List<SysStaff> getAllStaff() {
 		List<SysStaff> staffList = staffDao.getAll();
@@ -39,7 +66,7 @@ public class SysServiceImpl implements ISysService{
 		}
 		return staffList;
 	}
-	
+
 	@Override
 	public void removeStaff(String id) {
 		SysStaff staff = staffDao.find(id);
@@ -101,5 +128,104 @@ public class SysServiceImpl implements ISysService{
 	public PubHw findHwById(String id) {
 		// TODO Auto-generated method stub
 		return hwDao.find(id);
+	}
+	
+	@Override
+	public List<SysPurview> getAllPurview() {
+		List<SysPurview> purviewList = purviewDao.getAll();
+		if (purviewList == null) {
+			purviewList = new ArrayList<SysPurview>();
+		}
+		return purviewList;
+	}
+	
+	@Override
+	public void removePurview(String id) {
+		SysPurview purview = purviewDao.find(id);
+		if (purview != null) {
+			purview.setDeleteState((byte)1);
+			purview.setUpdateTime(new Date());
+			purviewDao.merge(purview);
+		}
+	}
+	
+	@Override
+	public void savePurview(SysPurview purview) {
+		if (purview.getId() == null || "0".equals(purview.getId())) {
+			purviewDao.persist(purview);
+		} else {
+			purviewDao.merge(purview);
+		}
+	}
+	
+	@Override
+	public SysPurview findPurviewById(String id) {
+		return purviewDao.find(id);
+	}
+	
+	@Override
+	public List<SysStaffPurview> getAllStaffPur() {
+		List<SysStaffPurview> staffPurList = staffPurDao.getAll();
+		if (staffPurList == null) {
+			staffPurList = new ArrayList<SysStaffPurview>();
+		}
+		return staffPurList;
+	}
+
+	@Override
+	public void removeStaffPur(String id) {
+		SysStaffPurview staffPur = staffPurDao.find(id);
+		if (staffPur != null) {
+			staffPur.setDeleteState((byte)1);
+			staffPur.setUpdateTime(new Date());
+			staffPurDao.merge(staffPur);
+		}
+	}
+
+	@Override
+	public void saveStaffPur(SysStaffPurview staffPur) {
+		if (staffPur.getId() == null || "0".equals(staffPur.getId())) {
+			staffPurDao.persist(staffPur);
+		} else {
+			staffPurDao.merge(staffPur);
+		}
+	}
+
+	@Override
+	public SysStaffPurview findStaffPurById(String id) {
+		return staffPurDao.find(id);
+	}
+	
+	@Override
+	public List<SysStaffRegCode> getAllStaffRegCodeList() {
+		List<SysStaffRegCode> regCodeList = staffRegCodeDao.getAll();
+		if (regCodeList == null) {
+			regCodeList = new ArrayList<SysStaffRegCode>();
+		}
+		return regCodeList;
+	}
+
+	@Override
+	public void removeStaffRegCode(String id) {
+		SysStaffRegCode regCode = staffRegCodeDao.find(id);
+		if (regCode != null) {
+			regCode.setUpdateTime(new Date());
+			regCode.setDeleteState((byte)1);
+			staffRegCodeDao.merge(regCode);
+		}
+	}
+
+	@Override
+	public void saveStaffRegCode(SysStaffRegCode staffRegCode) {
+		if (staffRegCode.getId() == null || "0".equals(staffRegCode.getId())) {
+			staffRegCodeDao.persist(staffRegCode);
+		} else {
+			staffRegCodeDao.merge(staffRegCode);
+		}
+	}
+
+	@Override
+	public SysStaffRegCode findStaffRegCodeById(String id) {
+		return staffRegCodeDao.find(id);
 	}
 }
