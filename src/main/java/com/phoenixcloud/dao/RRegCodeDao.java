@@ -25,4 +25,5 @@ public class RRegCodeDao extends AbstractDao<RRegCode>{
 		Query query = entityManager.createQuery("select rr from RRegCode rr where rr.deleteState=0");
 		return query.getResultList();
 	}
+	
 }

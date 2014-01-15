@@ -28,4 +28,10 @@ public class RBookDao extends AbstractDao<RBook>{
 		query.setParameter(2, id);
 		query.executeUpdate();
 	}
+	
+	public RBook find(String id) {
+		Query query = entityManager.createQuery("select rb from RBook rb where rb.deleteState=0 and rb.bookId = ?1");
+		query.setParameter(1, id);
+		return getSingleResultOrNull(query);
+	}
 }

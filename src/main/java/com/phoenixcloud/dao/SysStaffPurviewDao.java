@@ -19,4 +19,10 @@ public class SysStaffPurviewDao extends AbstractDao<SysStaffPurview> {
 		Query query = entityManager.createQuery("select sp from SysStaffPurview sp where sp.deleteState = 0");
 		return query.getResultList();
 	}
+	
+	public SysStaffPurview find(String id) {
+		Query query = entityManager.createQuery("select sp from SysStaffPurview sp where sp.deleteState = 0 and sp.staPurId = ?1");
+		query.setParameter(1, id);
+		return getSingleResultOrNull(query);
+	}
 }

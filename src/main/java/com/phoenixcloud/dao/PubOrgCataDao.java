@@ -24,16 +24,6 @@ public class PubOrgCataDao extends AbstractDao<PubOrgCata>{
 		return query.getResultList();
 	}
 	
-	public void save(PubOrgCata cata) {
-		if (cata.getId() == null || cata.getId() == "0") {
-			//cata.setOrgCataId(getCountAll() + 10);
-			entityManager.persist(cata);
-		} else {
-			entityManager.merge(cata);
-		}
-		entityManager.flush();
-	}
-	
 	@Override
 	public void remove(PubOrgCata cata) {
 		cata.setDeleteState((byte)1);
@@ -46,5 +36,11 @@ public class PubOrgCataDao extends AbstractDao<PubOrgCata>{
 		Query query = entityManager.createQuery("select cata from PubOrgCata cata where cata.cataName like :code and cata.deleteState=0");
 		query.setParameter("code", "%" + cataName + "%");
 		return query.getResultList();
+	}
+	
+	public PubOrgCata find(String id) {
+		Query query = entityManager.createQuery("select cata from PubOrgCata cata where cata.deleteState=0 and cata.orgCataId = ?1");
+		query.setParameter(1, id);
+		return getSingleResultOrNull(query);
 	}
 }

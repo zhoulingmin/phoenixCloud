@@ -24,5 +24,5 @@ public class SysStaffRegCodeDao extends AbstractDao<SysStaffRegCode> {
 		Query query = entityManager.createQuery("select regcode from SysStaffRegCode regcode where regcode.deleteState = 0 and regcode.ssrcId = ?1");
 		query.setParameter(1, id);
 		return getSingleResultOrNull(query);
-	}
+	}	
 }

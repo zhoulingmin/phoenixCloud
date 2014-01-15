@@ -43,4 +43,10 @@ public class PubOrgDao extends AbstractDao<PubOrg>{
 		query.setParameter(2, orgCataId);
 		query.executeUpdate();
 	}
+	
+	public PubOrg find(String id) {
+		Query query = entityManager.createQuery("select org from PubOrg org where org.deleteState=0 and org.orgId = ?1");
+		query.setParameter(1, id);
+		return getSingleResultOrNull(query);
+	}
 }

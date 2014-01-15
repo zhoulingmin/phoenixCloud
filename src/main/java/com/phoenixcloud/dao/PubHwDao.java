@@ -20,4 +20,9 @@ public class PubHwDao extends AbstractDao<PubHw> {
 		return query.getResultList();
 	}
 	
+	public PubHw find(String id) {
+		Query query = entityManager.createQuery("select hw from PubHw hw where hw.deleteState = 0 and hw.hwId = ?1");
+		query.setParameter(1, id);
+		return getSingleResultOrNull(query);
+	}
 }
