@@ -7,6 +7,10 @@
 <%@page import="com.phoenixcloud.util.MiscUtils" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="java.math.BigInteger" %>
+<%@page import="com.phoenixcloud.dao.PubDdvDao" %>
+<%@page import="com.phoenixcloud.bean.PubDdv" %>
+<%@page import="com.phoenixcloud.util.SpringUtils" %>
+<%@page import="java.util.List" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%
 	String ctx = request.getContextPath();
@@ -64,7 +68,8 @@
 	} else {
 		parentName = pubOrgCata.getCataName();
 	}
-	
+	PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
+	List<PubDdv> ddvList = ddvDao.findByTblAndField("pub_org", "ORG_TYPE_ID");
 %>
 <html>
 <head>
@@ -121,9 +126,9 @@
 	<span class="editAgency" style="display:block">机构类型:
 	<%} %>
 		<select id="orgTypeId">
-			<option value="1">机构类型1</option>
-			<option value="2">机构类型2</option>
-			<option value="3">机构类型3</option>
+			<%for (PubDdv ddv : ddvList) { %>
+			<option value="<%=ddv.getDdvId()%>"><%=ddv.getValue() %></option>
+			<%} %>
 		</select>
 	</span>
 	<div id="datetimepicker1" class="input-append date">
@@ -168,7 +173,7 @@
 				jQuery("#agencyNotes").val(), // 备注
 			<%if (isCata){%>
 				null
-			<%} else {%>
+				<%} else {%>
 				jQuery("#orgTypeId option:selected").val()
 			<%}%>
 			);

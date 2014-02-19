@@ -1,9 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
+<%@page import="com.phoenixcloud.util.SpringUtils" %>
+<%@page import="com.phoenixcloud.dao.PubDdvDao" %>
+<%@page import="com.phoenixcloud.bean.PubDdv" %>
+<%@page import="java.util.List" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%
 	String ctx = request.getContextPath();
 	String noChk = request.getParameter("noChk");
+	PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
+	List<PubDdv> ddvList = ddvDao.findByTblAndField("pub_org", "ORG_TYPE_ID");
 %>
 <html>
 <head>
@@ -51,9 +57,9 @@
 	<span class="addAgency">机构目录名:<input type="text" id="agencyName" name="agencyName" value=""></span>
 	<span class="addAgency" id="orgType" style="display:none">机构类型:
 		<select id="orgTypeId">
-			<option value="1" selected="selected">机构类型1</option>
-			<option value="2">机构类型2</option>
-			<option value="3">机构类型3</option>
+			<%for(PubDdv ddv : ddvList) { %>
+			<option value="<%=ddv.getDdvId() %>" ><%=ddv.getValue() %></option>
+			<%} %>
 		</select>
 	</span>
 	<span class="addAgency">备注:<textarea id="agencyNotes" name="agencyNotes" maxlength="255" style="width: 296px; height: 255px;"></textarea></span>
@@ -66,7 +72,7 @@
 <script type="text/javascript">
 
 	function selectType(which) {
-		if (which.value == 1) { // 机构目录
+		if (which.value == "cata") { // 机构目录
 			jQuery("#orgType").css("display", "none");
 			jQuery(jQuery(".addAgency")[1]).html(jQuery(jQuery(".addAgency")[1]).html().replace("机构名:", "机构目录名:"));
 		} else { // 机构
@@ -96,6 +102,10 @@
 			self.opener.checkedNodes = null;
 		}
 	}
+	
+	jQuery(document).ready(function(){
+		jQuery("#orgTypeId option:first").prop("selected", "selected");
+	});
 </script>
 
 </html>

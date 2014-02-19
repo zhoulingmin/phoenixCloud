@@ -56,6 +56,10 @@ if (bookList == null) {
 			<div class="widget-content">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addBook();" value="新建"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeBooks();" value="删除"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadBook" onclick="uploadBook();" value="上传附件"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookDire" onclick="editBookDire();" value="编辑目录"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookRes" onclick="editBookRes();" value="编辑资源"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewBook();" value="详情"/>
 			</div>
 		</div>
 
@@ -114,6 +118,10 @@ if (bookList == null) {
 								<td><%=updateTime%></td>
 								<td><%=book.getNotes() %></td>
 								<td>
+									<%if (book.getIsUpload() == (byte)0) {%>
+									<a class="tip-top" data-original-title="上传" href="<%=ctx%>/book/book_editBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-upload"></i></a>
+									<%} %>
+									<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/book_viewBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-eye-open"></i></a>
 									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/book_editBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-edit"></i></a>
 									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
 								</td>
@@ -133,6 +141,32 @@ if (bookList == null) {
 
 function addBook() {
 	window.location.href = "<%=ctx%>/addBook.jsp";
+}
+
+function uploadBook() {
+	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
+	if (checkedItems == null || checkedItems.length != 1) {
+		alert("请选择一本书籍后重试！");
+		return;
+	}
+	window.location.href = "<%=ctx%>/book/book_editBook.do?bookInfo.bookId=" + checkedItems[0].value;
+}
+
+function editBookDire() {
+	
+}
+
+function editBookRes() {
+	
+}
+
+function viewBook() {
+	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
+	if (checkedItems == null || checkedItems.length != 1) {
+		alert("请选择一本书籍后重试！");
+		return;
+	}
+	window.location.href = "<%=ctx%>/book/book_viewBook.do?bookInfo.bookId=" + checkedItems[0].value;
 }
 
 function removeBooks() {
@@ -168,7 +202,7 @@ function removeBooks() {
 }
 
 jQuery(document).ready(function() {
-	jQuery("td a.tip-top:nth-child(2)").on("click", function(e) {
+	jQuery("td a.tip-top:nth-child(4)").on("click", function(e) {
 		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
 		jQuery.ajax({
 			url: "<%=ctx%>/book/book_removeBook.do",

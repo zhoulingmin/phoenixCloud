@@ -48,7 +48,7 @@ public class RBook extends AbstractModel<String> implements Serializable {
 	private String ipAddr;
 
 	@Column(name="IS_UPLOAD", nullable=false)
-	private byte isUpload;
+	private byte isUpload = (byte)0;
 
 	@Column(name="KIND_ID", nullable=false)
 	private BigInteger kindId;
@@ -77,6 +77,9 @@ public class RBook extends AbstractModel<String> implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="UPDATE_TIME", nullable=false)
 	private Date updateTime;
+	
+	@Column(name="PAGE_NUM")
+	private BigInteger pageNum;
 
 	public RBook() {
 	}
@@ -221,6 +224,14 @@ public class RBook extends AbstractModel<String> implements Serializable {
 	public String getId() {
 		// TODO Auto-generated method stub
 		return bookId;
+	}
+
+	public BigInteger getPageNum() {
+		return pageNum;
+	}
+
+	public void setPageNum(BigInteger pageNum) {
+		this.pageNum = pageNum;
 	}
 
 }

@@ -171,30 +171,17 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		}
 		JSONObject jsonObj = null;
 		JSONArray cataArr = new JSONArray();
-		// 判断本级机构目录是不是符合条件
-		if (!cataName.isEmpty() || !notes.isEmpty()) {
-			if ((!cataName.isEmpty() && cata.getCataName().indexOf(cataName) != -1) 
-					|| (!notes.isEmpty() && cata.getNotes().indexOf(notes) != -1)) {
-				jsonObj = new JSONObject();
-				jsonObj.put("type", "cata");
-				jsonObj.put("selfId", cata.getId());
-				//jsonObj.put("id", "cata-" + cata.getId());
-				//jsonObj.put("pid", "cata-" + cata.getParentCataId());
-				jsonObj.put("name", cata.getCataName());
-				jsonObj.put("isParent", true);
-			}
-			
-			// 判断下级机构目录是不是符合条件
-			List<PubOrgCata> cataList = iAgencyMgmt.getAllOrgCataByParentCataId(
-					BigInteger.valueOf(Long.parseLong(cata.getId())));
-			for (PubOrgCata cataObj : cataList) {
-				JSONObject cataJson = searchCata(cataObj);
-				if (cataJson != null) {
-					cataArr.add(cataJson);
-				}
-			}			
-		}
 		
+		// 判断下级机构目录是不是符合条件
+		List<PubOrgCata> cataList = iAgencyMgmt.getAllOrgCataByParentCataId(
+				BigInteger.valueOf(Long.parseLong(cata.getId())));
+		for (PubOrgCata cataObj : cataList) {
+			JSONObject cataJson = searchCata(cataObj);
+			if (cataJson != null) {
+				cataArr.add(cataJson);
+			}
+		}	
+				
 		// 判断本级机构目录下机构是不是符合条件
 		if (!orgName.isEmpty() || !notes.isEmpty()) {
 			List<PubOrg> orgList = iAgencyMgmt.getAllOrgByCataId(cata.getId());
@@ -210,6 +197,20 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 					orgJson.put("isParent", false);
 					cataArr.add(orgJson);
 				}
+			}
+		}
+
+		// 判断本级机构目录是不是符合条件
+		if (!cataName.isEmpty() || !notes.isEmpty()) {
+			if ((!cataName.isEmpty() && cata.getCataName().indexOf(cataName) != -1) 
+					|| (!notes.isEmpty() && cata.getNotes().indexOf(notes) != -1)) {
+				jsonObj = new JSONObject();
+				jsonObj.put("type", "cata");
+				jsonObj.put("selfId", cata.getId());
+				//jsonObj.put("id", "cata-" + cata.getId());
+				//jsonObj.put("pid", "cata-" + cata.getParentCataId());
+				jsonObj.put("name", cata.getCataName());
+				jsonObj.put("isParent", true);
 			}
 		}
 		

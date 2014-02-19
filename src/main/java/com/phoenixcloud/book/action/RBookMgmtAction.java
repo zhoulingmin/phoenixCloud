@@ -1,5 +1,6 @@
 package com.phoenixcloud.book.action;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +89,7 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 		Date date = new Date();
 		bookInfo.setCreateTime(date);
 		bookInfo.setUpdateTime(date);
+		bookInfo.setStaffId(new BigInteger("1"));
 		iBookService.saveBook(bookInfo);
 		bookInfo = null;
 		return null;
@@ -119,5 +121,13 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 		}
 		
 		return null;
+	}
+	
+	public String viewBook() throws Exception{
+		bookInfo = iBookService.findBook(bookInfo.getBookId());
+		if (bookInfo == null) {
+			throw new Exception("没有找到相应的书籍！");
+		}
+		return "success";
 	}
 }

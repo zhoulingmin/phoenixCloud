@@ -69,6 +69,7 @@
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addAgency" onclick="popUpAddAgency();" value="新建"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeAgency" onclick="removeAgency();" value="删除"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editAgency" onclick="popUpEditAgency();" value="修改"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewAgency" onclick="popUpViewAgency();" value="详情"/>
 			</div>
 		</div>
 		<div id="agencyTree" class="widget-box ztree">
@@ -114,11 +115,11 @@ function onDblClick(event, treeId, node) {
 	var isCata = false;
 	if (node.isParent) {
 		params += "470,width=520,top=" + (window.screen.availHeight - 30 - 470) / 2 + ",left=" + (window.screen.availWidth - 10 - 520) / 2;
-		title = "修改机构目录";
+		title = "查看机构目录";
 		isCata = true;
 	} else {
 		params += "500,width=520,top=" + (window.screen.availHeight - 30 - 500) / 2 + ",left=" + (window.screen.availWidth - 10 - 520) / 2;
-		title = "修改机构";
+		title = "查看机构";
 	}
 	params += ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
 	window.open("<%=ctx%>/editAgency.jsp?isView=true&isCata=" + isCata + "&id=" + node.selfId, title, params);
@@ -193,7 +194,39 @@ function onAsyncError(event, treeId, treeNode, XMLHttpRequest, textStatus, error
 }
 
 function popUpViewAgency() {
-	
+	if (checkedNodes != null || toDelNodes != null) {
+		alert("请求处理中，请稍后...");
+		return;
+	}
+	var chkCatas = zTreeObj.getNodesByFilter(function(node){
+		return (node.isParent && node.checked);
+	});
+	var chkOrgs = zTreeObj.getNodesByFilter(function(node){
+		return (!node.isParent && node.checked);
+	});
+	if (chkCatas.length > 0 && chkOrgs.length > 0) {
+		alert("只能选择一个项目进行查看！");
+		return;
+	} else if (chkCatas.length == 0 && chkOrgs.length == 0) {
+		alert("请至少选择一个项目进行查看！");
+		checkedNodes = null;
+		return;
+	}
+	var params = "height=";
+	var title = null;
+	var isCata = false;
+	if (chkCatas.length > 0) {
+		params += "470,width=520,top=" + (window.screen.availHeight - 30 - 470) / 2 + ",left=" + (window.screen.availWidth - 10 - 520) / 2;
+		title = "查看机构目录";
+		isCata = true;
+		checkedNodes = chkCatas;
+	} else {
+		params += "500,width=520,top=" + (window.screen.availHeight - 30 - 500) / 2 + ",left=" + (window.screen.availWidth - 10 - 520) / 2;
+		title = "查看机构";
+		checkedNodes = chkOrgs;
+	}
+	params += ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
+	window.open("<%=ctx%>/editAgency.jsp?isView=true&isCata=" + isCata + "&id=" + checkedNodes[0].selfId, title, params);
 }
 
 function popUpEditAgency() {

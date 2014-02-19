@@ -73,7 +73,7 @@ CREATE TABLE `r_book_dire` (
 -- ----------------------------
 DROP TABLE IF EXISTS `r_book_log`;
 CREATE TABLE `r_book_log` (
-  `LOG_ID` bigint(18) NOT NULL PRIMARY KEY,
+  `LOG_ID` bigint(18) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `BOOK_ID` bigint(12) DEFAULT NULL,
   `LOG_TYPE_ID` bigint(12) NOT NULL COMMENT '',
   `FUNCTION_ID` bigint(12) NOT NULL COMMENT '',
@@ -94,7 +94,7 @@ CREATE TABLE `r_book_log` (
 -- ----------------------------
 DROP TABLE IF EXISTS `r_book_res`;
 CREATE TABLE `r_book_res` (
-  `RES_ID` bigint(12) NOT NULL,
+  `RES_ID` bigint(12) NOT NULL AUTO_INCREMENT,
   `BOOK_ID` bigint(12) NOT NULL,
   `NAME` varchar(60) NOT NULL,
   `FORMAT` bigint(12) NOT NULL,
@@ -122,7 +122,7 @@ CREATE TABLE `r_book_res` (
 -- ----------------------------
 DROP TABLE IF EXISTS `r_reg_code`;
 CREATE TABLE `r_reg_code` (
-  `REG_CODE_ID` bigint(12) NOT NULL,
+  `REG_CODE_ID` bigint(12) NOT NULL AUTO_INCREMENT,
   `BOOK_ID` bigint(12) NOT NULL,
   `CODE` varchar(60) NOT NULL,
   `IS_VALID` tinyint(1) NOT NULL COMMENT '',

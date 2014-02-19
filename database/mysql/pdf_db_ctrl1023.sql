@@ -100,7 +100,7 @@ CREATE TABLE `pub_org_cata` (
 -- ----------------------------
 DROP TABLE IF EXISTS `pub_press`;
 CREATE TABLE `pub_press` (
-  `PRESS_ID` bigint(12) NOT NULL,
+  `PRESS_ID` bigint(12) NOT NULL AUTO_INCREMENT,
   `NAME` varchar(60) NOT NULL,
   `CODE` varchar(60) DEFAULT NULL,
   `CREATE_TIME` datetime NOT NULL,

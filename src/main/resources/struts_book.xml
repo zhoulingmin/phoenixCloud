@@ -4,7 +4,7 @@
 <struts>
 	<package name="book" extends="struts-default" namespace="/book">
 		<action name="uploadBook" class="bookUploadAction" method="uploadBook">
-			<result name="success" type="redirect">/book/bookDire_getAll.do?bookId=${bookId}</result>
+			<result name="success" type="redirect">/book/book_editBook.do?bookInfo.bookId=${bookId}</result>
 		</action>
 		
 		<action name="*_*" class="{1}MgmtAction" method="{2}" >
