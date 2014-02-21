@@ -37,8 +37,8 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	@Column(name="BOOK_ID", nullable=false)
 	private BigInteger bookId;
 
-	@Column(name="CATA_ADDR", length=255)
-	private String cataAddr;
+	@Column(name="CATA_ADDR", length=12)
+	private BigInteger cataAddrId;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="CREATE_TIME", nullable=false)
@@ -110,12 +110,12 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 		this.bookId = bookId;
 	}
 
-	public String getCataAddr() {
-		return this.cataAddr;
+	public BigInteger getCataAddrId() {
+		return cataAddrId;
 	}
 
-	public void setCataAddr(String cataAddr) {
-		this.cataAddr = cataAddr;
+	public void setCataAddrId(BigInteger cataAddrId) {
+		this.cataAddrId = cataAddrId;
 	}
 
 	public Date getCreateTime() {

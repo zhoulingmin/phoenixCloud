@@ -1,32 +1,24 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.*" %>
-<%@ page import="java.math.*" %>
-<%@ page import="com.phoenixcloud.book.vo.BookResNode" %>
-<%@page import="org.springframework.web.context.WebApplicationContext" %>
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib prefix="s" uri="/struts-tags" %>
 <%@page import="com.phoenixcloud.agency.service.IAgencyMgmtService" %>
-<%@page import="com.phoenixcloud.bean.*"%>
-<%@page import="com.phoenixcloud.book.service.IRBookMgmtService" %>
-    
+<%@page import="java.util.List" %>
+<%@page import="java.util.ArrayList" %>
+<%@page import="com.phoenixcloud.bean.*" %>
+<%@page import="java.text.SimpleDateFormat" %>
+<%@page import="com.phoenixcloud.util.*" %>
+<%@page import="com.phoenixcloud.dao.*" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
 <%
-String ctx = request.getContextPath();
-Integer maxLevel = (Integer)request.getAttribute("maxLevel");
-if (maxLevel == null) {
-	maxLevel = 1;
-}
-Map<String,BookResNode> resNodeMap = (HashMap<String,BookResNode>)request.getAttribute("resNodeMap");
-if (resNodeMap == null) {
-	resNodeMap = new HashMap<String,BookResNode>();
-}
-List<String> children = resNodeMap.get("root").getChildren();
-WebApplicationContext context = (WebApplicationContext)this.getServletContext().getAttribute(
-		WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-IRBookMgmtService iBookService = (IRBookMgmtService)context.getBean("bookMgmtServiceImpl");
-IAgencyMgmtService iAgencyMgmt = (IAgencyMgmtService)context.getBean("agencyMgmtServiceImpl");
+String ctx = (String) request.getContextPath();
+
+RBook book = (RBook)request.getAttribute("book");
+List<RBookRe> resList = (List<RBookRe>)request.getAttribute("resList");
+
+PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 
 %>
 
-<html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,6 +26,7 @@ IAgencyMgmtService iAgencyMgmt = (IAgencyMgmtService)context.getBean("agencyMgmt
 	<link rel="stylesheet" href="<%=ctx%>/css/bootstrap-responsive.min.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/uniform.css" />
+	<link rel="stylesheet" href="<%=ctx%>/css/select2.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.grey.css" class="skin-color" />
 	
 	<script src="<%=ctx%>/js/jquery.min.js"></script>
@@ -41,23 +34,11 @@ IAgencyMgmtService iAgencyMgmt = (IAgencyMgmtService)context.getBean("agencyMgmt
 	<script src="<%=ctx%>/js/jquery.ui.custom.js"></script>
 	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.js"></script>
-	<title>书籍资源管理</title>
+	<script src="<%=ctx%>/js/select2.min.js"></script>
+	<script src="<%=ctx%>/js/jquery.dataTables.min.js"></script>
+	<script src="<%=ctx%>/js/unicorn.tables.js"></script>
 	
-	<style type="text/css">
-	table th,td{
-	border: 1px solid #DADADA;
-	width:10%;
-	}
-	th{
-	text-align:left;
-	}
-	.emptyCol{
-	width:3%;
-	}
-	.passAnchor{}
-	.rejectAnchor{}
-	.removeAnchor{}
-	</style>
+<title>书籍管理界面</title>
 </head>
 <body>
 	<jsp:include page="header.jsp" flush="true"></jsp:include>
@@ -66,186 +47,193 @@ IAgencyMgmtService iAgencyMgmt = (IAgencyMgmtService)context.getBean("agencyMgmt
 		<div id="content-header">
 			<h1>凤凰云端</h1>
 		</div>
-		<%
-		// 算出机构节点的最大level
-		// 1.有资源的机构找出来
-		// 2.计算机构的最大深度
-		
-		%>
 		
 		<div class="widget-box">
-			<table style="border: 1px solid #AAAAAA;border-collapse: collapse;width:100%">
-				<thead  style="background:#EEEEEE;">
-					<tr>
-						<th colspan="<%=(maxLevel+1)%>">机构根节点</th>
-						<th>电子书名称</th>
-						<th>资源名称</th>
-						<th>状态</th>
-						<th colspan="3" style="text-align:center">操作</th>
-					</tr>
-				</thead>
-				<tbody>
-				<%!
-				void showChild(Map<String,BookResNode> resNodeMap, String child, 
-						javax.servlet.jsp.JspWriter out,
-						IAgencyMgmtService iAgencyMgmt,
-						IRBookMgmtService iBookService,
-						int maxLevel,
-						String ctx) throws java.io.IOException{
-	
-					BookResNode resNode = resNodeMap.get(child);
-					if ("cata".equals(resNode.getType())) {
-						out.print("<tr>");
-						for (int i = 0; i < resNode.getLevel(); i++) {
-							out.print("<td></td>");
-						}
-						
-						PubOrgCata cata = iAgencyMgmt.findOrgCataById(resNode.getId());
+			<div class="widget-content">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addRes();" value="新建"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="editRes();" value="修改"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeRes();" value="删除"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadBook" onclick="uploadRes();" value="上传资源"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewRes();" value="详情"/>
+			</div>
+		</div>
 
-						// 输出机构目录名称
-						out.print("<td colspan=\"" + (maxLevel - resNode.getLevel() + 1) + "\">" + cata.getCataName() + "</td>");
-						
-						// 电子书名称
-						out.print("<td></td>");
-						
-						// 资源名称
-						out.print("<td></td>");
-						
-						// 状态
-						out.print("<td></td>");
-						
-						// 3个操作
-						out.print("<td></td>");
-						out.print("<td></td>");
-						out.print("<td></td>");
-						out.print("</tr>");
-						for (String childKey: resNode.getChildren()) {
-							showChild(resNodeMap, childKey, out, iAgencyMgmt, iBookService, maxLevel, ctx);
-						}
-					} else if ("org".equals(resNode.getType())) {
-						PubOrg org = iAgencyMgmt.findOrgById(resNode.getId());
-						// 循环输出有资源 书籍及其所有资源
-						for (String bookId : resNode.getBookIds()) {
-							RBook book = iBookService.findBook(bookId);
-							List<RBookRe> resList = iBookService.getResByBookId(bookId);
+		<div><!-- this div node is just used to let $(this).parents('.widget-box') find only one node -->
+			<div class="widget-box">
+				<div class="widget-title">
+					<span class="icon"><i class="icon-eye-open"></i></span>
+					<h5><%=book.getName() %>--资源列表</h5>
+				</div>
+				<div class="widget-content nopadding">
+					<table id="bookContent" class="table table-bordered data-table">
+						<thead>
+							<tr>
+							<th style="width:1%;">
+								<div id="uniform-title-table-checkbox" class="checker">
+									<span class="">
+										<input id="title-table-checkbox" type="checkbox" name="title-table-checkbox" style="opacity: 0;">
+									</span>
+								</div>
+							</th>
+							<th style="width:5%;">标识</th>
+							<th>资源名称</th>
+							<th>格式</th>
+							<th>是否上传</th>
+							<th>创建时间</th>
+							<th>更新时间</th>
+							<th>审核状态</th>
+							<th>备注</th>
+							<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 							for (RBookRe res : resList) {
-								out.print("<tr>");
-								for (int i = 0; i < maxLevel; i++) {
-									out.print("<td></td>");
+								String createTime = sdf.format(res.getCreateTime());
+								String updateTime = sdf.format(res.getUpdateTime());
+								
+								String format = "";
+								PubDdv ddv = ddvDao.find(res.getFormat().toString());
+								if (ddv != null) {
+									format = ddv.getValue();
 								}
-								// 输出机构目录名称
-								out.print("<td>" + org.getOrgName() + "</td>");
 								
-								// 电子书名称
-								out.print("<td>" + book.getName() + "</td>");
-								
-								// 资源名称
-								out.print("<td>" + res.getName() + "</td>");
-								
-								// 状态
-								byte isAudit = res.getIsAudit();
-								if (isAudit == (byte)-1) {
-									out.print("<td>未审核</td>");
-									out.print("<td><a class=\"passAnchor\" resId=\"" + res.getId() + "\" href=\"#\">通过</a></td>");
-									out.print("<td><a class=\"rejectAnchor\" resId=\"" + res.getId() + "\" href=\"#\">不通过</a></td>");
-								} else if (isAudit == (byte)0){
-									out.print("<td>审核未通过</td>");
-									out.print("<td></td>");
-									out.print("<td></td>");
-								} else if (isAudit == (byte)1) {
-									out.print("<td>审核已通过</td>");
-									out.print("<td></td>");
-									out.print("<td></td>");
-								} else {
-									out.print("<td></td>");
-									out.print("<td></td>");
-									out.print("<td></td>");
+								String auditStatus = "未知状态";
+								if (res.getIsAudit() == (byte)-1) {
+									auditStatus = "未审核";
+								} else if (res.getIsAudit() == (byte)1) {
+									auditStatus = "审核通过";
+								} else if (res.getIsAudit() == (byte)0) {
+									auditStatus = "审核不通过";
 								}
-								out.print("<td><a class=\"removeAnchor\" resId=\"" + res.getId() + "\" href=\"#\">删除</a></td>");
-								out.print("</tr>");
-							}
-						}
-					}
-				}
-				
-				%>
-				<%
-				if (children.size() == 0) {
-					out.print("<tr><td>暂时没有可用的书籍资源！</td></tr>");
-				} else {
-					for (String child: children) {
-						showChild(resNodeMap, child, out, iAgencyMgmt, iBookService, maxLevel, ctx);
-					}
-				}
-				%>
-				</tbody>
-			</table>
-		</div>		
+							%>
+							<tr>
+								<td style="width:1%">
+									<div id="uniform-undefined" class="checker">
+										<span class="">
+											<input type="checkbox" style="opacity: 0;" value="<%=res.getId()%>">
+										</span>
+									</div>
+								</td>
+								<td style="width:5%;"><%=res.getId() %></td>
+								<td><%=res.getName() %></a></td>
+								<td><%=format %></td>
+								<td><%if (res.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
+								<td><%=createTime%></td>
+								<td><%=updateTime%></td>
+								<td><%=auditStatus %></td>
+								<td><%=res.getNotes() %></td>
+								<td>
+									<%if (res.getIsUpload() == (byte)0) {%>
+									<a class="tip-top" data-original-title="上传" href="<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-upload"></i></a>
+									<%} %>
+									<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/bookRes_viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
+									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-edit"></i></a>
+									<%if (res.getIsAudit() == (byte)0) {%>
+									<a class="tip-top" data-original-title="" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=1"><i class="icon-ok-circle"></i></a>
+									<a class="tip-top" data-original-title="" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=-1"><i class="icon-ban-circle"></i></a>
+									<%} %>
+									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
+								</td>
+							</tr>
+							<%} %>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
 	</div>
+
 	<jsp:include page="footer.jsp" flush="true" />
 </body>
 
 <script type="text/javascript">
-$(function(){
-	$("th").each(function(){
-		if ($(this).html().length == 0) {
-			$(this).addClass("emptyCol");
+
+function addRes() {
+	window.location.href = "<%=ctx%>/addRes.jsp";
+}
+
+function editRes() {
+	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
+	if (checkedItems == null || checkedItems.length != 1) {
+		alert("请选择一本书籍后重试！");
+		return;
+	}
+	window.location.href = "<%=ctx%>/book/book_editBook.do?bookInfo.bookId=" + checkedItems[0].value;
+}
+
+function uploadRes() {
+	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
+	if (checkedItems == null || checkedItems.length != 1) {
+		alert("请选择一本书籍后重试！");
+		return;
+	}
+	window.location.href = "<%=ctx%>/book/book_editBook.do?bookInfo.bookId=" + checkedItems[0].value;
+}
+
+function viewRes() {
+	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
+	if (checkedItems == null || checkedItems.length != 1) {
+		alert("请选择一本书籍后重试！");
+		return;
+	}
+	window.location.href = "<%=ctx%>/book/book_viewBook.do?bookInfo.bookId=" + checkedItems[0].value;
+}
+
+function removeRes() {
+	var ids = "";
+	
+	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
+	if (checkedItems == null || checkedItems.length == 0) {
+		alert("请选择要删除的书籍！");
+		return;
+	}
+	for (var i = 0; i < checkedItems.length; i++) {
+		ids += checkedItems[i].value;
+		if (i != (checkedItems.length - 1)) {
+			ids += ",";
+		}
+	}
+	
+	jQuery.ajax({
+		url: "<%=ctx%>/book/book_removeBook.do",
+		type: "POST",
+		async: "false",
+		timeout: 30000,
+		data: {bookIdArr:ids},
+		success: function() {
+			alert("删除成功！");
+			window.location.href = "<%=ctx%>/book/book_getAll.do";
+		},
+		error: function() {
+			alert("删除失败！");
 		}
 	});
-	$("td").each(function(){
-		if ($(this).html().length == 0) {
-			$(this).addClass("emptyCol");
-		}
-	});
-	$(".passAnchor").on("click", function(event) {
-		$.ajax({
-			url: "<%=ctx%>/book/bookRes_auditRes.do",
-			type: "post",
+
+}
+
+jQuery(document).ready(function() {
+	jQuery("td a.tip-top:last-child").on("click", function(e) {
+		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
+		jQuery.ajax({
+			url: "<%=ctx%>/book/book_removeBook.do",
+			type: "POST",
 			async: "false",
 			timeout: 30000,
-			data: {flag:"true", resId:event.target.getAttribute("resId")},
+			data: {bookIdArr: id},
 			success: function() {
-				location.reload(true);
+				alert("删除成功！");
+				window.location.href = "<%=ctx%>/book/book_getAll.do";
 			},
 			error: function() {
-				alert("请重试！");
-			}
-		});
-		return false;
-	});
-	$(".rejectAnchor").on("click", function(event) {
-		$.ajax({
-			url: "<%=ctx%>/book/bookRes_auditRes.do",
-			type: "post",
-			async: "false",
-			timeout: 30000,
-			data: {flag:"false", resId:event.target.getAttribute("resId")},
-			success: function() {
-				location.reload(true);
-			},
-			error: function() {
-				alert("请重试！");
-			}
-		});
-		return false;
-	});
-	$(".removeAnchor").on("click", function(event) {
-		$.ajax({
-			url: "<%=ctx%>/book/bookRes_removeRes.do",
-			type: "post",
-			async: "false",
-			timeout: 30000,
-			data: {resId:event.target.getAttribute("resId")},
-			success: function() {
-				location.reload(true);
-			},
-			error: function() {
-				alert("请重试！");
+				alert("删除失败！");
 			}
 		});
 		return false;
 	});
 });
+
 </script>
 
 </html>

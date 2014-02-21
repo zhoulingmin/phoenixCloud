@@ -40,7 +40,7 @@ if (orgBean != null) {
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.grey.css" class="skin-color" />
 	<link rel="stylesheet" href="<%=ctx%>/css/zTreeStyle/zTreeStyle.css" type="text/css">
 	
-	<script src="<%=ctx%>/js/jquery-2.0.3.js"></script>
+	<script src="<%=ctx%>/js/jquery-1.7.2.js"></script>
 	<script src="<%=ctx%>/js/jquery.ui.custom.js"></script>
 	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.js"></script>

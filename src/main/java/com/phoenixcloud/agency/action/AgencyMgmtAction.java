@@ -257,8 +257,6 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
         	MiscUtils.getLogger().info(e.toString());
         }
         
-        criteria = null;
-		
 		return null;
 	}
 	
@@ -328,10 +326,6 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		String[] cataIdArr = cataId.split(",");
 		if (cataIdArr == null || cataIdArr.length == 0) {
 			MiscUtils.getLogger().error("没有合适的cata id列表！");
-			type = null;
-			agencyName = null;
-			orgTypeId = null;
-			notes = null;
 			number = 0;
 			return null;
 		}
@@ -377,14 +371,6 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		} else {
 			MiscUtils.getLogger().info("创建机构目录或机构时，类型出错！");
 		}
-		
-		type = null;
-		agencyName = null;
-		orgTypeId = null;
-		notes = null;
-		number = 0;
-		cataId = null;
-		
 		return null;
 	}
 	
@@ -410,7 +396,6 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 				iAgencyMgmt.removeOrg(id);
 			}
 		}
-		checkedNodes = null;
 		return null;
 	}
 	
@@ -423,11 +408,6 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		String[] agencyIdArr = cataId.split(",");
 		if (agencyIdArr == null || agencyIdArr.length == 0) {
 			MiscUtils.getLogger().error("没有合适的cata id列表！");
-			type = null;
-			agencyName = null;
-			orgTypeId = null;
-			notes = null;
-			createTime = null;
 			return null;
 		}
 		
@@ -463,14 +443,6 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 				}
 			}
 		}
-		
-		type = null;
-		agencyName = null;
-		orgTypeId = null;
-		notes = null;
-		createTime = null;
-		cataId = null;
-		
 		return null;
 	}
 

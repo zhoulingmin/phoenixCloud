@@ -29,29 +29,29 @@ public class RBookDire extends AbstractModel<String> implements Serializable {
 	private String direId;
 
 	@Column(name="B_PAGE_NUM", nullable=false)
-	private BigInteger bPageNum;
+	private BigInteger bPageNum = BigInteger.ZERO;
 
 	@Column(name="BOOK_ID", nullable=false)
-	private BigInteger bookId;
+	private BigInteger bookId = BigInteger.ZERO;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="CREATE_TIME", nullable=false)
 	private Date createTime;
 
 	@Column(name="DELETE_STATE", nullable=false)
-	private byte deleteState;
+	private byte deleteState = (byte)0;
 
 	@Column(name="E_PAGE_NUM", nullable=false)
-	private BigInteger ePageNum;
+	private BigInteger ePageNum = BigInteger.ZERO;
 
 	@Column(nullable=false)
-	private byte level;
+	private byte level = (byte)0;
 
 	@Column(nullable=false, length=60)
 	private String name;
 
 	@Column(length=255)
-	private String notes;
+	private String notes = "";
 
 	@Column(name="STAFF_ID", nullable=false)
 	private BigInteger staffId;

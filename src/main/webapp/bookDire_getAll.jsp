@@ -4,16 +4,22 @@
 <%@page import="com.phoenixcloud.book.service.IRBookMgmtService" %>
 <%@page import="java.util.List" %>
 <%@page import="java.util.ArrayList" %>
-<%@page import="com.phoenixcloud.bean.RBookDire" %>
 <%@page import="java.math.BigInteger" %>
-<%@page import="com.phoenixcloud.bean.RBook" %>
-<%@page import="com.phoenixcloud.util.MiscUtils" %>
+<%@page import="com.phoenixcloud.util.*" %>
+<%@page import="com.phoenixcloud.bean.*" %>
+<%@page import="com.phoenixcloud.dao.*" %>
 <%@page import="java.util.Date" %>
+<%@page import="net.sf.json.JSONArray" %>
+<%@page import="net.sf.json.JSONObject" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
 String ctx = request.getContextPath();
 RBook book = (RBook)request.getAttribute("book");
+
+int maxLevel = (Integer)request.getAttribute("maxLevel");
+JSONArray direArr = (JSONArray)request.getAttribute("direArr");
+
 %>
 
 <html>
@@ -26,7 +32,6 @@ RBook book = (RBook)request.getAttribute("book");
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/uniform.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.grey.css" class="skin-color" />
-	<link rel="stylesheet" href="<%=ctx%>/css/zTreeStyle/zTreeStyle.css" type="text/css">
 	
 	<script src="<%=ctx%>/js/jquery.min.js"></script>
 	<script src="<%=ctx%>/js/jquery.uniform.js"></script>
@@ -34,14 +39,20 @@ RBook book = (RBook)request.getAttribute("book");
 	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
 	<script src="<%=ctx%>/js/bootstrap-fileinput.js"></script>
 	<script src="<%=ctx%>/js/unicorn.js"></script>
-	<script type="text/javascript" src="<%=ctx%>/js/ztree/jquery.ztree.core-3.5.js"></script>
-	<script type="text/javascript" src="<%=ctx%>/js/ztree/jquery.ztree.exedit-3.5.js"></script>
 	
 	<style type="text/css">
 	#contextMenu {
 	    position: absolute;
 	    display:none;
 	}
+	table th,td{
+	border: 1px solid #DADADA;
+	width:10%;
+	}
+	th{
+	text-align:left;
+	}
+	td p{ margin: 0;}
 	</style>
 	
 	<title><%=book.getName()%>-书籍目录管理</title>
@@ -53,10 +64,7 @@ RBook book = (RBook)request.getAttribute("book");
 	<div id="contextMenu" class="dropdown clearfix">
 	    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:absolute;margin-bottom:5px;">
 	        <li><a tabindex="1" href="#">新建</a></li>
-	        <li><a tabindex="2" href="#">修改</a></li>
 	        <li><a tabindex="3" href="#">删除</a></li>
-	        <li class="divider"></li>
-	        <li><a tabindex="4" href="#">刷新</a></li>
 	    </ul>
 	</div>
 	
@@ -65,30 +73,65 @@ RBook book = (RBook)request.getAttribute("book");
 			<h1>凤凰云端</h1>
 		</div>
 		<div class="widget-box">
-			<div class="widget-content">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBookDire" onclick="addBookDire();" value="新建"/>
-				
-				<!-- 上传书籍文件 -->
-				<div class="fileinput fileinput-new" data-provides="fileinput" style="border:1px dotted #0000FF">
-					<form id="uploadBookFrm" action="<%=ctx%>/book/uploadBook.do" method="POST" enctype="multipart/form-data">
-						<span class="btn btn-default btn-file">
-							<span class="fileinput-new">选择书籍文件</span>
-							<span class="fileinput-exists">重新选择书籍文件</span>
-							<input id="bookFile" type="file" name="bookFile">
-						</span>
-						<span class="fileinput-filename"></span>
-						<a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
-						<input type="hidden" name="bookId" value="<%=book.getId()%>" />
-						<%if (book.getIsUpload() == (byte)0) {%>
-						<input type="submit" class="btn" name="submit" value="上传"/>
-						<%} else {%>
-						<input type="submit" class="btn" name="submit" value="更新" />
+			<table style="border: 1px solid #AAAAAA;border-collapse: collapse;width:100%">
+				<thead style="background:#EEEEEE;">
+					<tr>
+						<%for (int i = 0; i < (maxLevel+2); i++) { %>
+						<th></th>
 						<%} %>
-					</form>
-				</div>
-			</div>
-		</div>
-		<div id="direTree" class="widget-box ztree">
+						<th>描述</th>
+						<th>开始页面</th>
+						<th>结束页面</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr direId="0">
+						<td><%=book.getName() %></td>
+						<%for (int i = 0; i < (maxLevel+1); i++) {%>
+						<td></td>
+						<%} %>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<%!
+					void showChildDire(JSONArray direArr, javax.servlet.jsp.JspWriter out, int maxLevel) throws java.io.IOException{
+						for (int i = 0; i < direArr.size(); i++) {
+							JSONObject obj = (JSONObject)direArr.get(i);
+							int level = (Integer)obj.get("level");
+							out.print("<tr direId=\"" + obj.get("direId") + "\" level=\"" + obj.get("level") + "\">");
+							for (int j = 0; j < (level+1); j++) {
+								out.print("<td></td>");
+							}
+							out.print("<td><input type='text' name='name' style='border:0;margin:0;padding:0' value='" + obj.get("name") + "'>" + "</td>");
+							
+							for (int k = 0; k < (maxLevel - level); k++) {
+								out.print("<td></td>");
+							}
+							
+							out.print("<td><input type='text' name='notes' style='border:0;margin:0;padding:0' value='" + obj.get("notes") + "'>" + "</td>");
+							out.print("<td><input type='text' name='bPageNum' style='border:0;margin:0;padding:0' value='" + obj.get("bPageNum") + "'>" + "</td>");
+							out.print("<td><input type='text' name='ePageNum' style='border:0;margin:0;padding:0' value='" + obj.get("ePageNum") + "'>" + "</td>");
+							out.print("</tr>");
+							
+							JSONArray children = (JSONArray)obj.get("children");
+							if (children != null) {
+								showChildDire(children, out, maxLevel);
+							}
+						}
+					}
+					
+					%>
+					
+					<%showChildDire(direArr, out, maxLevel); %>
+					
+				</tbody>
+			</table>
+			<br />
+			<br />
+			<br />
+			<input style="float:right; margin-right:30px;" type="button" name="cancel" class="btn btn-primary" onclick="cancel();return false;" value="返回" />
+			<input style="float:right; margin-right:30px;" class="btn btn-primary" type="button" name="update" onclick="updateDire();return false;" value="保存" />
 		</div>
 	</div>
 	<jsp:include page="footer.jsp" flush="true" />
@@ -96,53 +139,69 @@ RBook book = (RBook)request.getAttribute("book");
 
 <script type="text/javascript">
 
-var zTreeObj,
-setting = {
-	view: {
-		dblClickExpand: false
-	},
-	async: {
-		enable: true,
-		url: "<%=ctx%>/book/bookDire_getSubDire.do",
-		autoParam: ["direId"],
-		otherParam: ["bookId","<%=book.getId()%>"]
-	},
-	callback: {
-		onRightClick: OnRightClick,
-		onDblClick: onDblClick
-	}
-},
-zTreeNodes = [];
-
-function addBookDire() {
-	location.href = "<%=ctx%>/addBookDire.jsp?bookId=<%=book.getId()%>&parentId=0";	
+function cancel() {
+	window.location.href = "<%=ctx%>/book/book_getAll.do";
 }
 
-function onDblClick(event, treeId, node) {
-	location.href = "<%=ctx%>/book/bookDire_editDire.do?isView=true&direId=" + node.direId;
-}
+var count = 0;
+var updatedCount = 0;
 
+function updateDire() {
+	updatedCount = 0;
+	count = jQuery("tbody tr[direId!='0']").length;
+	jQuery("tbody tr[direId!='0']").each(function() {
+		var direId = this.getAttribute("direId");
+		var name = jQuery(this).find("input[name='name']")[0].value;
+		var notes = jQuery(this).find("input[name='notes']")[0].value;
+		var bPageNum = jQuery(this).find("input[name='bPageNum']")[0].value;
+		var ePageNum = jQuery(this).find("input[name='ePageNum']")[0].value;
+		jQuery.ajax({
+			url: "<%=ctx%>/book/bookDire_saveDire.do",
+			type: "POST",
+			async: "true",
+			data:  {
+				"bookDire.direId": direId,
+				"bookDire.name": name,
+				"bookDire.notes": notes,
+				"bookDire.bPageNum": bPageNum,
+				"bookDire.ePageNum": ePageNum
+			},
+			timeout: 30000,
+			success: function() {
+			},
+			error: function() {
+				alert("保存书籍目录失败！");
+			}
+		});
+	});
+}
 
 var $contextMenu = $("#contextMenu");
-var $curTreeNode;
-
-function OnRightClick(event, treeId, treeNode) {
-	if (treeNode == null) {
-		alert("请在节点上面点击！");
-		return;
-	}
-	$contextMenu.css({
-	      display: "block",
-	      left: event.clientX,
-	      top: event.clientY
-	});
-	$curTreeNode = treeNode;
-}
+var $curDire;
 
 // 初始化，手动初始化
 // 初始化之后，开启异步加载
 $(document).ready(function(){
-	zTreeObj = $.fn.zTree.init($("#direTree"), setting, zTreeNodes);
+
+	$("tbody tr").on("contextmenu", function(event) {
+		$contextMenu.css({
+			  display: "block",
+			  left: event.clientX,
+			  top: event.clientY
+		});
+		$curDire = this;
+		return false;
+	});
+	
+	$("td").on("click", function(event) {
+		var inputChild = $(this).children("input");
+		if (inputChild != null) {
+			$(this).children("p").css("display", "none");
+			$(this).children("input").css("display", "inline");
+		}
+	});
+	
+	
 	$(document).click(function () {
 	    $contextMenu.hide();
 	});
@@ -151,35 +210,34 @@ $(document).ready(function(){
 		var tabIndex = e.target.getAttribute("tabindex");
 		switch (parseInt(tabIndex)) {
 		case 1: // 新建
-			location.href = "<%=ctx%>/addBookDire.jsp?bookId=<%=book.getId()%>&parentId=" + $curTreeNode.direId;
+			var url = "<%=ctx%>/addBookDire.jsp?bookId=<%=book.getId()%>&parentId=" 
+					+ $curDire.getAttribute("direId") + "&level=" + $curDire.getAttribute("level");
+			var title = "创建书籍目录";
+			var params = "height=470,width=635,top=" 
+				+ (window.screen.availHeight - 30 - 470) / 2 
+				+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
+				+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
+			window.open(url, title, params);
 			break;
-		case 2: // 修改
-			location.href = "<%=ctx%>/book/bookDire_editDire.do?direId=" + $curTreeNode.direId;
-			break;
-		case 3: // 删除
-			if ($curTreeNode == zTreeObj.getNodes()[0] || $curTreeNode == zTreeObj.getNodes()[1]) {
-				alert("无法删除！");
-			}
+		case 2: // 删除
 			jQuery.ajax({
 				url: "<%=ctx%>/book/bookDire_removeDire.do",
 				type: "post",
 				async: "false",
-				data: {bookId:"<%=book.getId()%>", direId:$curTreeNode.direId},
+				data: {bookId:"<%=book.getId()%>", direId:$curDire.getAttribute("direId")},
 				timeout: 30000,
 				success: function() {
 					alert("删除书籍目录成功！");
-					zTreeObj.reAsyncChildNodes($curTreeNode.getParentNode(), "refresh", false);
+					window.location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>"; 
 				},
 				error: function() {
 					alert("删除书籍目录失败！");
 				}
 			});
 			break;
-		case 4: // 刷新
-			location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>";
-			break;
 		}
 		$contextMenu.hide();
+		return false;
 	});
 });
 

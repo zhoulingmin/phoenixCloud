@@ -32,7 +32,7 @@ public class RBookDireDao extends AbstractDao<RBookDire>{
 		entityManager.merge(dire);
 	}
 	
-	public RBookDire find(String id) {
+	public RBookDire findByBookId(String id) {
 		Query query = entityManager.createQuery("select bd from RBookDire bd where bd.deleteState=0 and bd.bookId = ?1");
 		query.setParameter(1, id);
 		return getSingleResultOrNull(query);

@@ -26,8 +26,12 @@ import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
 @Component("bookDireMgmtAction")
-public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, ServletResponseAware{
+public class RBookDireMgmtAction extends ActionSupport implements RequestAware, ServletResponseAware{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private RequestMap request;
 	private HttpServletResponse response;
 	private String bookId;
@@ -37,6 +41,8 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 	private BigInteger direId;
 	private RBookDire bookDire;
 	private boolean isView;
+	
+	private int num;
 	
 	
 	public IRBookMgmtService getiBookService() {
@@ -118,7 +124,6 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 				bookDire.setBookId(BigInteger.ZERO);
 				bookDire.setDeleteState((byte)1);
 			}
-			bookDire.setLevel((byte)1);
 			bookDire.setName("封面");
 			bookDire.setStaffId(BigInteger.ONE);
 			bookDire.setCreateTime(curDate);
@@ -137,7 +142,6 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 				bookDire.setBookId(BigInteger.ZERO);
 				bookDire.setDeleteState((byte)1);
 			}
-			bookDire.setLevel((byte)1);
 			bookDire.setName("目录");
 			bookDire.setStaffId(BigInteger.ONE);
 			bookDire.setCreateTime(curDate);
@@ -146,7 +150,33 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 			iBookService.saveBookDire(bookDire);
 		}
 		
-		bookId = null;
+		int maxLevel = 0;
+		JSONArray jsonArr = new JSONArray();
+		List<RBookDire> direList = iBookService.getBookDires(new BigInteger(bookId), BigInteger.ZERO);
+		for (RBookDire bookDire : direList) {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("level", 0);
+			jsonObj.put("name", bookDire.getName());
+			jsonObj.put("direId", bookDire.getDireId());
+			jsonObj.put("bPageNum", bookDire.getBPageNum());
+			jsonObj.put("ePageNum", bookDire.getEPageNum());
+			jsonObj.put("notes", bookDire.getNotes());
+			
+			JSONObject tmpJosn = getSubDire(bookDire.getBookId(), new BigInteger(bookDire.getDireId()), 0);
+			if (tmpJosn != null) {
+				jsonObj.put("children", tmpJosn.get("children"));
+				if (tmpJosn.get("maxLevel") != null) {
+					int maxLevTmp = (Integer)tmpJosn.get("maxLevel");
+					if (maxLevTmp > maxLevel) {
+						maxLevel = maxLevTmp;
+					}
+				}
+			}
+			jsonArr.add(jsonObj);
+		}
+		request.put("direArr", jsonArr);
+		request.put("maxLevel", maxLevel);
+		
 		return "success";
 	}
 	
@@ -185,9 +215,6 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
         } catch (Exception e) {
         	MiscUtils.getLogger().info(e.toString());
         }
-        
-		direId = null;
-		bookId = null;
 		
 		return null;
 	}
@@ -196,12 +223,21 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 		if (bookDire == null) {
 			return null;
 		}
-		
 		Date date = new Date();
-		bookDire.setCreateTime(date);
-		bookDire.setUpdateTime(date);
-		iBookService.saveBookDire(bookDire);
-		bookDire = null;
+		for (int i = 0; i < num; i++) {
+			RBookDire dire = new RBookDire();
+			dire.setCreateTime(date);
+			dire.setUpdateTime(date);
+			dire.setName(bookDire.getName());
+			dire.setNotes(bookDire.getNotes());
+			dire.setBPageNum(bookDire.getBPageNum());
+			dire.setBookId(bookDire.getBookId());
+			dire.setParentDireId(bookDire.getParentDireId());
+			dire.setStaffId(new BigInteger("1"));
+			dire.setLevel((byte)((int)bookDire.getLevel() + 1));
+			iBookService.saveBookDire(dire);
+		}
+		
 		return null;
 	}
 	
@@ -210,9 +246,17 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 			MiscUtils.getLogger().info("无法更新书籍目录信息！");
 			return null;
 		}
-		bookDire.setUpdateTime(new Date());
-		iBookService.saveBookDire(bookDire);
-		bookDire = null;
+		RBookDire dire = iBookService.findBookDire(bookDire.getDireId());
+		if (dire == null) {
+			return null;
+		}
+		dire.setBPageNum(bookDire.getBPageNum());
+		dire.setEPageNum(bookDire.getEPageNum());
+		dire.setName(bookDire.getName());
+		dire.setNotes(bookDire.getNotes());
+		dire.setUpdateTime(new Date());
+		iBookService.saveBookDire(dire);
+		
 		return null;
 	}
 	
@@ -223,8 +267,6 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 			return null;
 		}
 		request.put("isView", isView);
-		isView = false;
-		direId = null;
 		return "success";
 	}
 	
@@ -235,7 +277,64 @@ public class RBookDrieMgmtAction extends ActionSupport implements RequestAware, 
 			return;
 		}
 		iBookService.removeDire(bookId, direId);
-		bookId = null;
-		direId = null;
 	}
+	
+	private JSONObject getSubDire(BigInteger bookID, BigInteger parentDireID, int level) {
+		JSONObject subDireObj = null;
+		JSONArray jsonArr = null;
+		int maxLevel = 0;
+		List<RBookDire> direList = iBookService.getBookDires(bookID, parentDireID);
+		if (direList.size() > 0) {
+			level++;
+			maxLevel = level;
+			jsonArr = new JSONArray();
+			subDireObj = new JSONObject();
+			subDireObj.put("maxLevel", level);
+			subDireObj.put("children", jsonArr);
+		}
+		for (RBookDire dire : direList) {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("level", level);
+			jsonObj.put("name", dire.getName());
+			jsonObj.put("direId", dire.getDireId());
+			jsonObj.put("bPageNum", dire.getBPageNum());
+			jsonObj.put("ePageNum", dire.getEPageNum());
+			jsonObj.put("notes", dire.getNotes());
+			
+			JSONObject tmpJosn = getSubDire(dire.getBookId(), new BigInteger(dire.getDireId()), level);
+			if (tmpJosn != null) {
+				jsonObj.put("children", tmpJosn.get("children"));
+				int maxLevTmp = (Integer)tmpJosn.get("maxLevel");
+				if (maxLevTmp > maxLevel) {
+					maxLevel = maxLevTmp;
+					subDireObj.put("maxLevel", maxLevTmp);
+				}
+			}
+			jsonArr.add(jsonObj);
+		}
+		if (jsonArr != null) {
+			subDireObj.put("children", jsonArr);
+		}
+		return subDireObj;
+	}
+
+	public int getNum() {
+		return num;
+	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
+	
+	public void addActionError(String anErrorMessage) {
+        MiscUtils.getLogger().info(anErrorMessage);
+    }
+
+    public void addActionMessage(String aMessage) {
+    	MiscUtils.getLogger().info(aMessage);
+    }
+
+    public void addFieldError(String fieldName, String errorMessage) {
+    	MiscUtils.getLogger().info(fieldName + " " + errorMessage);
+    }
 }

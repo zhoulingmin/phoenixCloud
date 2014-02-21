@@ -47,6 +47,8 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	private boolean flag;
 	private String resId;
 	
+	private RBookRe bookRes;
+	
 	public void setiBookService(IRBookMgmtService iBookService) {
 		this.iBookService = iBookService;
 	}
@@ -97,6 +99,14 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 
 	public void setResId(String resId) {
 		this.resId = resId;
+	}
+
+	public RBookRe getBookRes() {
+		return bookRes;
+	}
+
+	public void setBookRes(RBookRe bookRes) {
+		this.bookRes = bookRes;
 	}
 
 	private BookResNode getDepthAddParent(BigInteger orgId, Map<String,BookResNode> resNodeMap) {
@@ -231,5 +241,9 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	public String removeRes() {
 		iBookService.removeRes(resId);
 		return null;
+	}
+	
+	public String addRes() {
+		
 	}
 }

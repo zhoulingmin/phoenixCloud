@@ -102,9 +102,22 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 				throw new Exception("没有找到相应的书籍！");
 			}
 		} else {
-			bookInfo.setUpdateTime(new Date());
-			iBookService.saveBook(bookInfo);
-			bookInfo = null;
+			RBook book = iBookService.findBook(bookInfo.getBookId());
+			if (book != null) {
+				book.setCataAddrId(bookInfo.getCataAddrId());
+				book.setClassId(bookInfo.getClassId());
+				book.setKindId(bookInfo.getKindId());
+				book.setName(bookInfo.getName());
+				book.setNotes(bookInfo.getNotes());
+				book.setOrgId(bookInfo.getOrgId());
+				book.setPageNum(bookInfo.getPageNum());
+				book.setPressId(bookInfo.getPressId());
+				book.setStuSegId(bookInfo.getStuSegId());
+				book.setSubjectId(bookInfo.getSubjectId());
+				book.setUpdateTime(new Date());
+				iBookService.saveBook(book);
+			}
+			
 			return null;
 		}
 		return "success";

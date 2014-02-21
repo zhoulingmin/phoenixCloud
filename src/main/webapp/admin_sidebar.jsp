@@ -25,7 +25,7 @@
 				<li style="display:none"><a href="#">书籍目录管理</a></li>
 				<li style="display:none"><a href="#">书籍上传管理</a></li>
 				<li style="display:none"><a href="#">资源上传管理</a></li>
-				<li><a href="<%=request.getContextPath()%>/book/bookRes_getAll.do">资源管理</a></li>
+				<li><a href="<%=request.getContextPath()%>/book/bookRes_getAll.do">资源查询</a></li>
 			</ul>
 		</li>
 		<li id="favorite_menu" onclick="javascript:void(0);" class="submenu"><a href="#"><i class="icon icon-star"></i> <span>系统管理</span></a>

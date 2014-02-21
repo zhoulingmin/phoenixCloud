@@ -157,22 +157,6 @@ List<PubPress> pressList = pressDao.getAll();
 						</div>
 					</div>
 					
-					<!--
-					<div class="control-group">
-						<label class="control-label">创建时间</label>
-						<div class="controls">
-							<input type="text" name="bookInfo.orgId">
-						</div>
-					</div>
-					 
-					<div class="control-group">
-						<label class="control-label">更新时间</label>
-						<div class="controls">
-							<input type="text" name="bookInfo.createTime">
-						</div>
-					</div>
-					-->
-					
 					<div class="control-group">
 						<label class="control-label">备注</label>
 						<div class="controls">
