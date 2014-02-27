@@ -31,13 +31,13 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	@Column(name="ALL_ADDR", length=60)
 	private String allAddr;
 
-	@Column(name="AUDIT_STAFF_ID", nullable=false)
-	private BigInteger auditStaffId;
+	@Column(name="AUDIT_STAFF_ID")
+	private BigInteger auditStaffId = BigInteger.ZERO;
 
 	@Column(name="BOOK_ID", nullable=false)
 	private BigInteger bookId;
 
-	@Column(name="CATA_ADDR", length=12)
+	@Column(name="CATA_ADDR_ID", length=12)
 	private BigInteger cataAddrId;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -57,7 +57,7 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	private byte isAudit = (byte)-1;
 
 	@Column(name="IS_UPLOAD", nullable=false)
-	private byte isUpload;
+	private byte isUpload = (byte)0;
 
 	@Column(nullable=false, length=60)
 	private String name;
@@ -66,7 +66,7 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	private String notes;
 
 	@Column(name="PARENT_RES_ID")
-	private BigInteger parentResId;
+	private BigInteger parentResId = BigInteger.ZERO;
 
 	@Column(name="STAFF_ID", nullable=false)
 	private BigInteger staffId;

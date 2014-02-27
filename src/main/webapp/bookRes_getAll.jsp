@@ -50,11 +50,12 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 		
 		<div class="widget-box">
 			<div class="widget-content">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addRes();" value="新建"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="editRes();" value="修改"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeRes();" value="删除"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadBook" onclick="uploadRes();" value="上传资源"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewRes();" value="详情"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addRes" onclick="addRes();" value="新建"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeRes" onclick="editRes();" value="修改"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeRes" onclick="removeRes();" value="删除"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadRes" onclick="uploadRes();" value="上传资源"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewRes" onclick="viewRes();" value="详情"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="back" onclick="cancel();" value="返回"/>
 			</div>
 		</div>
 
@@ -65,7 +66,7 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 					<h5><%=book.getName() %>--资源列表</h5>
 				</div>
 				<div class="widget-content nopadding">
-					<table id="bookContent" class="table table-bordered data-table">
+					<table id="resContent" class="table table-bordered data-table">
 						<thead>
 							<tr>
 							<th style="width:1%;">
@@ -126,13 +127,13 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 								<td><%=res.getNotes() %></td>
 								<td>
 									<%if (res.getIsUpload() == (byte)0) {%>
-									<a class="tip-top" data-original-title="上传" href="<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-upload"></i></a>
+									<a class="tip-top" data-original-title="上传" href="#" onclick="return editResFromIcon(<%=res.getId()%>)"><i class="icon-upload"></i></a>
 									<%} %>
 									<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/bookRes_viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
-									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-edit"></i></a>
-									<%if (res.getIsAudit() == (byte)0) {%>
-									<a class="tip-top" data-original-title="" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=1"><i class="icon-ok-circle"></i></a>
-									<a class="tip-top" data-original-title="" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=-1"><i class="icon-ban-circle"></i></a>
+									<a class="tip-top" data-original-title="修改" href="#" onclick="return editResFromIcon(<%=res.getId()%>)"><i class="icon-edit"></i></a>
+									<%if (res.getIsAudit() == (byte)-1) {%>
+									<a class="tip-top" data-original-title="通过" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=true"><i class="icon-ok-circle"></i></a>
+									<a class="tip-top" data-original-title="不通过" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=false"><i class="icon-ban-circle"></i></a>
 									<%} %>
 									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
 								</td>
@@ -150,43 +151,87 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 
 <script type="text/javascript">
 
+function cancel() {
+	window.location.href = "<%=ctx%>/book/book_getAll.do";
+}
+
 function addRes() {
-	window.location.href = "<%=ctx%>/addRes.jsp";
+	var checkedItems = jQuery("#resContent tbody").find("input:checked");
+	if (checkedItems != null && checkedItems.length > 1) {
+		alert("请只选择一个资源后，创建子资源！");
+		return;
+	}
+	var parentId = 0;
+	if (checkedItems != null && checkedItems.length == 1) {
+		parentId = checkedItems[0].value;
+	}
+	var url = "<%=ctx%>/addRes.jsp?bookId=<%=book.getBookId()%>&parentId=" + parentId;
+	var title = "创建书籍资源";
+	var params = "height=470,width=635,top=" 
+		+ (window.screen.availHeight - 30 - 470) / 2 
+		+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
+		+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
+	window.open(url, title, params);
 }
 
 function editRes() {
-	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
+	var checkedItems = jQuery("#resContent tbody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
+		alert("请选择一个资源后重试！");
 		return;
 	}
-	window.location.href = "<%=ctx%>/book/book_editBook.do?bookInfo.bookId=" + checkedItems[0].value;
+	
+	var url = "<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=" + checkedItems[0].value;
+	var title = "修改书籍资源";
+	var params = "height=470,width=635,top=" 
+		+ (window.screen.availHeight - 30 - 470) / 2 
+		+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
+		+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
+	window.open(url, title, params);
+}
+
+function editResFromIcon(resId) {
+	var url = "<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=" + resId;
+	var title = "修改书籍资源";
+	var params = "height=470,width=635,top=" 
+		+ (window.screen.availHeight - 30 - 470) / 2 
+		+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
+		+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
+	window.open(url, title, params);
+	return false;
 }
 
 function uploadRes() {
-	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
+	var checkedItems = jQuery("#resContent tbody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
+		alert("请选择一个资源后重试！");
 		return;
 	}
-	window.location.href = "<%=ctx%>/book/book_editBook.do?bookInfo.bookId=" + checkedItems[0].value;
+	
+	var url = "<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=" + checkedItems[0].value;
+	var title = "修改书籍资源";
+	var params = "height=470,width=635,top=" 
+		+ (window.screen.availHeight - 30 - 470) / 2 
+		+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
+		+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
+	window.open(url, title, params);
 }
 
 function viewRes() {
-	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
+	var checkedItems = jQuery("#resContent tbody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
+		alert("请选择一个资源后重试！");
 		return;
 	}
-	window.location.href = "<%=ctx%>/book/book_viewBook.do?bookInfo.bookId=" + checkedItems[0].value;
+	window.location.href = "<%=ctx%>/book/bookRes_viewRes.do?bookRes.resId=" + checkedItems[0].value;
 }
 
 function removeRes() {
 	var ids = "";
 	
-	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
+	var checkedItems = jQuery("#resContent tbody").find("input:checked");
 	if (checkedItems == null || checkedItems.length == 0) {
-		alert("请选择要删除的书籍！");
+		alert("请选择要删除的资源！");
 		return;
 	}
 	for (var i = 0; i < checkedItems.length; i++) {
@@ -197,14 +242,14 @@ function removeRes() {
 	}
 	
 	jQuery.ajax({
-		url: "<%=ctx%>/book/book_removeBook.do",
+		url: "<%=ctx%>/book/bookRes_removeRes.do",
 		type: "POST",
 		async: "false",
 		timeout: 30000,
-		data: {bookIdArr:ids},
+		data: {resIdArr:ids},
 		success: function() {
 			alert("删除成功！");
-			window.location.href = "<%=ctx%>/book/book_getAll.do";
+			window.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=book.getBookId()%>";
 		},
 		error: function() {
 			alert("删除失败！");
@@ -217,14 +262,14 @@ jQuery(document).ready(function() {
 	jQuery("td a.tip-top:last-child").on("click", function(e) {
 		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
 		jQuery.ajax({
-			url: "<%=ctx%>/book/book_removeBook.do",
+			url: "<%=ctx%>/book/bookRes_removeRes.do",
 			type: "POST",
 			async: "false",
 			timeout: 30000,
-			data: {bookIdArr: id},
+			data: {resIdArr: id},
 			success: function() {
 				alert("删除成功！");
-				window.location.href = "<%=ctx%>/book/book_getAll.do";
+				window.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=book.getBookId()%>";
 			},
 			error: function() {
 				alert("删除失败！");

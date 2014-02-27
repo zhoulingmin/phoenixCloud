@@ -1,7 +1,9 @@
 package com.phoenixcloud.dao;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import javax.persistence.Query;
 
@@ -33,5 +35,38 @@ public class RBookDao extends AbstractDao<RBook>{
 		Query query = entityManager.createQuery("select rb from RBook rb where rb.deleteState=0 and rb.bookId = ?1");
 		query.setParameter(1, id);
 		return getSingleResultOrNull(query);
+	}
+	
+	public List<RBook> findByCriteria(RBook book) {
+		String sql = "select rb from RBook rb where rb.deleteState = 0";
+		int index = 1;
+		Vector params = new Vector();
+		if (book.getStuSegId() != null && book.getStuSegId().compareTo(BigInteger.ZERO) != 0) {
+			sql += " and rb.stuSegId = ?" + index;
+			params.add(book.getStuSegId());
+			index++;
+		}
+		if (book.getSubjectId() != null && book.getSubjectId().compareTo(BigInteger.ZERO) != 0) {
+			sql += " and rb.subjectId = ?" + index;
+			params.add(book.getSubjectId());
+			index++;
+		}
+		if (book.getClassId() != null && book.getClassId().compareTo(BigInteger.ZERO) != 0) {
+			sql += " and rb.classId = ?" + index;
+			params.add(book.getClassId());
+			index++;
+		}
+		if (book.getPressId() != null && book.getPressId().compareTo(BigInteger.ZERO) != 0) {
+			sql += " add rb.pressId = ?" + index;
+			params.add(book.getPressId());
+			index++;
+		}
+		
+		Query query = entityManager.createQuery(sql);
+		for (int i = 0; i < params.size(); i++) {
+			query.setParameter((i + 1), params.get(i));
+		}
+		
+		return query.getResultList();
 	}
 }

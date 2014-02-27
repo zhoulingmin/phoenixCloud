@@ -24,16 +24,14 @@ public class RBookDireDao extends AbstractDao<RBookDire>{
 		return query.getResultList();
 	}
 	
-	public void remove(BigInteger direId) {
-		RBookDire dire = find(direId.toString());
-		if (dire != null) {
-			dire.setDeleteState((byte)1);
-		}
-		entityManager.merge(dire);
-	}
-	
 	public RBookDire findByBookId(String id) {
 		Query query = entityManager.createQuery("select bd from RBookDire bd where bd.deleteState=0 and bd.bookId = ?1");
+		query.setParameter(1, id);
+		return getSingleResultOrNull(query);
+	}
+	
+	public RBookDire find(String id) {
+		Query query = entityManager.createQuery("select bd from RBookDire bd where bd.direId = ?1 and bd.deleteState = 0");
 		query.setParameter(1, id);
 		return getSingleResultOrNull(query);
 	}

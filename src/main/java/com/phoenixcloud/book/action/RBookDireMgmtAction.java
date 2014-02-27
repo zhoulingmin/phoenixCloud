@@ -276,7 +276,7 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 			MiscUtils.getLogger().info("删除书籍目录出现错误！");
 			return;
 		}
-		iBookService.removeDire(bookId, direId);
+		iBookService.removeDire(new BigInteger(bookId), direId);
 	}
 	
 	private JSONObject getSubDire(BigInteger bookID, BigInteger parentDireID, int level) {

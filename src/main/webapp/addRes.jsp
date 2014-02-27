@@ -10,9 +10,12 @@
 String ctx = request.getContextPath();
 String bookId = request.getParameter("bookId");
 String parentId = request.getParameter("parentId");
+if (parentId == null || "null".equalsIgnoreCase(parentId)) {
+	parentId = "0";
+}
 
 PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
-List<PubDdv> formatList = ddvDao.findByTblAndField("r_book_res", "FORMART");
+List<PubDdv> formatList = ddvDao.findByTblAndField("r_book_res", "FORMAT");
 List<PubDdv> cataAddrList = ddvDao.findByTblAndField("r_book_res", "CATA_ADDR_ID");
 
 
@@ -42,7 +45,7 @@ List<PubDdv> cataAddrList = ddvDao.findByTblAndField("r_book_res", "CATA_ADDR_ID
 			<h5>输入资源信息</h5>
 		</div>
 		<div class="widget-content nopadding">
-			<form id="addDire" class="form-horizontal" method="POST" action="#">
+			<form id="addRes" class="form-horizontal" method="POST" action="#">
 				
 				<input type="hidden" name="bookRes.bookId" value="<%=bookId%>"/>
 				<input type="hidden" name="bookRes.parentResId" value="<%=parentId%>"/>
@@ -57,7 +60,7 @@ List<PubDdv> cataAddrList = ddvDao.findByTblAndField("r_book_res", "CATA_ADDR_ID
 				<div class="control-group">
 					<label class="control-label">格式</label>
 					<div class="controls">
-						<select name=bookRes.format">
+						<select name="bookRes.format">
 							<%for (PubDdv format : formatList) { %>
 							<option value="<%=format.getDdvId()%>"><%=format.getValue() %></option>
 							<%} %>

@@ -82,6 +82,15 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 		bookDao.remove(bookId);
 	}
 	
+	public List<RBook> searchBook(RBook book) {
+		List<RBook> bookList = bookDao.findByCriteria(book);
+		if (bookList == null) {
+			bookList = new ArrayList();
+		}
+		return bookList;
+	}
+	
+	
 	public List<RBookDire> getBookDires(BigInteger bookId, BigInteger parentId) {
 		List<RBookDire> bdList = bookDireDao.findSubDires(bookId, parentId);
 		if (bdList == null) {
@@ -102,37 +111,71 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 		return bookDireDao.find(direId);
 	}
 	
-	private void removeSubDire(String bookId, BigInteger direId){
-		List<RBookDire> direList = bookDireDao.findSubDires(BigInteger.valueOf(Long.parseLong(bookId)), direId);
+	private void removeSubDire(BigInteger bookId, BigInteger direId, Date curDate){
+		List<RBookDire> direList = bookDireDao.findSubDires(bookId, direId);
 		for (RBookDire dire : direList) {
-			removeSubDire(bookId, BigInteger.valueOf(Long.parseLong(dire.getId())));
+			removeSubDire(bookId, BigInteger.valueOf(Long.parseLong(dire.getId())), curDate);
 			dire.setDeleteState((byte)1);
+			dire.setUpdateTime(curDate);
 			bookDireDao.merge(dire);
 		}
 	}
 	
-	public void removeDire(String bookId, BigInteger direId) {
+	public void removeDire(BigInteger bookId, BigInteger direId) {
 		// 递归删除子节点
-		removeSubDire(bookId, direId);
-		bookDireDao.remove(direId);
+		RBookDire dire = bookDireDao.find(direId.toString());
+		if (dire == null) {
+			return;
+		}
+		Date curDate = new Date();
+		removeSubDire(bookId, direId, curDate);
+		
+		dire.setDeleteState((byte)1);
+		dire.setUpdateTime(curDate);
+		
+		bookDireDao.merge(dire);
 	}
 	
 	public List<BigInteger> getBookIdsHaveRes() {
 		return bookReDao.getAllBookIds();
 	}
 	
-	public List<RBookRe> getResByBookId(String bookId) {
-		return bookReDao.getAllResByBookId(bookId);
+	public List<RBookRe> getResByBookId(BigInteger bookId) {
+		List<RBookRe> resList = bookReDao.getAllResByBookId(bookId);
+		if (resList == null) {
+			resList = new ArrayList<RBookRe>();
+		}
+		return resList;
 	}
 	
 	public RBookRe findBookRes(String resId) {
 		return bookReDao.find(resId);
 	}
 	
+	private void removeSubRes(BigInteger bookId, String parentResId, Date curDate) {
+		List<RBookRe> resList = bookReDao.getSubRes(bookId, new BigInteger(parentResId));
+		if (resList == null) {
+			return;
+		}
+		for (RBookRe res : resList) {
+			removeSubRes(res.getBookId(), res.getResId(), curDate);
+			res.setDeleteState((byte)1);
+			res.setUpdateTime(curDate);
+			bookReDao.merge(res);
+		}
+	}
+	
 	public void removeRes(String resId) {
 		RBookRe bookRes = bookReDao.find(resId);
+		if (bookRes == null) {
+			return;
+		}
+		
+		Date date = new Date();
+		removeSubRes(bookRes.getBookId(), resId, date);
+		
 		bookRes.setDeleteState((byte)1);
-		bookRes.setUpdateTime(new Date());
+		bookRes.setUpdateTime(date);
 		bookReDao.merge(bookRes);
 	}
 	

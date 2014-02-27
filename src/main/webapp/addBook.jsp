@@ -71,6 +71,13 @@ List<PubPress> pressList = pressDao.getAll();
 					</div>
 					
 					<div class="control-group">
+						<label class="control-label">书籍编码</label>
+						<div class="controls">
+							<input type="text" name="bookInfo.isbn">
+						</div>
+					</div>
+					
+					<div class="control-group">
 						<label class="control-label">出版社名称</label>
 						<div class="controls">
 							<select name="bookInfo.pressId">

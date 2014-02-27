@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.phoenixcloud.bean.RBookRe;
 
-@Repository
+@Repository("rBookReDao")
 public class RBookReDao extends AbstractDao<RBookRe>{
 	public RBookReDao() {
 		super(RBookRe.class);
@@ -22,9 +22,9 @@ public class RBookReDao extends AbstractDao<RBookRe>{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<RBookRe> getAllResByBookId(String bookId) {
+	public List<RBookRe> getAllResByBookId(BigInteger bookId) {
 		Query query = entityManager.createQuery("select rr from RBookRe rr where rr.bookId = ?1 and rr.deleteState = 0");
-		query.setParameter(1, BigInteger.valueOf(Long.parseLong(bookId)));
+		query.setParameter(1, bookId);
 		return query.getResultList();
 	}
 	
@@ -32,5 +32,14 @@ public class RBookReDao extends AbstractDao<RBookRe>{
 		Query query = entityManager.createQuery("select rr from RBookRe rr where rr.deleteState=0 and rr.resId = ?1");
 		query.setParameter(1, id);
 		return getSingleResultOrNull(query);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<RBookRe> getSubRes(BigInteger bookId, BigInteger parentResId) {
+		Query query = entityManager.createQuery("select rr from RBookRe rr where rr.bookId = ?1 and rr.parentResId = ?2 and rr.deleteState = 0");
+		query.setParameter(1, bookId);
+		query.setParameter(2, parentResId);
+		return query.getResultList();
 	}
 }

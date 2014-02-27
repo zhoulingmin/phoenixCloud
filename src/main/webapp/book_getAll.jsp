@@ -1,26 +1,29 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="s" uri="/struts-tags" %>
-<%@page import="org.springframework.web.context.WebApplicationContext" %>
-<%@page import="com.phoenixcloud.bean.PubOrg"%>
 <%@page import="com.phoenixcloud.agency.service.IAgencyMgmtService" %>
 <%@page import="java.util.List" %>
 <%@page import="java.util.ArrayList" %>
-<%@page import="com.phoenixcloud.bean.RBook" %>
+<%@page import="com.phoenixcloud.bean.*" %>
+<%@page import="com.phoenixcloud.dao.*" %>
 <%@page import="java.text.SimpleDateFormat" %>
+<%@page import="com.phoenixcloud.util.*" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
 String ctx = (String) request.getContextPath();
-WebApplicationContext context = (WebApplicationContext)this.getServletContext().getAttribute(
-		WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-//IRBookMgmtService iBookService = (IRBookMgmtService)context.getBean("bookMgmtServiceImpl");
-IAgencyMgmtService iAgencyMgmt = (IAgencyMgmtService)context.getBean("agencyMgmtServiceImpl");
+IAgencyMgmtService iAgencyMgmt = (IAgencyMgmtService)SpringUtils.getBean("agencyMgmtServiceImpl");
 
 List<RBook> bookList = (List<RBook>)request.getAttribute("bookList");
 if (bookList == null) {
 	bookList = new ArrayList<RBook>();
 }
 
+PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
+List<PubDdv> subjectList = ddvDao.findByTblAndField("r_book", "SUBJECT_ID");
+List<PubDdv> stuSegList = ddvDao.findByTblAndField("r_book", "STU_SEG_ID");
+List<PubDdv> classList = ddvDao.findByTblAndField("r_book", "CLASS_ID");
+PubPressDao pressDao = (PubPressDao)SpringUtils.getBean(PubPressDao.class);
+List<PubPress> pressList = pressDao.getAll();
 %>
 
 <head>
@@ -30,7 +33,7 @@ if (bookList == null) {
 	<link rel="stylesheet" href="<%=ctx%>/css/bootstrap-responsive.min.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/uniform.css" />
-	<link rel="stylesheet" href="<%=ctx%>/css/select2.css" />
+	
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.grey.css" class="skin-color" />
 	
 	<script src="<%=ctx%>/js/jquery.min.js"></script>
@@ -38,7 +41,7 @@ if (bookList == null) {
 	<script src="<%=ctx%>/js/jquery.ui.custom.js"></script>
 	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.js"></script>
-	<script src="<%=ctx%>/js/select2.min.js"></script>
+	
 	<script src="<%=ctx%>/js/jquery.dataTables.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.tables.js"></script>
 	
@@ -50,6 +53,43 @@ if (bookList == null) {
 	<div id="content">
 		<div id="content-header">
 			<h1>凤凰云端</h1>
+		</div>
+		
+		<div class="widget-box">
+			<div class="widget-content">
+				<form id="searchBook" action="" method="post">
+					学段:
+					<select name="bookInfo.stuSegId">
+						<option value="0" selected="selected">全部</option>
+						<%for (PubDdv stu : stuSegList) { %>
+						<option value="<%=stu.getDdvId()%>"><%=stu.getValue() %></option>
+						<%} %>
+					</select>
+					&nbsp;&nbsp;&nbsp;&nbsp;学科:
+					<select name="bookInfo.subjectId">
+						<option value="0">全部</option>
+						<%for (PubDdv sub: subjectList) {%>
+						<option value="<%=sub.getDdvId() %>"><%=sub.getValue() %></option>
+						<%} %>
+					</select>
+					<br />
+					年级:
+					<select name="bookInfo.stuSegId">
+						<option value="0" selected="selected">全部</option>
+						<%for (PubDdv cls : classList) { %>
+						<option value="<%=cls.getDdvId()%>"><%=cls.getValue() %></option>
+						<%} %>
+					</select>
+					&nbsp;&nbsp;&nbsp;&nbsp;出版社:
+					<select name="bookInfo.pressId">
+						<option value="0" selected="selected">全部</option>
+						<%for (PubPress press : pressList) { %>
+						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
+						<%} %>
+					</select>
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="button" onclick="searchBook();" style="margin-bottom:10px;width:50px;"/>
+				</form>
+			</div>
 		</div>
 		
 		<div class="widget-box">
@@ -125,6 +165,7 @@ if (bookList == null) {
 									<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/book_viewBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-eye-open"></i></a>
 									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/book_editBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-edit"></i></a>
 									<a class="tip-top" data-original-title="目录" href="<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
+									<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=book.getId()%>"><i class="icon-file"></i></a>
 									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
 								</td>
 							</tr>
@@ -140,6 +181,10 @@ if (bookList == null) {
 </body>
 
 <script type="text/javascript">
+
+function searchBook() {
+	window.location.href = "<%=ctx%>/book/book_searchBook.do?" + jQuery("#searchBook").serialize(); 
+}
 
 function addBook() {
 	window.location.href = "<%=ctx%>/addBook.jsp";
@@ -178,6 +223,7 @@ function editBookRes() {
 		alert("请选择一本书籍后重试！");
 		return;
 	}
+	window.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=" + checkedItems[0].value;
 }
 
 function viewBook() {

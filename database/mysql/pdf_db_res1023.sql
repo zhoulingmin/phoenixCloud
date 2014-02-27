@@ -107,7 +107,7 @@ CREATE TABLE `r_book_res` (
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '',
   `IS_AUDIT` tinyint(1) NOT NULL COMMENT '',
-  `AUDIT_STAFF_ID` bigint(12) NOT NULL,
+  `AUDIT_STAFF_ID` bigint(12),
   `STAFF_ID` bigint(12) NOT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`RES_ID`)

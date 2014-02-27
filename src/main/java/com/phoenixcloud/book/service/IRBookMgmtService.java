@@ -13,15 +13,16 @@ public interface IRBookMgmtService {
 	void saveBook(RBook book);
 	RBook findBook(String bookId);
 	void removeBook(String bookId);
+	List<RBook> searchBook(RBook book);
 	
 	List<RBookDire> getBookDires(BigInteger bookId, BigInteger parentId);
 	void saveBookDire(RBookDire bookDire);
 	RBookDire findBookDire(String direId);
-	void removeDire(String bookId, BigInteger direId);
+	void removeDire(BigInteger bookId, BigInteger direId);
 	
 	RBookRe findBookRes(String resId);
 	List<BigInteger> getBookIdsHaveRes();
-	List<RBookRe> getResByBookId(String bookId);
+	List<RBookRe> getResByBookId(BigInteger bookId);
 	void saveBookRes(RBookRe bookRes);
 	void removeRes(String resId);
 	

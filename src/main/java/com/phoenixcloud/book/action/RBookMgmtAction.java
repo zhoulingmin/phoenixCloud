@@ -143,4 +143,12 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 		}
 		return "success";
 	}
+	
+	public String seachBook() {
+		
+		List<RBook> bookList = iBookService.searchBook(bookInfo);
+		this.request.put("bookList", bookList);
+		
+		return "success";
+	}
 }

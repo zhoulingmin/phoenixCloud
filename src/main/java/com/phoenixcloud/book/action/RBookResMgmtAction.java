@@ -2,6 +2,7 @@ package com.phoenixcloud.book.action;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,7 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	private String resId;
 	
 	private RBookRe bookRes;
+	private String resIdArr;
 	
 	public void setiBookService(IRBookMgmtService iBookService) {
 		this.iBookService = iBookService;
@@ -186,6 +188,22 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	}
 
 	public String getAll() {
+		BigInteger bookId = bookRes.getBookId();
+		RBook book = iBookService.findBook(bookId.toString());
+		if (book == null) {
+			MiscUtils.getLogger().info("Can't find book by id: " + bookId);
+			return null;
+		}
+		
+		List<RBookRe> resList = iBookService.getResByBookId(bookId);
+
+		request.put("book", book);
+		request.put("resList", resList);
+		
+		return "success";
+	}
+	
+	public String getAll_ext() {
 		// key: type_id, type: cata,org  or key: root
 		Map<String,BookResNode> resNodeMap = new HashMap<String, BookResNode>();
 		BookResNode root = new BookResNode();
@@ -239,11 +257,60 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	}	
 	
 	public String removeRes() {
-		iBookService.removeRes(resId);
+		if (resIdArr == null) {
+			return null;
+		}
+		
+		String resId[] = resIdArr.split(",");
+		for (String id : resId) {
+			iBookService.removeRes(id);
+		}
+		
+		return null;
+	}
+	
+	public String editRes() throws Exception{
+		bookRes = iBookService.findBookRes(bookRes.getResId());
+		if (bookRes == null) {
+			throw new Exception("Not found the resource by id:" + bookRes.getResId());
+		}
+		
+		return "success";
+	}
+	
+	public String viewRes() throws Exception{
+		bookRes = iBookService.findBookRes(bookRes.getResId());
+		if (bookRes == null) {
+			throw new Exception("Not found the resource by id:" + bookRes.getResId());
+		}
+		
+		return "success";
+	}
+	
+	public String saveRes() {
+		RBookRe res = iBookService.findBookRes(bookRes.getResId());
+		if (res == null) {
+			return null;
+		}
+		
+		res.setCataAddrId(bookRes.getCataAddrId());
+		res.setFormat(bookRes.getFormat());
+		res.setName(bookRes.getName());
+		res.setNotes(bookRes.getNotes());
+		res.setUpdateTime(new Date());
+		
+		iBookService.saveBookRes(res);
+	
 		return null;
 	}
 	
 	public String addRes() {
-		
+		Date date = new Date();
+		bookRes.setCreateTime(date);
+		bookRes.setUpdateTime(date);
+		bookRes.setStaffId(new BigInteger("1"));
+		iBookService.saveBookRes(bookRes);
+		return null;
 	}
+	
 }
