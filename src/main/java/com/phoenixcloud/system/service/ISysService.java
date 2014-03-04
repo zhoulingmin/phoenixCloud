@@ -1,8 +1,10 @@
 package com.phoenixcloud.system.service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import com.phoenixcloud.bean.PubHw;
+import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
@@ -33,4 +35,7 @@ public interface ISysService {
 	void removeStaffRegCode(String id);
 	void saveStaffRegCode(SysStaffRegCode staffRegCode);
 	SysStaffRegCode findStaffRegCodeById(String id);
+	
+	PubServerAddr findServerAddrByOrgId(BigInteger orgId);
+	
 }

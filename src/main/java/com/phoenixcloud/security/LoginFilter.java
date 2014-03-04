@@ -20,7 +20,7 @@ public class LoginFilter implements Filter {
 	private static final Logger logger = MiscUtils.getLogger();
 	private static final String[] EXEMPT_URLS = {
 		"/index.jsp",
-		"/user/login.do",
+		"/system/login.do",
 		"/logout.jsp",
 
 		"/user/activeUser.do",

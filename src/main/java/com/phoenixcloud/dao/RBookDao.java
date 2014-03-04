@@ -57,7 +57,7 @@ public class RBookDao extends AbstractDao<RBook>{
 			index++;
 		}
 		if (book.getPressId() != null && book.getPressId().compareTo(BigInteger.ZERO) != 0) {
-			sql += " add rb.pressId = ?" + index;
+			sql += " and rb.pressId = ?" + index;
 			params.add(book.getPressId());
 			index++;
 		}
@@ -67,6 +67,13 @@ public class RBookDao extends AbstractDao<RBook>{
 			query.setParameter((i + 1), params.get(i));
 		}
 		
+		return query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RBook> findByBookNo(String bookNo) {
+		Query query = entityManager.createQuery("select rb from RBook rb where rb.deleteState = 0 and rb.bookNo = ?1");
+		query.setParameter(1, bookNo);
 		return query.getResultList();
 	}
 }

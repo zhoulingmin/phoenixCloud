@@ -74,7 +74,7 @@ List<PubPress> pressList = pressDao.getAll();
 					</select>
 					<br />
 					年级:
-					<select name="bookInfo.stuSegId">
+					<select name="bookInfo.classId">
 						<option value="0" selected="selected">全部</option>
 						<%for (PubDdv cls : classList) { %>
 						<option value="<%=cls.getDdvId()%>"><%=cls.getValue() %></option>

@@ -78,8 +78,8 @@ public class RBook extends AbstractModel<String> implements Serializable {
 	@Column(name="UPDATE_TIME", nullable=false)
 	private Date updateTime;
 	
-	@Column(name="ISBN", nullable=false)
-	private String isbn;
+	@Column(name="BOOK_NO", nullable=false)
+	private String bookNo;
 	
 	@Column(name="PAGE_NUM")
 	private BigInteger pageNum;
@@ -195,6 +195,14 @@ public class RBook extends AbstractModel<String> implements Serializable {
 		return this.staffId;
 	}
 
+	public String getBookNo() {
+		return bookNo;
+	}
+
+	public void setBookNo(String bookNo) {
+		this.bookNo = bookNo;
+	}
+
 	public void setStaffId(BigInteger staffId) {
 		this.staffId = staffId;
 	}
@@ -236,13 +244,4 @@ public class RBook extends AbstractModel<String> implements Serializable {
 	public void setPageNum(BigInteger pageNum) {
 		this.pageNum = pageNum;
 	}
-
-	public String getIsbn() {
-		return isbn;
-	}
-
-	public void setIsbn(String isbn) {
-		this.isbn = isbn;
-	}
-
 }

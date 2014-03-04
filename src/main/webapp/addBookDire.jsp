@@ -41,20 +41,20 @@ if (level == null || "null".equalsIgnoreCase(level)) {
 				<input type="hidden" name="bookDire.bookId" value="<%=bookId%>"/>
 				<input type="hidden" name="bookDire.parentDireId" value="<%=parentId%>"/>
 				
-				<div class="control-group">
+				<div class="control-group" style="display:none">
 					<label class="control-label">目录名称</label>
 					<div class="controls">
-						<input type="text" name="bookDire.name">
+						<input type="text" name="bookDire.name" value="书籍目录">
 					</div>
 				</div>
-				
+				<!--
 				<div class="control-group">
 					<label class="control-label">描述</label>
 					<div class="controls">
 						<input type="text" name="bookDire.notes">
 					</div>
 				</div>
-				
+				 
 				<div class="control-group">
 					<label class="control-label">起始页码</label>
 					<div class="controls">
@@ -68,7 +68,7 @@ if (level == null || "null".equalsIgnoreCase(level)) {
 						<input type="text" name="bookDire.ePageNum">
 					</div>
 				</div>
-				
+				 -->
 				<div class="control-group" style="display:none">
 					<label class="control-label">账号Id</label>
 					<div class="controls">
@@ -92,7 +92,7 @@ if (level == null || "null".equalsIgnoreCase(level)) {
 				
 				<div class="form-actions">
 					<button class="btn btn-primary" type="button"  onclick="addDire();">创建</button>
-					<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">取消</button>
+					<button class="btn btn-primary" style="margin-left:50px" onclick="self.close();">取消</button>
 				</div>
 				
 			</form>
@@ -102,10 +102,6 @@ if (level == null || "null".equalsIgnoreCase(level)) {
 </body>
 
 <script type="text/javascript">
-
-function cancel() {
-	location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=<%=bookId%>";
-}
 
 function addDire() {
 	jQuery.ajax({

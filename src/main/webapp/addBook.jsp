@@ -73,7 +73,7 @@ List<PubPress> pressList = pressDao.getAll();
 					<div class="control-group">
 						<label class="control-label">书籍编码</label>
 						<div class="controls">
-							<input type="text" name="bookInfo.isbn">
+							<input type="text" name="bookInfo.bookNo">
 						</div>
 					</div>
 					

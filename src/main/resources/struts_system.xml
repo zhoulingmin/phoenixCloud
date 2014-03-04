@@ -6,5 +6,16 @@
 		<action name="*_*" class="{1}MgmtAction" method="{2}" >
 			<result name="success">/{1}_{2}.jsp</result>
 		</action>
+		
+		<action name="login" class="com.phoenixcloud.user.action.LoginAction" >
+			<result name="success">/agencyMgmt.jsp</result>
+			<result name="success_admin">/agencyMgmt.jsp</result>
+			<result name="success_manager">/agencyMgmt.jsp</result>
+			<result name="success_user">/agencyMgmt.jsp</result>
+			<result name="NotFound">/agencyMgmt.jsp</result>
+			<result name="ErrorPass">/agencyMgmt.jsp</result>
+			<result name="Expired">/agencyMgmt.jsp</result>
+		</action>
+		
 	</package>
 </struts>

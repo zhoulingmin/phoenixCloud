@@ -158,4 +158,11 @@ public class SysStaff extends AbstractModel<String> implements Serializable {
 		return staffId;
 	}
 
+	public boolean isExpired() {
+		if (new Date().after(validDate)) {
+			return true;
+		}
+		return false;
+	}
+	
 }

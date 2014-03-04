@@ -1,5 +1,6 @@
 package com.phoenixcloud.system.service.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,11 +10,13 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import com.phoenixcloud.bean.PubHw;
+import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
 import com.phoenixcloud.bean.SysStaffRegCode;
 import com.phoenixcloud.dao.PubHwDao;
+import com.phoenixcloud.dao.PubServerAddrDao;
 import com.phoenixcloud.dao.SysPurviewDao;
 import com.phoenixcloud.dao.SysStaffDao;
 import com.phoenixcloud.dao.SysStaffPurviewDao;
@@ -38,6 +41,9 @@ public class SysServiceImpl implements ISysService{
 	@Resource
 	private SysStaffRegCodeDao staffRegCodeDao;
 	
+	@Resource
+	private PubServerAddrDao serverAddrDao;
+	
 	public void setPurviewDao(SysPurviewDao purviewDao) {
 		this.purviewDao = purviewDao;
 	}
@@ -58,6 +64,10 @@ public class SysServiceImpl implements ISysService{
 		this.staffRegCodeDao = staffRegCodeDao;
 	}
 	
+	public void setServerAddrDao(PubServerAddrDao serverAddrDao) {
+		this.serverAddrDao = serverAddrDao;
+	}
+
 	@Override
 	public List<SysStaff> getAllStaff() {
 		List<SysStaff> staffList = staffDao.getAll();
@@ -227,5 +237,9 @@ public class SysServiceImpl implements ISysService{
 	@Override
 	public SysStaffRegCode findStaffRegCodeById(String id) {
 		return staffRegCodeDao.find(id);
+	}
+	
+	public PubServerAddr findServerAddrByOrgId(BigInteger orgId) {
+		return serverAddrDao.findByOrgId(orgId);
 	}
 }

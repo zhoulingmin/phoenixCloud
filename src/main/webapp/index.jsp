@@ -116,7 +116,7 @@
 
 	<div id="loginbox">
 		<form id="loginform" class="form-vertical" method="GET"
-			onSubmit="return check();" action="<%=ctx%>/agencyMgmt.jsp">
+			onSubmit="return check();" action="<%=ctx%>/system/login.do">
 			<span style="color:red"><%=msg==null?"":msg%></span>
 			<br>
 			<br>
@@ -124,7 +124,7 @@
 				<div class="controls">
 					<div class="input-prepend">
 						<span class="add-on"><i class="icon-user"></i></span><input
-							id="username" name="username" type="text" placeholder="用户名" />
+							id="username" name="staff.code" type="text" placeholder="登陆名" />
 					</div>
 				</div>
 			</div>
@@ -132,13 +132,13 @@
 				<div class="controls">
 					<div class="input-prepend">
 						<span class="add-on"><i class="icon-lock"></i></span><input
-							id="password" name="password" type="password"
+							id="password" name="staff.password" type="password"
 							placeholder="密码" />
 					</div>
 				</div>
 			</div>
 			<div class="form-actions">
-				<span class="pull-left"><a href="#" class="flip-link"
+				<span style="display:none" class="pull-left"><a href="#" class="flip-link"
 					id="to-recover" onclick="register();">注册</a>&nbsp;&nbsp;&nbsp;</span><span
 					class="pull-left"><a href="#" onclick="setInfo(this);" >忘记密码?</a></span> <span
 					class="pull-right"><input type="submit"

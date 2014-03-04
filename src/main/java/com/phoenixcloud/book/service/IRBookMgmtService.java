@@ -14,6 +14,7 @@ public interface IRBookMgmtService {
 	RBook findBook(String bookId);
 	void removeBook(String bookId);
 	List<RBook> searchBook(RBook book);
+	boolean checkBookNoExist(String bookNo);
 	
 	List<RBookDire> getBookDires(BigInteger bookId, BigInteger parentId);
 	void saveBookDire(RBookDire bookDire);

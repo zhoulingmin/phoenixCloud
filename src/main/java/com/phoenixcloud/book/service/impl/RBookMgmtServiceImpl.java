@@ -90,7 +90,11 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 		return bookList;
 	}
 	
-	
+	public boolean checkBookNoExist(String bookNo) {
+		List<RBook> bookList = bookDao.findByBookNo(bookNo);
+		return (bookList == null);
+	}
+		
 	public List<RBookDire> getBookDires(BigInteger bookId, BigInteger parentId) {
 		List<RBookDire> bdList = bookDireDao.findSubDires(bookId, parentId);
 		if (bdList == null) {

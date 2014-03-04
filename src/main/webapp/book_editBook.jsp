@@ -28,6 +28,13 @@ if (orgBean != null) {
 	orgName = orgBean.getOrgName();
 }
 
+String accntName = "";
+SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
+SysStaff staff = staffDao.find(vs.findString("bookInfo.staffId"));
+if (staff != null) {
+	accntName = staff.getName();
+}
+
 %>
 
 <head>
@@ -89,6 +96,13 @@ if (orgBean != null) {
 						<label class="control-label">书籍名称</label>
 						<div class="controls">
 							<input type="text" name="bookInfo.name" value="<s:property value="bookInfo.name"/>">
+						</div>
+					</div>
+					
+					<div class="control-group">
+						<label class="control-label">书籍编码</label>
+						<div class="controls">
+							<input type="text" name="bookInfo.bookNo" value="<s:property value="bookInfo.bookNo"/>" onchange="checkBookNoExist();">
 						</div>
 					</div>
 					
@@ -176,6 +190,28 @@ if (orgBean != null) {
 					</div>
 					
 					<div class="control-group">
+						<label class="control-label">服务器IP地址</label>
+						<div class="controls">
+							<input type="text" name="bookInfo.ipAddr" value="<s:property value="bookInfo.ipAddr"/>" readonly="readonly">
+						</div>
+					</div>
+					
+					<div class="control-group">
+						<label class="control-label">书籍全路径</label>
+						<div class="controls">
+							<input type="text" name="bookInfo.allAddr" value="<s:property value="bookInfo.allAddr"/>" readonly="readonly">
+						</div>
+					</div>
+					
+					<div class="control-group">
+						<label class="control-label">账号</label>
+						<div class="controls">
+							<input type="hidden" name="bookInfo.orgId" value="<s:property value="bookInfo.orgId"/>">
+							<input type="text" name="accntName" value="<%= accntName%>" readonly="readonly">
+						</div>
+					</div>
+					
+					<div class="control-group">
 						<label class="control-label">备注</label>
 						<div class="controls">
 							<input type="text" name="bookInfo.notes" value="<s:property value="bookInfo.notes"/>">
@@ -203,6 +239,34 @@ function checkfile() {
 		return false;
 	}
 	return true;
+}
+
+function checkBookNoExist(){
+	var bookNo = jQuery("input[name='bookInfo.bookNo']")[0];
+	if (bookNo == null || bookNo.value.length == 0) {
+		alert("书籍编码不能为空！");
+		return;
+	}
+	
+	jQuery.ajax({
+		url: "<%=ctx%>/book/book_checkBookNo.do",
+		data: {"bookInfo.bookNo": bookNo.value},
+		dataType: "JSON",
+		async: false,
+		timeout: 3000,
+		success: function(ret) {
+			if (ret == null || !ret.ret) {
+				alert("检查书籍编码是否重复时，出错！");
+				jQuery(bookNo).val("");
+			}
+		},
+		error: function(XMLRequest, textInfo) {
+			if (textInfo != null) {
+				alert(textInfo);
+			}
+			jQuery(bookNo).val("");
+		}
+	});
 }
 
 function onfocusOrg() {

@@ -25,4 +25,10 @@ public class SysStaffDao extends AbstractDao<SysStaff> {
 		query.setParameter(1, id);
 		return getSingleResultOrNull(query);
 	}
+	
+	public SysStaff findByCode(String code) {
+		Query query = entityManager.createQuery("select staff from SysStaff staff where staff.deleteState = 0 and staff.code = ?1 order by staff.updateTime desc");
+		query.setParameter(1, code);
+		return getSingleResultOrNull(query);
+	}
 }

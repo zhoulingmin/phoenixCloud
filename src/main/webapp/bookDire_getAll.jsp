@@ -145,11 +145,22 @@ function cancel() {
 
 var count = 0;
 var updatedCount = 0;
+var isAjax = false;
 
 function updateDire() {
+	if (isAjax) {
+		alert("正在保存，请稍后重试！");
+		return;
+	}
+	if (jQuery("tbody tr[direId!='0']").length > 0) {
+		isAjax = true;
+	}
 	updatedCount = 0;
 	count = jQuery("tbody tr[direId!='0']").length;
 	jQuery("tbody tr[direId!='0']").each(function() {
+		if (!isAjax) {
+			
+		}
 		var direId = this.getAttribute("direId");
 		var name = jQuery(this).find("input[name='name']")[0].value;
 		var notes = jQuery(this).find("input[name='notes']")[0].value;
@@ -168,12 +179,18 @@ function updateDire() {
 			},
 			timeout: 30000,
 			success: function() {
+				updatedCount++;
 			},
 			error: function() {
+				isAjax = false;
 				alert("保存书籍目录失败！");
 			}
 		});
 	});
+}
+
+function checkUpdated() {
+
 }
 
 var $contextMenu = $("#contextMenu");
@@ -213,8 +230,8 @@ $(document).ready(function(){
 			var url = "<%=ctx%>/addBookDire.jsp?bookId=<%=book.getId()%>&parentId=" 
 					+ $curDire.getAttribute("direId") + "&level=" + $curDire.getAttribute("level");
 			var title = "创建书籍目录";
-			var params = "height=470,width=635,top=" 
-				+ (window.screen.availHeight - 30 - 470) / 2 
+			var params = "height=245,width=635,top=" 
+				+ (window.screen.availHeight - 30 - 245) / 2 
 				+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
 				+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
 			window.open(url, title, params);
