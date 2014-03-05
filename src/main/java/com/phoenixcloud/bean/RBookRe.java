@@ -63,7 +63,7 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	private String name;
 
 	@Column(length=255)
-	private String notes;
+	private String notes = "";
 
 	@Column(name="PARENT_RES_ID")
 	private BigInteger parentResId = BigInteger.ZERO;
@@ -210,6 +210,37 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	public String getId() {
 		// TODO Auto-generated method stub
 		return resId;
+	}
+	
+	public String getLocalPath() {
+		String localPath = "";
+		
+		if (this.isUpload == (byte)0) {
+			return localPath;
+		}
+		
+		int startIdx = this.allAddr.indexOf(":");
+		if (startIdx == -1){
+			return localPath;
+		}
+		
+		startIdx = this.allAddr.indexOf(":", startIdx + 1);
+		if (startIdx == -1){
+			return localPath;
+		}
+		
+		startIdx = this.allAddr.indexOf("/", startIdx);
+		if (startIdx == -1) {
+			return localPath;
+		}
+		
+		if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) {
+			localPath = this.allAddr.substring(startIdx + 1);
+		} else {
+			localPath = this.allAddr.substring(startIdx);
+		}
+		
+		return localPath;
 	}
 
 }

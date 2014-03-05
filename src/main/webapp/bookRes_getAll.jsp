@@ -131,6 +131,9 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 									<%} %>
 									<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/bookRes_viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
 									<a class="tip-top" data-original-title="修改" href="#" onclick="return editResFromIcon(<%=res.getId()%>)"><i class="icon-edit"></i></a>
+									<%if (res.getIsUpload() == (byte)1) {%>
+									<a class="tip-top" data-original-title="下载" href="<%=ctx%>/book/bookRes_download.do?bookRes.resId=<%=res.getId()%>"><i class="icon-download-alt"></i></a>
+									<%} %>
 									<%if (res.getIsAudit() == (byte)-1) {%>
 									<a class="tip-top" data-original-title="通过" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=true"><i class="icon-ok-circle"></i></a>
 									<a class="tip-top" data-original-title="不通过" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=false"><i class="icon-ban-circle"></i></a>
@@ -167,8 +170,8 @@ function addRes() {
 	}
 	var url = "<%=ctx%>/addRes.jsp?bookId=<%=book.getBookId()%>&parentId=" + parentId;
 	var title = "创建书籍资源";
-	var params = "height=470,width=635,top=" 
-		+ (window.screen.availHeight - 30 - 470) / 2 
+	var params = "height=400,width=635,top=" 
+		+ (window.screen.availHeight - 30 - 400) / 2 
 		+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
 		+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
 	window.open(url, title, params);
@@ -210,8 +213,8 @@ function uploadRes() {
 	
 	var url = "<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=" + checkedItems[0].value;
 	var title = "修改书籍资源";
-	var params = "height=470,width=635,top=" 
-		+ (window.screen.availHeight - 30 - 470) / 2 
+	var params = "height=400,width=635,top=" 
+		+ (window.screen.availHeight - 30 - 400) / 2 
 		+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
 		+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
 	window.open(url, title, params);

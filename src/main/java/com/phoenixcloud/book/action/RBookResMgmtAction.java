@@ -1,5 +1,9 @@
 package com.phoenixcloud.book.action;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,13 +12,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.dispatcher.RequestMap;
+import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.interceptor.SessionAware;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -22,25 +31,32 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.agency.service.IAgencyMgmtService;
 import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.PubOrgCata;
+import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookRe;
+import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.book.vo.BookResNode;
+import com.phoenixcloud.dao.PubServerAddrDao;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
 @Component("bookResMgmtAction")
-public class RBookResMgmtAction extends ActionSupport implements RequestAware,ServletResponseAware{
+public class RBookResMgmtAction extends ActionSupport implements RequestAware,ServletResponseAware,SessionAware{
 	private static final long serialVersionUID = 5600142681527501077L;
 	
 	private RequestMap request;
 	private HttpServletResponse response;
+	private SessionMap session;
 	
 	@Resource(name="bookMgmtServiceImpl")
 	private IRBookMgmtService iBookService;
 	
 	@Resource(name="agencyMgmtServiceImpl")
 	private IAgencyMgmtService agencyService;
+	
+	@Autowired
+	private PubServerAddrDao serAddrDao;
 	
 	private int start;
 	private int end;
@@ -50,6 +66,16 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	
 	private RBookRe bookRes;
 	private String resIdArr;
+	
+	public String getResIdArr() {
+		return resIdArr;
+	}
+
+	public void setResIdArr(String resIdArr) {
+		this.resIdArr = resIdArr;
+	}
+
+	private int num;
 	
 	public void setiBookService(IRBookMgmtService iBookService) {
 		this.iBookService = iBookService;
@@ -306,11 +332,86 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	
 	public String addRes() {
 		Date date = new Date();
-		bookRes.setCreateTime(date);
-		bookRes.setUpdateTime(date);
-		bookRes.setStaffId(new BigInteger("1"));
-		iBookService.saveBookRes(bookRes);
+		if (num < 1) {
+			num = 1;
+		}
+		
+		SysStaff curStaff = (SysStaff)session.get("user");
+		PubServerAddr addr = serAddrDao.findByOrgId(curStaff.getOrgId());
+		String ipAddr = "";
+		if (addr != null) {
+			ipAddr = addr.getBookSerIp();
+		}
+		for (int i = 0; i < num; i++) {
+			RBookRe res = new RBookRe();
+			res.setBookId(bookRes.getBookId());
+			res.setCataAddrId(bookRes.getCataAddrId());
+			res.setCreateTime(date);
+			res.setUpdateTime(date);
+			res.setFormat(bookRes.getFormat());
+			res.setName(bookRes.getName());
+			res.setParentResId(bookRes.getParentResId());
+			res.setStaffId(new BigInteger(curStaff.getStaffId()));
+			res.setIpAddr(ipAddr);
+			iBookService.saveBookRes(res);
+		}
+		
 		return null;
 	}
 	
+	private void outputToInput(OutputStream os, InputStream is) throws IOException {
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = is.read(buf)) > 0) {
+                os.write(buf, 0, len);
+        }
+    }
+
+	public String download() throws Exception{
+		RBookRe res = iBookService.findBookRes(bookRes.getResId());
+		if (res == null) {
+			throw new Exception("Not found the resource by id:" + bookRes.getResId());
+		}
+		response.setCharacterEncoding("utf-8");
+		response.setContentType("application/zip");  //octet-stream
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + res.getName() + ".zip\"");
+		try {
+			ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
+	        zos.setLevel(9);
+	        ZipEntry resEntry = new ZipEntry(res.getName());
+	        zos.putNextEntry(resEntry);
+	        FileInputStream fis = new FileInputStream(res.getLocalPath());
+	        outputToInput(zos, fis);
+	        zos.closeEntry();
+	        zos.close();
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
+		return null;
+	}
+	
+	public int getNum() {
+		return num;
+	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
+
+	@Override
+	public void setSession(Map<String, Object> session) {
+		// TODO Auto-generated method stub
+		this.session = (SessionMap) session;
+	}
+	public void addActionError(String anErrorMessage) {
+        //validationAware.addActionError(anErrorMessage);
+    }
+
+    public void addActionMessage(String aMessage) {
+       // validationAware.addActionMessage(aMessage);
+    }
+
+    public void addFieldError(String fieldName, String errorMessage) {
+        //validationAware.addFieldError(fieldName, errorMessage);
+    }
 }

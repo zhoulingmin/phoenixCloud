@@ -50,10 +50,10 @@ List<PubDdv> cataAddrList = ddvDao.findByTblAndField("r_book_res", "CATA_ADDR_ID
 				<input type="hidden" name="bookRes.bookId" value="<%=bookId%>"/>
 				<input type="hidden" name="bookRes.parentResId" value="<%=parentId%>"/>
 				
-				<div class="control-group">
+				<div class="control-group" style="display:none">
 					<label class="control-label">资源名称</label>
 					<div class="controls">
-						<input type="text" name="bookRes.name">
+						<input type="hidden" name="bookRes.name" value="资源">
 					</div>
 				</div>
 				
@@ -79,10 +79,17 @@ List<PubDdv> cataAddrList = ddvDao.findByTblAndField("r_book_res", "CATA_ADDR_ID
 					</div>
 				</div>
 				
-				<div class="control-group">
+				<div class="control-group" style="display:none">
 					<label class="control-label">备注</label>
 					<div class="controls">
-						<input type="text" name="bookRes.notes">
+						<input type="text" name="bookRes.notes" value="">
+					</div>
+				</div>
+				
+				<div class="control-group" >
+					<label class="control-label">数目</label>
+					<div class="controls">
+						<input type="text" name="num">
 					</div>
 				</div>
 				

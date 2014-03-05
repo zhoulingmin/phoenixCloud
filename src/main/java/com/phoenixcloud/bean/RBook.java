@@ -244,4 +244,28 @@ public class RBook extends AbstractModel<String> implements Serializable {
 	public void setPageNum(BigInteger pageNum) {
 		this.pageNum = pageNum;
 	}
+	
+	public String getLocalPath() {
+		String localPath = "";
+		
+		if (this.isUpload == (byte)0) {
+			return localPath;
+		}
+		
+		int startIdx = this.allAddr.indexOf(":");
+		if (startIdx == -1){
+			return localPath;
+		}
+		startIdx = this.allAddr.indexOf("/", startIdx);
+		if (startIdx == -1) {
+			return localPath;
+		}
+		if (System.getProperty("os.name").indexOf("windows") != -1) {
+			localPath = this.allAddr.substring(startIdx + 1);
+		} else {
+			localPath = this.allAddr.substring(startIdx);
+		}
+		
+		return localPath;
+	}
 }

@@ -12,9 +12,9 @@
 			<result name="success_admin">/agencyMgmt.jsp</result>
 			<result name="success_manager">/agencyMgmt.jsp</result>
 			<result name="success_user">/agencyMgmt.jsp</result>
-			<result name="NotFound">/agencyMgmt.jsp</result>
-			<result name="ErrorPass">/agencyMgmt.jsp</result>
-			<result name="Expired">/agencyMgmt.jsp</result>
+			<result name="NotFound">/loginFailed.jsp?reason=NotFound</result>
+			<result name="ErrorPass">/loginFailed.jsp?reason=ErrorPass</result>
+			<result name="Expired">/loginFailed.jsp?reason=Expired</result>
 		</action>
 		
 	</package>

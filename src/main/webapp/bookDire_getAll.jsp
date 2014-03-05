@@ -47,7 +47,7 @@ JSONArray direArr = (JSONArray)request.getAttribute("direArr");
 	}
 	table th,td{
 	border: 1px solid #DADADA;
-	width:10%;
+	width:20%;
 	}
 	th{
 	text-align:left;
@@ -64,7 +64,7 @@ JSONArray direArr = (JSONArray)request.getAttribute("direArr");
 	<div id="contextMenu" class="dropdown clearfix">
 	    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:absolute;margin-bottom:5px;">
 	        <li><a tabindex="1" href="#">新建</a></li>
-	        <li><a tabindex="3" href="#">删除</a></li>
+	        <li><a tabindex="2" href="#">删除</a></li>
 	    </ul>
 	</div>
 	
@@ -146,6 +146,7 @@ function cancel() {
 var count = 0;
 var updatedCount = 0;
 var isAjax = false;
+var timerCheck;
 
 function updateDire() {
 	if (isAjax) {
@@ -159,7 +160,15 @@ function updateDire() {
 	count = jQuery("tbody tr[direId!='0']").length;
 	jQuery("tbody tr[direId!='0']").each(function() {
 		if (!isAjax) {
-			
+			isAjax = true;
+			timerCheck = setTimeout(function() {
+				if (updatedCount != count) {
+					alert("保存书籍目录失败！");
+				} else {
+					alert("保存书籍成功！");
+				}
+				isAjax = false;
+			}, count * 30 * 1000);
 		}
 		var direId = this.getAttribute("direId");
 		var name = jQuery(this).find("input[name='name']")[0].value;
@@ -180,6 +189,11 @@ function updateDire() {
 			timeout: 30000,
 			success: function() {
 				updatedCount++;
+				if (updatedCount == count) {
+					alert("保存书籍成功！");
+					clearTimeout(timerCheck);
+					isAjax = false;
+				}
 			},
 			error: function() {
 				isAjax = false;
@@ -187,10 +201,6 @@ function updateDire() {
 			}
 		});
 	});
-}
-
-function checkUpdated() {
-
 }
 
 var $contextMenu = $("#contextMenu");
@@ -208,6 +218,14 @@ $(document).ready(function(){
 		});
 		$curDire = this;
 		return false;
+	});
+	
+	$("tbody tr").on("mouseover", function(event) {
+		$(this).attr("bgcolor", "#E6E6FA");
+	});
+	
+	$("tbody tr").on("mouseout", function(event) {
+		$(this).removeAttr("bgcolor");
 	});
 	
 	$("td").on("click", function(event) {

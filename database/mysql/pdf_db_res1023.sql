@@ -102,7 +102,7 @@ CREATE TABLE `r_book_res` (
   `PARENT_RES_ID` bigint(12) DEFAULT NULL,
   `IP_ADDR` varchar(16) DEFAULT NULL,
   `CATA_ADDR_ID` bigint(12) DEFAULT NULL COMMENT '',
-  `ALL_ADDR` varchar(60) DEFAULT NULL,
+  `ALL_ADDR` text DEFAULT NULL,
   `IS_UPLOAD` tinyint(1) NOT NULL COMMENT '',
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
