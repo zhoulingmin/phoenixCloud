@@ -29,7 +29,7 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	private String resId;
 
 	@Column(name="ALL_ADDR", length=60)
-	private String allAddr;
+	private String allAddr = "";
 
 	@Column(name="AUDIT_STAFF_ID")
 	private BigInteger auditStaffId = BigInteger.ZERO;
@@ -37,8 +37,8 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	@Column(name="BOOK_ID", nullable=false)
 	private BigInteger bookId;
 
-	@Column(name="CATA_ADDR_ID", length=12)
-	private BigInteger cataAddrId;
+	@Column(name="CATA_ADDR", length=255)
+	private String cataAddr = "";
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="CREATE_TIME", nullable=false)
@@ -51,7 +51,7 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	private BigInteger format;
 
 	@Column(name="IP_ADDR", length=16)
-	private String ipAddr;
+	private String ipAddr = "";
 
 	@Column(name="IS_AUDIT", nullable=false)
 	private byte isAudit = (byte)-1;
@@ -110,12 +110,12 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 		this.bookId = bookId;
 	}
 
-	public BigInteger getCataAddrId() {
-		return cataAddrId;
+	public String getCataAddr() {
+		return cataAddr;
 	}
 
-	public void setCataAddrId(BigInteger cataAddrId) {
-		this.cataAddrId = cataAddrId;
+	public void setCataAddr(String cataAddr) {
+		this.cataAddr = cataAddr;
 	}
 
 	public Date getCreateTime() {

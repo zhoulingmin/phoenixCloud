@@ -16,7 +16,6 @@ if (parentId == null || "null".equalsIgnoreCase(parentId)) {
 
 PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 List<PubDdv> formatList = ddvDao.findByTblAndField("r_book_res", "FORMAT");
-List<PubDdv> cataAddrList = ddvDao.findByTblAndField("r_book_res", "CATA_ADDR_ID");
 
 
 %>
@@ -71,11 +70,7 @@ List<PubDdv> cataAddrList = ddvDao.findByTblAndField("r_book_res", "CATA_ADDR_ID
 				<div class="control-group">
 					<label class="control-label">资源目录地址</label>
 					<div class="controls">
-						<select name="bookRes.cataAddrId">
-							<%for (PubDdv cataAddr : cataAddrList) { %>
-							<option value="<%=cataAddr.getDdvId() %>"><%=cataAddr.getValue() %></option>
-							<%} %>
-						</select>
+						<input type="text" name="bookRes.cataAddr" value="" />
 					</div>
 				</div>
 				

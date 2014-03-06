@@ -319,7 +319,7 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 			return null;
 		}
 		
-		res.setCataAddrId(bookRes.getCataAddrId());
+		res.setCataAddr(bookRes.getCataAddr());
 		res.setFormat(bookRes.getFormat());
 		res.setName(bookRes.getName());
 		res.setNotes(bookRes.getNotes());
@@ -345,7 +345,7 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		for (int i = 0; i < num; i++) {
 			RBookRe res = new RBookRe();
 			res.setBookId(bookRes.getBookId());
-			res.setCataAddrId(bookRes.getCataAddrId());
+			res.setCataAddr(bookRes.getCataAddr());
 			res.setCreateTime(date);
 			res.setUpdateTime(date);
 			res.setFormat(bookRes.getFormat());

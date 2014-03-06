@@ -4,7 +4,14 @@
 <html lang="en">
 <%
 	String ctx = (String) request.getContextPath();
-	String msg = (String)request.getAttribute("msg");
+	String msg = request.getParameter("reason");
+	if (msg == null) {
+		msg = "";
+	} else if ("NotFound".equals(msg) || "ErrorPass".equals(msg)) {
+		msg = "用户名或密码错误！";
+	} else if ("Expired".equals(msg)) {
+		msg = "用户已失效！";
+	}
 %>
 <head>
 <title>凤凰云端管理 </title>
@@ -115,11 +122,10 @@
 	</div>
 
 	<div id="loginbox">
-		<form id="loginform" class="form-vertical" method="POST"
+		<form id="loginform" class="form-vertical" method="post"
 			onSubmit="return check();" action="<%=ctx%>/system/login.do">
-			<span style="color:red; margin-top:10px"><%=msg==null?"":msg%></span>
-			<br>
-			<br>
+			<div style="color:red;margin-top:10px;"><%=msg==null?"":msg%></div>
+			<br />
 			<div class="control-group">
 				<div class="controls">
 					<div class="input-prepend">

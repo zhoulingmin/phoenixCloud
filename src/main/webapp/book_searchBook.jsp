@@ -59,14 +59,14 @@ List<PubPress> pressList = pressDao.getAll();
 			<div class="widget-content">
 				<form id="searchBook" action="" method="post">
 					学段:
-					<select name="bookInfo.stuSegId">
+					<select name="bookInfo.stuSegId" value="<s:property value="bookInfo.stuSegId"/>">
 						<option value="0" selected="selected">全部</option>
 						<%for (PubDdv stu : stuSegList) { %>
 						<option value="<%=stu.getDdvId()%>"><%=stu.getValue() %></option>
 						<%} %>
 					</select>
 					&nbsp;&nbsp;&nbsp;&nbsp;学科:
-					<select name="bookInfo.subjectId">
+					<select name="bookInfo.subjectId" value="<s:property value="bookInfo.subjectId"/>">
 						<option value="0">全部</option>
 						<%for (PubDdv sub: subjectList) {%>
 						<option value="<%=sub.getDdvId() %>"><%=sub.getValue() %></option>
@@ -74,14 +74,14 @@ List<PubPress> pressList = pressDao.getAll();
 					</select>
 					<br />
 					年级:
-					<select name="bookInfo.classId">
+					<select name="bookInfo.classId" value="<s:property value="bookInfo.classId"/>">
 						<option value="0" selected="selected">全部</option>
 						<%for (PubDdv cls : classList) { %>
 						<option value="<%=cls.getDdvId()%>"><%=cls.getValue() %></option>
 						<%} %>
 					</select>
 					&nbsp;&nbsp;&nbsp;&nbsp;出版社:
-					<select name="bookInfo.pressId">
+					<select name="bookInfo.pressId" value="<s:property value="bookInfo.pressId"/>">
 						<option value="0" selected="selected">全部</option>
 						<%for (PubPress press : pressList) { %>
 						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
@@ -125,16 +125,14 @@ List<PubPress> pressList = pressDao.getAll();
 							<th>书名</th>
 							<th>隶属机构</th>
 							<th>上传状态</th>
-							<th>创建人</th>
+							<th>备注</th>
 							<th>创建时间</th>
 							<th>更新时间</th>
-							<th>备注</th>
 							<th>操作</th>
 							</tr>
 						</thead>
 						<tbody>
 							<%
-							SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 							SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 							for (RBook book : bookList) {
 								PubOrg org = iAgencyMgmt.findOrgById(book.getOrgId().toString());
@@ -144,7 +142,6 @@ List<PubPress> pressList = pressDao.getAll();
 								}
 								String createTime = sdf.format(book.getCreateTime());
 								String updateTime = sdf.format(book.getUpdateTime());
-								SysStaff staff = staffDao.find(book.getStaffId().toString());
 							%>
 							<tr>
 								<td style="width:1%">
@@ -158,7 +155,6 @@ List<PubPress> pressList = pressDao.getAll();
 								<td><a href="<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>"><%=book.getName() %></a></td>
 								<td><%=orgName %></td>
 								<td><%if (book.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
-								<td><%=staff.getName() %></td>
 								<td><%=createTime%></td>
 								<td><%=updateTime%></td>
 								<td><%=book.getNotes() %></td>
@@ -289,6 +285,10 @@ jQuery(document).ready(function() {
 			}
 		});
 		return false;
+	});
+	
+	jQuery("select").each(function() {
+		jQuery(this).val(this.getAttribute("value"));
 	});
 });
 

@@ -53,6 +53,7 @@ JSONArray direArr = (JSONArray)request.getAttribute("direArr");
 	text-align:left;
 	}
 	td p{ margin: 0;}
+	td input{width:106px;}
 	</style>
 	
 	<title><%=book.getName()%>-书籍目录管理</title>
@@ -73,15 +74,15 @@ JSONArray direArr = (JSONArray)request.getAttribute("direArr");
 			<h1>凤凰云端</h1>
 		</div>
 		<div class="widget-box">
-			<table style="border: 1px solid #AAAAAA;border-collapse: collapse;width:100%">
+			<table style="border: 1px solid #AAAAAA;border-collapse: collapse;width:80%">
 				<thead style="background:#EEEEEE;">
 					<tr>
 						<%for (int i = 0; i < (maxLevel+2); i++) { %>
 						<th></th>
 						<%} %>
-						<th>描述</th>
 						<th>开始页面</th>
 						<th>结束页面</th>
+						<th>描述</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -109,9 +110,9 @@ JSONArray direArr = (JSONArray)request.getAttribute("direArr");
 								out.print("<td></td>");
 							}
 							
-							out.print("<td><input type='text' name='notes' style='border:0;margin:0;padding:0' value='" + obj.get("notes") + "'>" + "</td>");
 							out.print("<td><input type='text' name='bPageNum' style='border:0;margin:0;padding:0' value='" + obj.get("bPageNum") + "'>" + "</td>");
 							out.print("<td><input type='text' name='ePageNum' style='border:0;margin:0;padding:0' value='" + obj.get("ePageNum") + "'>" + "</td>");
+							out.print("<td><input type='text' name='notes' style='border:0;margin:0;padding:0' value='" + obj.get("notes") + "'>" + "</td>");
 							out.print("</tr>");
 							
 							JSONArray children = (JSONArray)obj.get("children");

@@ -158,6 +158,25 @@ function cancel() {
 	window.location.href = "<%=ctx%>/book/book_getAll.do";
 }
 
+function batchUploadRes() {
+	var checkedItems = jQuery("#resContent tbody").find("input:checked");
+	if (checkedItems != null && checkedItems.length > 1) {
+		alert("请只选择一个资源后，再批量上传子资源！");
+		return;
+	}
+	var parentId = 0;
+	if (checkedItems != null && checkedItems.length == 1) {
+		parentId = checkedItems[0].value;
+	}
+	var url = "<%=ctx%>/bookRes_batchUpload.jsp?bookId=<%=book.getBookId()%>&parentId=" + parentId;
+	var title = "批量上传书籍资源";
+	var params = "height=400,width=635,top=" 
+		+ (window.screen.availHeight - 30 - 400) / 2 
+		+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
+		+ ",toolbar=no,menubar=no,location=no";
+	window.open(url, title, params);
+}
+
 function addRes() {
 	var checkedItems = jQuery("#resContent tbody").find("input:checked");
 	if (checkedItems != null && checkedItems.length > 1) {
@@ -207,7 +226,8 @@ function editResFromIcon(resId) {
 function uploadRes() {
 	var checkedItems = jQuery("#resContent tbody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一个资源后重试！");
+		//alert("请选择一个资源后重试！");
+		batchUploadRes();
 		return;
 	}
 	

@@ -10,6 +10,8 @@
 		<action name="uploadBookRes" class="bookResUploadAction" method="uploadRes">
 			<result name="success" type="redirect">/book/bookRes_editRes.do?bookRes.resId=${resId}</result>
 		</action>
+		<action name="batchUploadBookRes" class="bookResUploadAction" method="batchUploadBookRes">
+		</action>
 		
 		<action name="*_*" class="{1}MgmtAction" method="{2}" >
 			<result name="success">/{1}_{2}.jsp</result>
