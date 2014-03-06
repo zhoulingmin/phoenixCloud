@@ -1,8 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="com.phoenixcloud.util.SpringUtils" %>
+<%@page import="com.phoenixcloud.bean.*" %>
+<%@page import="com.phoenixcloud.dao.*" %>
+<%@page import="java.util.List" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
 String ctx = (String) request.getContextPath();
+PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
+List<PubDdv> hwTypeList = ddvDao.findByTblAndField("pub_hardware", "HW_TYPE");
+
 %>
 
 <head>
@@ -12,11 +19,13 @@ String ctx = (String) request.getContextPath();
 	<link rel="stylesheet" href="<%=ctx%>/css/bootstrap-responsive.min.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.grey.css" class="skin-color" />
+	<link rel="stylesheet" href="<%=ctx%>/css/zTreeStyle/zTreeStyle.css" type="text/css">
 	
 	<script src="<%=ctx%>/js/jquery-2.0.3.js"></script>
 	<script src="<%=ctx%>/js/jquery.ui.custom.js"></script>
 	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.js"></script>
+	<script type="text/javascript" src="<%=ctx%>/js/ztree/jquery.ztree.core-3.5.js"></script>
 	
 	<title>添加硬件</title>
 </head>
@@ -37,7 +46,11 @@ String ctx = (String) request.getContextPath();
 					<div class="control-group">
 						<label class="control-label">硬件类型</label>
 						<div class="controls">
-							<input type="text" name="hw.hwType">
+							<select name="hw.hwType">
+							<%for (PubDdv hwType : hwTypeList) { %>
+								<option value="<%=hwType.getDdvId()%>"><%=hwType.getValue() %></option>
+							<%} %>
+							</select>
 						</div>
 					</div>
 					
@@ -49,9 +62,12 @@ String ctx = (String) request.getContextPath();
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label">绑定账号的ID</label>
+						<label class="control-label">绑定的账号</label>
 						<div class="controls">
-							<input type="text" name="hw.staffId">
+							<input type="hidden" name="hw.staffId">
+							<input type="text" name="staffName" onfocus="onfocusStaff()">
+							<div id="agencyTree" class="widget-box ztree" style="display:none; width:80%">
+							</div>
 						</div>
 					</div>
 					
@@ -106,6 +122,44 @@ function addHw() {
 		}
 	});
 }
+
+function onfocusStaff() {
+	jQuery("#agencyTree").css("display", "block");
+}
+
+var zTreeObj,
+setting = {
+	view: {
+		selectedMulti: false
+	},
+	async: {
+		enable: true,
+		url: "<%=ctx%>/agency/agencyMgmt!getStaff.do",
+		autoParam: ["type", "selfId"]
+	},
+	callback: {
+		onClick: onSelStaff
+	}
+},
+zTreeNodes = [];
+
+function onSelStaff(event, treeId, treeNode, clickFlag) {
+	if (treeNode != null && !treeNode.isParent) {
+		// 1. set org field value
+		jQuery(jQuery("input[name='hw.staffId']")[0]).val(treeNode.selfId);
+		jQuery(jQuery("input[name='staffName']")[0]).val(treeNode.name);
+		// 2. hide
+		jQuery("#agencyTree").css("display", "none");
+	}
+}
+
+jQuery(document).ready(function(){
+	zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, zTreeNodes);
+	jQuery("#agencyTree").on("blur", function(event) {
+		jQuery(this).css("display", "none");
+	});
+});
+
 
 </script>
 </html>

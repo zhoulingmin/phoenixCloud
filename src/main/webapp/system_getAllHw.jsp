@@ -5,6 +5,7 @@
 <%@page import="java.util.*" %>
 <%@page import="com.phoenixcloud.bean.*"%>
 <%@page import="com.phoenixcloud.system.service.ISysService" %>
+<%@page import="com.phoenixcloud.util.SpringUtils, com.phoenixcloud.dao.*" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
@@ -16,6 +17,8 @@ List<PubHw> hwList = (List<PubHw>)request.getAttribute("hwList");
 if (hwList == null) {
 	hwList = new ArrayList<PubHw>();
 }
+PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
+
 %>
 
 <head>
@@ -50,6 +53,7 @@ if (hwList == null) {
 		<div class="widget-box">
 			<div class="widget-content">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addHw" onclick="addHw();" value="新建"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="modifyHw" onclick="modifyHw();" value="修改"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeHw" onclick="removeHws();" value="删除"/>
 			</div>
 		</div>
@@ -94,7 +98,12 @@ if (hwList == null) {
 						}
 						String createTime = sdf.format(hw.getCreateTime());
 						String updateTime = sdf.format(hw.getUpdateTime());
-					
+						
+						PubDdv hwType = ddvDao.find(hw.getHwType().toString());
+						String hwTypeTmp = "";
+						if (hwType != null) {
+							hwTypeTmp = hwType.getValue();
+						}
 					%>
 						<tr>
 							<td>
@@ -104,7 +113,7 @@ if (hwList == null) {
 									</span>
 								</div>
 							</td>
-							<td><%=hw.getHwType() %></td>
+							<td><%=hwTypeTmp %></td>
 							<td><%=hw.getCode() %></td>
 							<td><%=staffName %></td>
 							<td><%=createTime %></td>
@@ -124,6 +133,16 @@ if (hwList == null) {
 	<jsp:include page="footer.jsp" flush="true" />
 </body>
 <script type="text/javascript">
+
+function modifyHw() {
+	var checkedItems = jQuery("#hwTable tbody").find("input:checked");
+	if (checkedItems == null || checkedItems.length != 0) {
+		alert("请选择要修改的硬件！");
+		return;
+	}
+	
+	window.loaction.href = "<%=ctx%>/system/system_editHw.do?hw.hwId=" + checkedItems[0].value;
+}
 
 function removeHws() {
 	var ids = "";

@@ -1,5 +1,6 @@
 package com.phoenixcloud.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -30,5 +31,12 @@ public class SysStaffDao extends AbstractDao<SysStaff> {
 		Query query = entityManager.createQuery("select staff from SysStaff staff where staff.deleteState = 0 and staff.code = ?1 order by staff.updateTime desc");
 		query.setParameter(1, code);
 		return getSingleResultOrNull(query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SysStaff> findByOrgId(BigInteger orgId) {
+		Query query = entityManager.createQuery("select staff from SysStaff staff where staff.deleteState = 0 and staff.orgId = ?1");
+		query.setParameter(1, orgId);
+		return query.getResultList();
 	}
 }

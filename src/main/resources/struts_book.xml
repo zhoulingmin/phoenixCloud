@@ -8,7 +8,7 @@
 		</action>
 		
 		<action name="uploadBookRes" class="bookResUploadAction" method="uploadRes">
-			<result name="success" type="redirect">/book/bookRes_editRes.do?bookRes.resId=${resId}</result>
+			<result name="success" type="redirect">/book/bookRes_editRes.do?bookRes.resId=${bookRes.resId}</result>
 		</action>
 		<action name="batchUploadBookRes" class="bookResUploadAction" method="batchUploadBookRes">
 		</action>

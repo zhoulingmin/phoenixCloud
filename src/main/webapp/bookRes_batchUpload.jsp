@@ -193,7 +193,9 @@ $(function() {
         		$(".start:eq(0)").trigger("click");
         	} else {
         		alert("上传资源成功！");
-        		self.close();
+        		if (window.opener != null) {
+    				window.opener.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=bookId%>";
+    			}
         	}
         },
         progressall: function (e, data) {

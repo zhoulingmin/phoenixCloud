@@ -42,4 +42,10 @@ public class RBookReDao extends AbstractDao<RBookRe>{
 		query.setParameter(2, parentResId);
 		return query.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RBookRe> getAll() {
+		Query query = entityManager.createQuery("select rr from RBookRe rr where rr.deleteState = 0");
+		return query.getResultList();
+	}
 }

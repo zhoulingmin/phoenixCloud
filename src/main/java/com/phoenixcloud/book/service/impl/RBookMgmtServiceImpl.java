@@ -152,6 +152,14 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 		return resList;
 	}
 	
+	public List<RBookRe> getAllRes() {
+		List<RBookRe> resList = bookReDao.getAll();
+		if (resList == null) {
+			resList = new ArrayList<RBookRe>();
+		}
+		return resList;
+	}
+	
 	public RBookRe findBookRes(String resId) {
 		return bookReDao.find(resId);
 	}

@@ -22,12 +22,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.phoenixcloud.bean.PubDdv;
 import com.phoenixcloud.bean.PubServerAddr;
+import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.PhoenixProperties;
+import com.phoenixcloud.dao.PubDdvDao;
 import com.phoenixcloud.dao.PubServerAddrDao;
+import com.phoenixcloud.dao.RBookDao;
+import com.phoenixcloud.dao.RBookReDao;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
@@ -46,7 +51,6 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 	private String resFileContentType;
 	private String resFileFileName;
 
-	private String resId;
 	private RBookRe bookRes;
 	
 	@Resource(name="bookMgmtServiceImpl")
@@ -54,6 +58,15 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 	
 	@Autowired
 	private PubServerAddrDao serAddrDao;
+	
+	@Autowired
+	private RBookDao bookDao;
+	
+	@Autowired
+	private PubDdvDao ddvDao;
+	
+	@Autowired
+	private RBookReDao resDao;
 	
 	PhoenixProperties phoenixProp = PhoenixProperties.getInstance();
 	
@@ -84,14 +97,6 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 	public void setResFileFileName(String resFileFileName) {
 		this.resFileFileName = resFileFileName;
 	}
-
-	public String getResId() {
-		return resId;
-	}
-
-	public void setResId(String resId) {
-		this.resId = resId;
-	}
 		
 	public String batchUploadBookRes() throws Exception {
 		
@@ -108,12 +113,9 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 		bookRes.setCreateTime(date);
 		bookRes.setUpdateTime(date);
 		bookRes.setName(resFileFileName);
+		resDao.persist(bookRes);
 		
-		// 保存文件
-		
-		// 设置alladdr
-		
-		// 保存bookRes，即创建一个新资源
+		uploadRes();
 
 		return null;
 	}
@@ -132,21 +134,55 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 			throw new Exception("上传资源出错！");
 		}
 		
-		FileInputStream fis = null;
-		FileOutputStream os = null;
-		
-		StringBuffer outPath = new StringBuffer();
-		outPath.append(phoenixProp.getProperty("res_file_folder"));
-		outPath.append(File.separator);
-		
-		RBookRe res = iBookService.findBookRes(resId);
+		RBookRe res = iBookService.findBookRes(bookRes.getResId());
 		if (res == null) {
 			throw new Exception("数据库中无法找到目标资源！");
 		}
-			
-		outPath.append(res.getResId());
-		outPath.append(File.separator);
 		
+		SysStaff staff = (SysStaff)session.get("user");
+		if (staff == null) {
+			throw new Exception("没有合适用户！");
+		}
+		
+		FileInputStream fis = null;
+		FileOutputStream os = null;
+		
+		RBook book = bookDao.find(bookRes.getBookId().toString());
+		if (book == null) {
+			throw new Exception("没有找到相应的书籍！");
+		}
+		
+		PubServerAddr addr = serAddrDao.find(staff.getOrgId().toString());
+		PubDdv cataAddr = ddvDao.find(book.getCataAddrId().toString());
+		
+		StringBuffer outPath = new StringBuffer();
+		String localPath = "";
+		if (book.getIsUpload() == (byte)0) {
+			if (addr != null) {
+				localPath = addr.getBookDir();
+			} else {
+				localPath = phoenixProp.getProperty("book_file_folder");
+			}
+			localPath += File.separator;
+			outPath.append(localPath);
+			outPath.append(book.getBookNo());
+		} else {
+			localPath = book.getLocalPath();
+			int lastIdx = localPath.lastIndexOf("/");
+			if (lastIdx != -1) {
+				localPath = localPath.substring(0, lastIdx);
+			}
+			outPath.append(localPath);
+		}
+		outPath.append(File.separator);
+		outPath.append(cataAddr.getValue());
+		
+		outPath.append(File.separator);
+		outPath.append(bookRes.getCataAddr());
+		
+		outPath.append(File.separator);
+		outPath.append(res.getResId());
+
 		File resFolder = new File(outPath.toString());
 		if (!resFolder.exists()) {
 			try {
@@ -156,6 +192,7 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 			}
 		}
 		
+		outPath.append(File.separator);
 		outPath.append(resFileFileName);
 		
 		File file = new File(outPath.toString());
@@ -178,11 +215,16 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 				e.printStackTrace();
 			}
 			// 上传成功后，更新资源存放地址
-			String localPath = outPath.toString().replace(File.separator, "/");
+			String localAllAddr = outPath.toString().replace(File.separator, "/");
+			String tmpAllAddr = "";
+			do {
+				tmpAllAddr = localAllAddr;
+				localAllAddr = localAllAddr.replaceAll("//", "/");
+			} while(tmpAllAddr.length() != localAllAddr.length());
 			String protocol = phoenixProp.getProperty("protocol_file_transfer");
 			String port = phoenixProp.getProperty("hfs_port");
 			
-			res.setAllAddr(protocol + "://" + res.getIpAddr() + ":" + port + "/" + localPath);
+			res.setAllAddr(protocol + "://" + res.getIpAddr() + ":" + port + "/" + localAllAddr);
 			res.setUpdateTime(new Date());
 			res.setIsUpload((byte)1);
 			res.setName(resFileFileName);

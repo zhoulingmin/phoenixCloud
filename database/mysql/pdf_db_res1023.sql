@@ -36,9 +36,11 @@ CREATE TABLE `r_book` (
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '',
+  `PAGE_NUM` bigint(12),
   `STAFF_ID` bigint(12) NOT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`BOOK_ID`)
+  PRIMARY KEY (`BOOK_ID`),
+  UNIQUE INDEX `un_book_no`(`BOOK_NO`, `DELETE_STATE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -101,7 +103,7 @@ CREATE TABLE `r_book_res` (
   `FORMAT` bigint(12) NOT NULL,
   `PARENT_RES_ID` bigint(12) DEFAULT NULL,
   `IP_ADDR` varchar(16) DEFAULT NULL,
-  `CATA_ADDR_ID` bigint(12) DEFAULT NULL COMMENT '',
+  `CATA_ADDR` varchar(255) DEFAULT NULL COMMENT '',
   `ALL_ADDR` text DEFAULT NULL,
   `IS_UPLOAD` tinyint(1) NOT NULL COMMENT '',
   `CREATE_TIME` datetime NOT NULL,

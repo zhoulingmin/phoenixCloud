@@ -16,6 +16,7 @@ import net.sf.json.JSONObject;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,8 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.agency.service.IAgencyMgmtService;
 import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.PubOrgCata;
+import com.phoenixcloud.bean.SysStaff;
+import com.phoenixcloud.dao.SysStaffDao;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
@@ -46,6 +49,9 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 	private String checkedNodes;
 	
 	com.phoenixcloud.agency.vo.Criteria criteria;
+	
+	@Autowired
+	private SysStaffDao staffDao;
 	
 	public javax.servlet.http.HttpServletResponse getResponse() {
 		return response;
@@ -256,6 +262,73 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
         } catch (Exception e) {
         	MiscUtils.getLogger().info(e.toString());
         }
+        
+		return null;
+	}
+	
+	public String getStaff() {
+		// 1.根据type判断是机构目录还是机构
+		// 2.根据selfId获取子节点
+		if (type != null && !"cata".equals(type) && !"org".equals(type)) {
+			return null;
+		}
+		if (selfId == null) {
+			selfId = BigInteger.ZERO;
+		}
+		JSONArray jsonArr = new JSONArray();
+		if (type == null || "cata".equals(type)) {
+			List<PubOrgCata> cataList = iAgencyMgmt.getAllOrgCataByParentCataId(selfId);
+			List<PubOrg> orgList = iAgencyMgmt.getAllOrgByCataId(selfId.toString());
+			
+			// 3.convert cataList and orgList to json string
+			for (PubOrgCata cata : cataList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("type", "cata");
+				jsonObj.put("selfId", cata.getId());
+				jsonObj.put("name", cata.getCataName());
+				//jsonObj.put("id", "cata-" + cata.getId());
+				//jsonObj.put("pid", "cata-" + cata.getParentCataId());
+				jsonObj.put("isParent", true);
+				jsonArr.add(jsonObj);
+			}
+			
+			for (PubOrg org : orgList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("type", "org");
+				jsonObj.put("selfId", org.getId());
+				jsonObj.put("name", org.getOrgName());
+				//jsonObj.put("id", "org-" + org.getId());
+				//jsonObj.put("pid", "cata-" + org.getPubOrgCata().getId());
+				jsonObj.put("isParent", true);
+				jsonArr.add(jsonObj);
+			}
+		} else { 
+			// get all staffs belong to this org
+			List<SysStaff> staffList = staffDao.findByOrgId(selfId);
+			for (SysStaff staff : staffList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("type", "staff");
+				jsonObj.put("selfId", staff.getId());
+				jsonObj.put("name", staff.getName());
+				jsonObj.put("isParent", false);
+				jsonArr.add(jsonObj);
+			}
+		}
+		
+		response.setCharacterEncoding("utf-8"); 
+        response.setContentType("html/text");
+        
+        try {
+        	PrintWriter out = response.getWriter();
+        	out.print(jsonArr.toString());
+        	out.flush();
+        	out.close();
+        } catch (Exception e) {
+        	MiscUtils.getLogger().info(e.toString());
+        }
+        
+        type = null;
+        selfId = BigInteger.ZERO;
         
 		return null;
 	}

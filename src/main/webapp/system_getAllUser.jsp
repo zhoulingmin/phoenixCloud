@@ -1,22 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@page import="org.springframework.web.context.WebApplicationContext" %>
+<%@page import="com.phoenixcloud.util.SpringUtils" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="java.util.*" %>
 <%@page import="com.phoenixcloud.bean.*"%>
+<%@page import="com.phoenixcloud.dao.*"%>
 <%@page import="com.phoenixcloud.system.service.ISysService" %>
 <%@page import="com.phoenixcloud.agency.service.IAgencyMgmtService" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
 String ctx = (String) request.getContextPath();
-WebApplicationContext context = (WebApplicationContext)this.getServletContext().getAttribute(
-		WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-ISysService userService = (ISysService)context.getBean("sysServiceImpl");
-IAgencyMgmtService iAgencyMgmt = (IAgencyMgmtService)context.getBean("agencyMgmtServiceImpl");
+ISysService userService = (ISysService)SpringUtils.getBean("sysServiceImpl");
+IAgencyMgmtService iAgencyMgmt = (IAgencyMgmtService)SpringUtils.getBean("agencyMgmtServiceImpl");
 List<SysStaff> staffList = (List<SysStaff>)request.getAttribute("staffList");
 if (staffList == null) {
 	staffList = new ArrayList<SysStaff>();
 }
+
+PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 %>
 
 <head>
@@ -51,6 +52,7 @@ if (staffList == null) {
 		<div class="widget-box">
 			<div class="widget-content">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addUser" onclick="addUser();" value="新建"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="modifyUser" onclick="modifyUser();" value="修改"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeUser" onclick="removeUsers();" value="删除"/>
 			</div>
 		</div>
@@ -95,6 +97,11 @@ if (staffList == null) {
 						}
 						String createTime = sdf.format(staff.getCreateTime());
 						String updateTime = sdf.format(staff.getUpdateTime());
+						PubDdv staffType = ddvDao.find(staff.getStaffTypeId().toString());
+						String type = "";
+						if (staffType != null) {
+							type = staffType.getValue();
+						}
 					
 					%>
 						<tr>
@@ -108,7 +115,7 @@ if (staffList == null) {
 							<td><%=staff.getId() %></td>
 							<td><%=staff.getName() %></td>
 							<td><%=orgName %></td>
-							<td><%=staff.getStaffTypeId() %></td>
+							<td><%=type %></td>
 							<td><%=staff.getCode() %></td>
 							<td><%=staff.getValidDate() %></td>
 							<td><%=createTime %></td>
@@ -163,8 +170,17 @@ function addUser() {
 	location.href = "<%=ctx%>/addUser.jsp";
 }
 
+function modifyUser() {
+	var checkedItems = jQuery("#userTable tbody").find("input:checked");
+	if (checkedItems == null || checkedItems.length != 1) {
+		alert("请选择要修改的账号！");
+		return;
+	}
+	window.location.href = "<%=ctx%>/system/system_editUser.do?staff.staffId=" + checkedItems[0].value;
+}
+
 jQuery(document).ready(function() {
-	jQuery("td a.tip-top:nth-child(2)").on("click", function(e) {
+	jQuery("td a.tip-top:last-child").on("click", function(e) {
 		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
 		jQuery.ajax({
 			url: "<%=ctx%>/system/system_removeUser.do",

@@ -80,7 +80,7 @@ if (tabId == null || tabId.isEmpty()) {
 					<li class="">
 						<a href="#staffPurTab" data-toggle="tab">功能权限配置</a>
 					</li>
-					<li class="">
+					<li class="" style="display:none">
 						<a href="#staffRegCodeTab" data-toggle="tab">图书下载权限配置</a>
 					</li>
 				</ul>
@@ -189,7 +189,7 @@ if (tabId == null || tabId.isEmpty()) {
 								<td><%=staffPur.getNotes() %></td>
 								<td><%=staffPur.getCfgStaffId() %></td>
 								<td>
-									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/system/system_editStaffPur.do?staffPur.staPurId=<%=staffPur.getId()%>"><i class="icon-edit"></i></a>
+									<a style="display:none" class="tip-top" data-original-title="修改" href="<%=ctx%>/system/system_editStaffPur.do?staffPur.staPurId=<%=staffPur.getId()%>"><i class="icon-edit"></i></a>
 									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
 								</td>
 							</tr>

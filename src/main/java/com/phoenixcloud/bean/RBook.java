@@ -256,11 +256,17 @@ public class RBook extends AbstractModel<String> implements Serializable {
 		if (startIdx == -1){
 			return localPath;
 		}
+		
+		startIdx = this.allAddr.indexOf(":", startIdx + 1);
+		if (startIdx == -1){
+			return localPath;
+		}
+		
 		startIdx = this.allAddr.indexOf("/", startIdx);
 		if (startIdx == -1) {
 			return localPath;
 		}
-		if (System.getProperty("os.name").indexOf("windows") != -1) {
+		if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) {
 			localPath = this.allAddr.substring(startIdx + 1);
 		} else {
 			localPath = this.allAddr.substring(startIdx);

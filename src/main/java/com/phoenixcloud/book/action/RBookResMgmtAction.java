@@ -12,8 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +22,8 @@ import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.interceptor.SessionAware;
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -220,12 +221,16 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 			MiscUtils.getLogger().info("Can't find book by id: " + bookId);
 			return null;
 		}
-		
 		List<RBookRe> resList = iBookService.getResByBookId(bookId);
-
 		request.put("book", book);
 		request.put("resList", resList);
 		
+		return "success";
+	}
+	
+	public String queryAll() {
+		List<RBookRe> resList = iBookService.getAllRes();
+		request.put("resList", resList);
 		return "success";
 	}
 	
@@ -372,12 +377,13 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		if (res == null) {
 			throw new Exception("Not found the resource by id:" + bookRes.getResId());
 		}
-		response.setCharacterEncoding("utf-8");
+		
 		response.setContentType("application/zip");  //octet-stream
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + res.getName() + ".zip\"");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(res.getName().getBytes(), "ISO8859-1") + ".zip\"");
 		try {
 			ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
 	        zos.setLevel(9);
+	        zos.setEncoding("utf-8");
 	        ZipEntry resEntry = new ZipEntry(res.getName());
 	        zos.putNextEntry(resEntry);
 	        FileInputStream fis = new FileInputStream(res.getLocalPath());

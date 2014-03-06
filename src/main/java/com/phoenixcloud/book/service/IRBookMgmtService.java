@@ -24,6 +24,7 @@ public interface IRBookMgmtService {
 	RBookRe findBookRes(String resId);
 	List<BigInteger> getBookIdsHaveRes();
 	List<RBookRe> getResByBookId(BigInteger bookId);
+	List<RBookRe> getAllRes();
 	void saveBookRes(RBookRe bookRes);
 	void removeRes(String resId);
 	

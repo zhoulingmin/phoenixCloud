@@ -59,8 +59,10 @@ if (ddv != null) {
 						</span>
 						<span class="fileinput-filename"></span>
 						<a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
-						<input type="hidden" name="resId" value="<s:property value="bookRes.resId"/>" />
-						<input type="hidden" name="isUpload" value="<s:property value="bookRes.isUpload"/>" />
+						<input type="hidden" name="bookRes.bookId" value="<s:property value="bookRes.bookId"/>" />
+						<input type="hidden" name="bookRes.resId" value="<s:property value="bookRes.resId"/>" />
+						<input type="hidden" name="bookRes.isUpload" value="<s:property value="bookRes.isUpload"/>" />
+						<input type="hidden" name="bookRes.cataAddr" value="<s:property value="bookRes.cataAddr"/>" />
 						<input id="uploadBtn" type="submit" class="btn" onclick="return checkfile();" name="submit" value="上传"/>						
 					</form>
 				</div>
@@ -86,7 +88,7 @@ if (ddv != null) {
 					</div>
 				</div>
 				
-				<div class="control-group" style="display:none">
+				<div class="control-group">
 					<label class="control-label">资源目录地址</label>
 					<div class="controls">
 						<input type="text" name="bookRes.cataAddr" value="<s:property value="bookRes.cataAddr"/>" readonly="readonly"/>
@@ -151,7 +153,7 @@ $(function() {
 		jQuery(this).val(this.getAttribute("value"));
 	});
 	
-	var isUpload = jQuery("input[name='isUpload']")[0].value;
+	var isUpload = jQuery("input[name='bookRes.isUpload']")[0].value;
 	if (isUpload != null && isUpload == 1) {
 		jQuery("#uploadBtn").val("更新");
 	}
