@@ -11,6 +11,7 @@
 <%@page import="java.util.Date" %>
 <%@page import="net.sf.json.JSONArray" %>
 <%@page import="net.sf.json.JSONObject" %>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
@@ -132,7 +133,9 @@ JSONArray direArr = (JSONArray)request.getAttribute("direArr");
 			<br />
 			<br />
 			<input style="float:right; margin-right:30px;" type="button" name="cancel" class="btn btn-primary" onclick="cancel();return false;" value="返回" />
+			<security:phoenixSec purviewCode="editBook">
 			<input style="float:right; margin-right:30px;" class="btn btn-primary" type="button" name="update" onclick="updateDire();return false;" value="保存" />
+			</security:phoenixSec>
 		</div>
 	</div>
 	<jsp:include page="footer.jsp" flush="true" />
@@ -210,7 +213,7 @@ var $curDire;
 // 初始化，手动初始化
 // 初始化之后，开启异步加载
 $(document).ready(function(){
-
+	<security:phoenixSec purviewCode="editBook">
 	$("tbody tr").on("contextmenu", function(event) {
 		$contextMenu.css({
 			  display: "block",
@@ -220,6 +223,7 @@ $(document).ready(function(){
 		$curDire = this;
 		return false;
 	});
+	</security:phoenixSec>
 	
 	$("tbody tr").on("mouseover", function(event) {
 		$(this).attr("bgcolor", "#E6E6FA");

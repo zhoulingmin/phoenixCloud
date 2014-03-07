@@ -6,6 +6,7 @@
 <%@page import="com.phoenixcloud.bean.*"%>
 <%@page import="com.phoenixcloud.system.service.ISysService" %>
 <%@page import="com.phoenixcloud.book.service.IRBookMgmtService" %>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
@@ -32,6 +33,8 @@ String tabId = (String)request.getAttribute("tabId");
 if (tabId == null || tabId.isEmpty()) {
 	tabId = "purviewTabTable";
 }
+
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 %>
 
 <head>
@@ -62,21 +65,23 @@ if (tabId == null || tabId.isEmpty()) {
 		<div id="content-header">
 			<h1>凤凰云端</h1>
 		</div>
-
+		<security:phoenixSec purviewCode="managePurview">
 		<div class="widget-box">
 			<div class="widget-content">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addItem" onclick="addItem();" value="新建"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeItems" onclick="removeItems();" value="删除"/>
 			</div>
 		</div>
-		
+		</security:phoenixSec>
 		<div class="widget-box">
 			
 			<div class="widget-title">
 				<ul class="nav nav-tabs">
+					<security:phoenixSec purviewCode="managePurview">
 					<li class="">
 						<a href="#purviewTab" data-toggle="tab">权限列表</a>
 					</li>
+					</security:phoenixSec>
 					<li class="">
 						<a href="#staffPurTab" data-toggle="tab">功能权限配置</a>
 					</li>
@@ -85,7 +90,7 @@ if (tabId == null || tabId.isEmpty()) {
 					</li>
 				</ul>
 			</div>
-			
+			<security:phoenixSec purviewCode="managePurview">
 			<div class="widget-content tab-content" style="padding: 0px; border-left-width: 0px;">
 				<!-- 权限列表 -->
 				<div id="purviewTab" class="tab-pane">
@@ -110,7 +115,7 @@ if (tabId == null || tabId.isEmpty()) {
 						</thead>
 						<tbody>
 						<%
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+						
 						for (SysPurview pur : purviewList) {
 							String createTime = sdf.format(pur.getCreateTime());
 							String updateTime = sdf.format(pur.getUpdateTime());
@@ -139,6 +144,7 @@ if (tabId == null || tabId.isEmpty()) {
 						</tbody>
 					</table>				
 				</div>
+				</security:phoenixSec>
 				
 				<!-- 功能权限配置 -->
 				<div id="staffPurTab" class="tab-pane">
@@ -159,7 +165,9 @@ if (tabId == null || tabId.isEmpty()) {
 								<th>更新时间</th>
 								<th>备注</th>
 								<th>配置账号</th>
+								<security:phoenixSec purviewCode="managePurview">
 								<th>操作</th>
+								</security:phoenixSec>
 							</tr>
 						</thead>
 						<tbody>
@@ -188,10 +196,12 @@ if (tabId == null || tabId.isEmpty()) {
 								<td><%=updateTime %></td>
 								<td><%=staffPur.getNotes() %></td>
 								<td><%=staffPur.getCfgStaffId() %></td>
+								<security:phoenixSec purviewCode="managePurview">
 								<td>
 									<a style="display:none" class="tip-top" data-original-title="修改" href="<%=ctx%>/system/system_editStaffPur.do?staffPur.staPurId=<%=staffPur.getId()%>"><i class="icon-edit"></i></a>
 									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
 								</td>
+								</security:phoenixSec>
 							</tr>
 						<%} %>
 						</tbody>

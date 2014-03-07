@@ -7,6 +7,7 @@
 <%@page import="com.phoenixcloud.dao.*" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="com.phoenixcloud.util.*" %>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
@@ -94,12 +95,18 @@ List<PubPress> pressList = pressDao.getAll();
 		
 		<div class="widget-box">
 			<div class="widget-content">
+				<security:phoenixSec purviewCode="editBook">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addBook();" value="新建"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="editBook();" value="修改"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeBooks();" value="删除"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadBook" onclick="uploadBook();" value="上传附件"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookDire" onclick="editBookDire();" value="编辑目录"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookRes" onclick="editBookRes();" value="编辑资源"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="editBook" reverse="true">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookDire" onclick="editBookDire();" value="查看目录"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookRes" onclick="editBookRes();" value="查看资源"/>
+				</security:phoenixSec>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewBook();" value="详情"/>
 			</div>
 		</div>
@@ -163,14 +170,23 @@ List<PubPress> pressList = pressDao.getAll();
 								<td><%=updateTime%></td>
 								<td><%=book.getNotes() %></td>
 								<td>
+									<security:phoenixSec purviewCode="editBook">
 									<%if (book.getIsUpload() == (byte)0) {%>
 									<a class="tip-top" data-original-title="上传" href="<%=ctx%>/book/book_editBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-upload"></i></a>
 									<%} %>
+									</security:phoenixSec>
 									<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/book_viewBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-eye-open"></i></a>
+									<security:phoenixSec purviewCode="editBook">
 									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/book_editBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-edit"></i></a>
+									</security:phoenixSec>
 									<a class="tip-top" data-original-title="目录" href="<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
 									<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=book.getId()%>"><i class="icon-file"></i></a>
+									<security:phoenixSec purviewCode="publishBook">
+									<a class="tip-top" data-original-title="发布" href="<%=ctx%>/book/bookBook_doPublish.do?bookInfo.bookId=<%=book.getId()%>"><i class=" icon-share-alt"></i></a>
+									</security:phoenixSec>
+									<security:phoenixSec purviewCode="editBook">
 									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
+									</security:phoenixSec>
 								</td>
 							</tr>
 							<%} %>

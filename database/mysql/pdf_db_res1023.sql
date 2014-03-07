@@ -40,7 +40,7 @@ CREATE TABLE `r_book` (
   `STAFF_ID` bigint(12) NOT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`BOOK_ID`),
-  UNIQUE INDEX `un_book_no`(`BOOK_NO`, `DELETE_STATE`)
+  UNIQUE KEY `un_book_no`(`BOOK_NO`, `DELETE_STATE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------

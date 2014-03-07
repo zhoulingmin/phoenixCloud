@@ -6,6 +6,7 @@
 <%@page import="com.phoenixcloud.dao.*"%>
 <%@page import="com.phoenixcloud.system.service.ISysService" %>
 <%@page import="com.phoenixcloud.agency.service.IAgencyMgmtService" %>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
@@ -48,7 +49,7 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 		<div id="content-header">
 			<h1>凤凰云端</h1>
 		</div>
-
+		<security:phoenixSec purviewCode="manageUser">
 		<div class="widget-box">
 			<div class="widget-content">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addUser" onclick="addUser();" value="新建"/>
@@ -56,6 +57,7 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeUser" onclick="removeUsers();" value="删除"/>
 			</div>
 		</div>
+		</security:phoenixSec>
 		
 		<!-- 显示账号列表  -->
 		<div class="widget-box">
@@ -83,7 +85,9 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 							<th>创建时间</th>
 							<th>更新时间</th>
 							<th>备注</th>
+							<security:phoenixSec purviewCode="manageUser">
 							<th>操作</th>
+							</security:phoenixSec>
 						</tr>
 					</thead>
 					<tbody>
@@ -121,10 +125,12 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 							<td><%=createTime %></td>
 							<td><%=updateTime %></td>
 							<td><%=staff.getNotes() %></td>
+							<security:phoenixSec purviewCode="manageUser">
 							<td>
 								<a class="tip-top" data-original-title="修改" href="<%=ctx%>/system/system_editUser.do?staff.staffId=<%=staff.getId()%>"><i class="icon-edit"></i></a>
 								<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
 							</td>
+							</security:phoenixSec>
 						</tr>
 					<%} %>
 					</tbody>

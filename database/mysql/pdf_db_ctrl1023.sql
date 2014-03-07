@@ -175,7 +175,8 @@ CREATE TABLE `sys_purview` (
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '',
   `NOTES` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`PURVIEW_ID`)
+  PRIMARY KEY (`PURVIEW_ID`),
+  UNIQUE KEY `un_purview_code` (`CODE`,`DELETE_STATE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -237,7 +238,8 @@ CREATE TABLE `sys_staff_purview` (
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '',
   `CFG_STAFF_ID` bigint(12) DEFAULT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`STA_PUR_ID`)
+  PRIMARY KEY (`STA_PUR_ID`),
+  UNIQUE KEY `un_staff_purview` (`STAFF_ID`,`PURVIEW_ID`,`DELETE_STATE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------

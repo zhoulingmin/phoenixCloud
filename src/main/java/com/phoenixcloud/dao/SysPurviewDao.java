@@ -25,4 +25,10 @@ public class SysPurviewDao extends AbstractDao<SysPurview> {
 		query.setParameter(1, id);
 		return getSingleResultOrNull(query);
 	}
+	
+	public SysPurview findByCode(String code) {
+		Query query = entityManager.createQuery("select pur from SysPurview pur where pur.deleteState = 0 and pur.code = ?1");
+		query.setParameter(1, code);
+		return getSingleResultOrNull(query);
+	}
 }

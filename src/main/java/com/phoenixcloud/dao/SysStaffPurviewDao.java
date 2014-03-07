@@ -1,5 +1,6 @@
 package com.phoenixcloud.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -23,6 +24,13 @@ public class SysStaffPurviewDao extends AbstractDao<SysStaffPurview> {
 	public SysStaffPurview find(String id) {
 		Query query = entityManager.createQuery("select sp from SysStaffPurview sp where sp.deleteState = 0 and sp.staPurId = ?1");
 		query.setParameter(1, id);
+		return getSingleResultOrNull(query);
+	}
+	
+	public SysStaffPurview findByStaffAndPurviewId(BigInteger staffId, BigInteger purviewId) {
+		Query query = entityManager.createQuery("select sp from SysStaffPurview sp where sp.deleteState = 0 and sp.staffId = ?1 and sp.purviewId = ?2");
+		query.setParameter(1, staffId);
+		query.setParameter(2, purviewId);
 		return getSingleResultOrNull(query);
 	}
 }

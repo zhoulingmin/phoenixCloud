@@ -6,6 +6,7 @@
 <%@page import="java.util.ArrayList" %>
 <%@page import="com.phoenixcloud.bean.RRegCode" %>
 <%@page import="java.text.SimpleDateFormat" %>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
@@ -48,14 +49,14 @@ if (codeList == null) {
 		<div id="content-header">
 			<h1>凤凰云端</h1>
 		</div>
-		
+		<security:phoenixSec purviewCode="manageRegcode">
 		<div class="widget-box">
 			<div class="widget-content">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addRegCode" onclick="addRegCode();" value="新建"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeCodes" onclick="removeCodes();" value="删除"/>
 			</div>
 		</div>
-
+		</security:phoenixSec>
 		<div><!-- this div node is just used to let $(this).parents('.widget-box') find only one node -->
 			<div class="widget-box">
 				<div class="widget-title">
@@ -82,7 +83,9 @@ if (codeList == null) {
 							<th>更新时间</th>
 							<th>账号</th>
 							<th>备注</th>
+							<security:phoenixSec purviewCode="manageRegcode">
 							<th>操作</th>
+							</security:phoenixSec>
 							</tr>
 						</thead>
 						<tbody>
@@ -114,10 +117,12 @@ if (codeList == null) {
 								<td><%=updateTime%></td>
 								<td><%=code.getStaffId() %></td>
 								<td><%=code.getNotes() %></td>
+								<security:phoenixSec purviewCode="manageRegcode">
 								<td>
 									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/bookRegCode_edit.do?regCode.regCodeId=<%=code.getId()%>"><i class="icon-edit"></i></a>
 									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
 								</td>
+								</security:phoenixSec>
 							</tr>
 							<%} %>
 						</tbody>

@@ -219,6 +219,10 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
     	
     	return null;
     }
+    
+    public String doPublish(){
+    	return null;
+    }
 
 	@SuppressWarnings("rawtypes")
 	@Override

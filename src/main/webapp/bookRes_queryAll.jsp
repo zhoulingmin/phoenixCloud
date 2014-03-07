@@ -7,6 +7,7 @@
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="com.phoenixcloud.util.*" %>
 <%@page import="com.phoenixcloud.dao.*" %>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
@@ -49,9 +50,11 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 		
 		<div class="widget-box">
 			<div class="widget-content">
+				<security:phoenixSec purviewCode="editBook">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeRes" onclick="editRes();" value="修改"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeRes" onclick="removeRes();" value="删除"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadRes" onclick="uploadRes();" value="上传资源"/>
+				</security:phoenixSec>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewRes" onclick="viewRes();" value="详情"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="back" onclick="cancel();" value="返回"/>
 			</div>
@@ -124,19 +127,27 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 								<td><%=auditStatus %></td>
 								<td><%=res.getNotes() %></td>
 								<td>
+									<security:phoenixSec purviewCode="editBook">
 									<%if (res.getIsUpload() == (byte)0) {%>
 									<a class="tip-top" data-original-title="上传" href="#" onclick="return editResFromIcon(<%=res.getId()%>)"><i class="icon-upload"></i></a>
 									<%} %>
+									</security:phoenixSec>
 									<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/bookRes_viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
+									<security:phoenixSec purviewCode="editBook">
 									<a class="tip-top" data-original-title="修改" href="#" onclick="return editResFromIcon(<%=res.getId()%>)"><i class="icon-edit"></i></a>
+									</security:phoenixSec>
 									<%if (res.getIsUpload() == (byte)1) {%>
 									<a class="tip-top" data-original-title="下载" href="<%=ctx%>/book/bookRes_download.do?bookRes.resId=<%=res.getId()%>"><i class="icon-download-alt"></i></a>
 									<%} %>
+									<security:phoenixSec purviewCode="verifyBook">
 									<%if (res.getIsAudit() == (byte)-1) {%>
 									<a class="tip-top" data-original-title="通过" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=true"><i class="icon-ok-circle"></i></a>
 									<a class="tip-top" data-original-title="不通过" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=false"><i class="icon-ban-circle"></i></a>
 									<%} %>
+									</security:phoenixSec>
+									<security:phoenixSec purviewCode="editBook">
 									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
+									</security:phoenixSec>
 								</td>
 							</tr>
 							<%} %>

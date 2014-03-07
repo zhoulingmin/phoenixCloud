@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
@@ -40,10 +40,12 @@
 	<jsp:include page="admin_sidebar.jsp" flush="true"></jsp:include>
 	<div id="contextMenu" class="dropdown clearfix">
 	    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:absolute;margin-bottom:5px;">
+	        <security:phoenixSec purviewCode="manageAgency">
 	        <li><a tabindex="1" href="#">新建</a></li>
 	        <li><a tabindex="2" href="#">删除</a></li>
 	        <li><a tabindex="3" href="#">修改</a></li>
 	        <li class="divider"></li>
+	        </security:phoenixSec>
 	        <li><a tabindex="4" href="#">刷新</a></li>
 	    </ul>
 	</div>
@@ -66,9 +68,11 @@
 		
 		<div class="widget-box">
 			<div class="widget-content">
+				<security:phoenixSec purviewCode="manageAgency">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addAgency" onclick="popUpAddAgency();" value="新建"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeAgency" onclick="removeAgency();" value="删除"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editAgency" onclick="popUpEditAgency();" value="修改"/>
+				</security:phoenixSec>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewAgency" onclick="popUpViewAgency();" value="详情"/>
 			</div>
 		</div>
