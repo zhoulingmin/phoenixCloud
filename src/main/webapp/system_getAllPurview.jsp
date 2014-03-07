@@ -46,6 +46,7 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 	<link rel="stylesheet" href="<%=ctx%>/css/uniform.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/select2.css" />
 	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.grey.css" class="skin-color" />
+	<link rel="stylesheet" href="<%=ctx%>/css/zTreeStyle/zTreeStyle.css" type="text/css">
 	
 	<script src="<%=ctx%>/js/jquery.min.js"></script>
 	<script src="<%=ctx%>/js/jquery.uniform.js"></script>
@@ -55,6 +56,8 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 	<script src="<%=ctx%>/js/select2.min.js"></script>
 	<script src="<%=ctx%>/js/jquery.dataTables.min.js"></script>
 	<script src="<%=ctx%>/js/unicorn.tables.js"></script>
+	<script type="text/javascript" src="<%=ctx%>/js/ztree/jquery.ztree.core-3.5.js"></script>
+	<script type="text/javascript" src="<%=ctx%>/js/ztree/jquery.ztree.excheck-3.5.js"></script>
 	
 <title>权限管理</title>
 </head>
@@ -77,11 +80,6 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			
 			<div class="widget-title">
 				<ul class="nav nav-tabs">
-					<security:phoenixSec purviewCode="managePurview">
-					<li class="">
-						<a href="#purviewTab" data-toggle="tab">权限列表</a>
-					</li>
-					</security:phoenixSec>
 					<li class="">
 						<a href="#staffPurTab" data-toggle="tab">功能权限配置</a>
 					</li>
@@ -90,122 +88,67 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 					</li>
 				</ul>
 			</div>
-			<security:phoenixSec purviewCode="managePurview">
-			<div class="widget-content tab-content" style="padding: 0px; border-left-width: 0px;">
-				<!-- 权限列表 -->
-				<div id="purviewTab" class="tab-pane">
-					<table id="purviewTabTable" class="table table-bordered data-table">
-						<thead>
-							<tr>
-								<th style="width:1%">
-									<div id="uniform-title-table-checkbox" class="checker">
-										<span class="">
-											<input id="title-table-checkbox" type="checkbox" name="title-table-checkbox" style="opacity: 0;">
-										</span>
-									</div>
-								</th>
-								<th style="width:5%">标识</th>
-								<th>权限名称</th>
-								<th>编码</th>
-								<th>创建时间</th>
-								<th>更新时间</th>
-								<th>备注</th>
-								<th>操作</th>
-							</tr>
-						</thead>
-						<tbody>
-						<%
-						
-						for (SysPurview pur : purviewList) {
-							String createTime = sdf.format(pur.getCreateTime());
-							String updateTime = sdf.format(pur.getUpdateTime());
-						
-						%>
-							<tr>
-								<td style="width:1%">
-									<div id="uniform-undefined" class="checker">
-										<span class="">
-											<input type="checkbox" style="opacity: 0;" value="<%=pur.getId()%>">
-										</span>
-									</div>
-								</td>
-								<td style="width:5%"><%=pur.getId() %></td>
-								<td><%=pur.getName() %></td>
-								<td><%=pur.getCode() %></td>
-								<td><%=createTime %></td>
-								<td><%=updateTime %></td>
-								<td><%=pur.getNotes() %></td>
-								<td>
-									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/system/system_editPurview.do?purview.purviewId=<%=pur.getId()%>"><i class="icon-edit"></i></a>
-									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
-								</td>
-							</tr>
-						<%} %>
-						</tbody>
-					</table>				
-				</div>
-				</security:phoenixSec>
-				
+			<div class="widget-content tab-content" style="padding: 0px; border-left-width: 0px;">			
 				<!-- 功能权限配置 -->
-				<div id="staffPurTab" class="tab-pane">
-					<table id="staffPurTabTable" class="table table-bordered data-table">
-						<thead>
-							<tr>
-								<th style="width:1%">
-									<div id="uniform-title-table-checkbox" class="checker">
-										<span class="">
-											<input id="title-table-checkbox" type="checkbox" name="title-table-checkbox" style="opacity: 0;">
-										</span>
-									</div>
-								</th>
-								<th style="width:5%">标识</th>
-								<th>账号</th>
-								<th>权限点标识</th>
-								<th>创建时间</th>
-								<th>更新时间</th>
-								<th>备注</th>
-								<th>配置账号</th>
-								<security:phoenixSec purviewCode="managePurview">
-								<th>操作</th>
-								</security:phoenixSec>
-							</tr>
-						</thead>
-						<tbody>
-						<%
-						for (SysStaffPurview staffPur : staffPurList) {
-							String createTime = sdf.format(staffPur.getCreateTime());
-							String updateTime = sdf.format(staffPur.getUpdateTime());
-							String acntName = "无";
-							SysStaff staff = iSysService.findStaffById(staffPur.getStaffId().toString());
-							if (staff != null) {
-								acntName = staff.getName();
-							}
-						%>
-							<tr>
-								<td style="width:1%">
-									<div id="uniform-undefined" class="checker">
-										<span class="">
-											<input type="checkbox" style="opacity: 0;" value="<%=staffPur.getId()%>">
-										</span>
-									</div>
-								</td>
-								<td style="width:5%"><%=staffPur.getId() %></td>
-								<td><%=acntName %></td>
-								<td><%=staffPur.getPurviewId() %></td>
-								<td><%=createTime %></td>
-								<td><%=updateTime %></td>
-								<td><%=staffPur.getNotes() %></td>
-								<td><%=staffPur.getCfgStaffId() %></td>
-								<security:phoenixSec purviewCode="managePurview">
-								<td>
-									<a style="display:none" class="tip-top" data-original-title="修改" href="<%=ctx%>/system/system_editStaffPur.do?staffPur.staPurId=<%=staffPur.getId()%>"><i class="icon-edit"></i></a>
-									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
-								</td>
-								</security:phoenixSec>
-							</tr>
-						<%} %>
-						</tbody>
-					</table>
+				<div id="staffPurTab" class="tab-pane" style="display:block">
+					<div class="span6">
+						<div class="widget-box">
+							<div class="widget-title">
+								<span class="icon">
+									<i class="icon-user"></i>
+								</span>
+								<h5>账号列表</h5>
+							</div>
+							<div class="widget-content">
+								<div id="agencyTree" class="widget-box ztree" style="display:none; width:80%">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="span6">
+						<div class="widget-box">
+							<div class="widget-title">
+								<span class="icon">
+									<i class="icon-user"></i>
+								</span>
+								<h5>权限点列表</h5>
+							</div>
+							<div class="widget-content" style="padding: 0px; border-left-width: 0px;">
+								<table id="purviewTabTable" class="table table-bordered data-table">
+									<thead>
+										<tr>
+											<th style="width:1%">
+												<div id="uniform-title-table-checkbox" class="checker">
+													<span class="">
+														<input id="title-table-checkbox" type="checkbox" name="title-table-checkbox" style="opacity: 0;">
+													</span>
+												</div>
+											</th>
+											<th>权限名称</th>
+											<th>备注</th>
+										</tr>
+									</thead>
+									<tbody>
+									<%
+									for (SysPurview pur : purviewList) {
+									%>
+										<tr>
+											<td style="width:1%">
+												<div id="uniform-undefined" class="checker">
+													<span class="">
+														<input type="checkbox" style="opacity: 0;" value="<%=pur.getId()%>">
+													</span>
+												</div>
+											</td>
+											<td><%=pur.getName() %></td>
+											<td><%=pur.getNotes() %></td>
+										</tr>
+									<%} %>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
 				</div>
 				
 				<!-- 图书下载权限配置 -->
@@ -364,7 +307,37 @@ function addItem() {
 	}
 }
 
+var zTreeObj,
+setting = {
+	view: {
+		selectedMulti: false
+	},
+	check:{//复选框设置 
+        enable:true,
+        chkStyle:"checkbox",
+		chkboxType:{"Y":"","N":""}
+    },
+	async: {
+		enable: true,
+		url: "<%=ctx%>/agency/agencyMgmt!getStaff.do",
+		autoParam: ["type", "selfId"]
+	},
+	// onAsyncError,onAsyncSuccess are used to deal with batch operation
+	callback: {
+		onClick: onSelStaff,
+	}
+},
+zTreeNodes = [];
+
+var toDelNodes = null;
+var checkedNodes = null;
+var curStatus = "init";
+
+
 jQuery(document).ready(function() {
+	
+	zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, zTreeNodes);
+	
 	// 设置激活tab
 	var activeTabId = "<%=tabId%>";
 	jQuery("#" + activeTabId).addClass("active");
