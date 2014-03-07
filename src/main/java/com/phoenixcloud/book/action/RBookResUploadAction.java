@@ -221,10 +221,14 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 				tmpAllAddr = localAllAddr;
 				localAllAddr = localAllAddr.replaceAll("//", "/");
 			} while(tmpAllAddr.length() != localAllAddr.length());
+			
+			if (!localAllAddr.startsWith("/")) {
+				localAllAddr = "/" + localAllAddr;
+			}
+			
 			String protocol = phoenixProp.getProperty("protocol_file_transfer");
 			String port = phoenixProp.getProperty("hfs_port");
-			
-			res.setAllAddr(protocol + "://" + res.getIpAddr() + ":" + port + "/" + localAllAddr);
+			res.setAllAddr(protocol + "://" + res.getIpAddr() + ":" + port + localAllAddr);
 			res.setUpdateTime(new Date());
 			res.setIsUpload((byte)1);
 			res.setName(resFileFileName);

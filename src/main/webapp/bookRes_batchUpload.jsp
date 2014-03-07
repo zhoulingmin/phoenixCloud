@@ -196,6 +196,7 @@ $(function() {
         		if (window.opener != null) {
     				window.opener.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=bookId%>";
     			}
+        		self.close();
         	}
         },
         progressall: function (e, data) {

@@ -158,9 +158,12 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 				tmpPath = localPath;
 				localPath = localPath.replaceAll("//", "/");
 			} while (tmpPath.length() != localPath.length());
+			if (!localPath.startsWith("/")) {
+				localPath = "/" + localPath;
+			}
 			String protocol = phoenixProp.getProperty("protocol_file_transfer");
 			String port = phoenixProp.getProperty("hfs_port");
-			book.setAllAddr(protocol + "://" + book.getIpAddr() + ":" + port + "/" + localPath);
+			book.setAllAddr(protocol + "://" + book.getIpAddr() + ":" + port + localPath);
 			book.setUpdateTime(new Date());
 			book.setIsUpload((byte)1);
 			iBookService.saveBook(book);
