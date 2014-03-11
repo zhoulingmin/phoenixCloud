@@ -168,9 +168,10 @@ CREATE TABLE `sys_log` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_purview`;
 CREATE TABLE `sys_purview` (
-  `PURVIEW_ID` bigint(12) NOT NULL AUTO_INCREMENT,
+  `PURVIEW_ID` bigint(12) NOT NULL,
   `NAME` varchar(60) NOT NULL,
   `CODE` varchar(60) NOT NULL,
+  `PARENT_ID` bigint(12) NOT NULL,
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '',

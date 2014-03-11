@@ -49,6 +49,9 @@ public class RBook extends AbstractModel<String> implements Serializable {
 
 	@Column(name="IS_UPLOAD", nullable=false)
 	private byte isUpload = (byte)0;
+	
+	@Column(name="IS_AUDIT", nullable=false)
+	private byte isAudit = (byte)-1;
 
 	@Column(name="KIND_ID", nullable=false)
 	private BigInteger kindId;
@@ -153,6 +156,14 @@ public class RBook extends AbstractModel<String> implements Serializable {
 
 	public BigInteger getKindId() {
 		return this.kindId;
+	}
+
+	public byte getIsAudit() {
+		return isAudit;
+	}
+
+	public void setIsAudit(byte isAudit) {
+		this.isAudit = isAudit;
 	}
 
 	public void setKindId(BigInteger kindId) {

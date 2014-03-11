@@ -10,10 +10,12 @@
 				<li><a href="#">报表数据处理</a></li>
 			</ul>
 		</li>
-		<security:phoenixSec purviewCode="queryAgency">
+		<security:phoenixSec purviewCode="ORG_MANAGE">
 		<li id="usermgmt_menu" onclick="javascript:void(0);" class="submenu"><a href="#"><i class="icon icon-user"></i> <span>机构管理</span></a>
 			<ul>
+				<security:phoenixSec purviewCode="ORG_MENU">
 				<li><a href="<%=request.getContextPath()%>/agencyMgmt.jsp">机构管理</a></li>
+				</security:phoenixSec>
 			</ul>
 		</li>
 		</security:phoenixSec>
@@ -24,10 +26,12 @@
 				<li><a href="#">日志写入接口</a></li>
 			</ul>
 		</li>
-		<security:phoenixSec purviewCode="queryBook">
+		<security:phoenixSec purviewCode="BOOK_MANAGE">
 		<li id="search_menu" onclick="javascript:void(0);" class="submenu"><a href="#"><i class="icon icon-search"></i> <span>书籍管理</span></a>
 			<ul>
-				<li><a href="<%=request.getContextPath()%>/book/book_getAll.do">书籍管理</a></li>
+				<security:phoenixSec purviewCode="ORG_MENU">
+				<li><a href="<%=request.getContextPath()%>/book/book_getAll.do?bookInfo.isAudit=-1">书籍制作</a></li>
+				</security:phoenixSec>
 				<li style="display:none"><a href="#">书籍目录管理</a></li>
 				<li style="display:none"><a href="#">书籍上传管理</a></li>
 				<li style="display:none"><a href="#">资源上传管理</a></li>
