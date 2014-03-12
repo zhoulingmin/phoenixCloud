@@ -1,6 +1,7 @@
 package com.phoenixcloud.bean;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -46,6 +47,9 @@ public class SysPurview extends AbstractModel<String> implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="UPDATE_TIME", nullable=false)
 	private Date updateTime;
+	
+	@Column(name="PARENT_ID", nullable=false)
+	private BigInteger parentId;
 
 	public SysPurview() {
 	}
@@ -110,6 +114,14 @@ public class SysPurview extends AbstractModel<String> implements Serializable {
 	public String getId() {
 		// TODO Auto-generated method stub
 		return purviewId;
+	}
+
+	public BigInteger getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(BigInteger parentId) {
+		this.parentId = parentId;
 	}
 
 }

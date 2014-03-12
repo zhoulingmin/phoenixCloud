@@ -1,5 +1,8 @@
 package com.phoenixcloud.system.action;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -7,9 +10,13 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +26,7 @@ import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
 import com.phoenixcloud.bean.SysStaffRegCode;
+import com.phoenixcloud.dao.SysPurviewDao;
 import com.phoenixcloud.system.service.ISysService;
 
 @Scope("prototype")
@@ -49,6 +57,10 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	private String staffRegCodeIdArr;
 	
 	private String tabId;
+	
+	private BigInteger selfId;
+	@Autowired
+	private SysPurviewDao sysPurDao;
 	
 	public void setiSysService(ISysService iSysService) {
 		this.iSysService = iSysService;
@@ -160,6 +172,14 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		return "success";
 	}
 	
+	public BigInteger getSelfId() {
+		return selfId;
+	}
+
+	public void setSelfId(BigInteger selfId) {
+		this.selfId = selfId;
+	}
+
 	public String addUser() {
 		Date curDate = new Date();
 		staff.setCreateTime(curDate);
@@ -241,6 +261,67 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		return "success";
 	}
 	
+	private JSONArray getSubPur(BigInteger parentId) {
+		JSONArray jsonArr = null;
+		List<SysPurview> purList = sysPurDao.findByParentId(parentId);
+		if (purList == null) {
+			return null;
+		}
+		jsonArr = new JSONArray();
+		for (SysPurview pur : purList) {
+			JSONObject obj = new JSONObject();
+			obj.put("selfId", pur.getId());
+			obj.put("name", pur.getName());
+			obj.put("isParent", true);
+			obj.put("parentId", parentId);
+			JSONArray childArr = getSubPur(new BigInteger(pur.getId()));
+			if (childArr != null) {
+				obj.put("children", childArr);
+			}
+			jsonArr.add(obj);
+		}
+		
+		return jsonArr;
+	}
+	
+	public String getAllPur() {
+		
+		if (selfId == null) {
+			selfId = BigInteger.ZERO;
+		}
+		JSONArray jsonArr = new JSONArray();
+		List<SysPurview> purList = sysPurDao.findByParentId(BigInteger.ZERO);
+		if (purList != null) {
+			for (SysPurview pur : purList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("selfId", pur.getId());
+				jsonObj.put("isParent", true);
+				jsonObj.put("parentId", pur.getParentId());
+				jsonObj.put("name", pur.getName());
+				
+				JSONArray jsonChildren = getSubPur(new BigInteger(pur.getId()));
+				if (jsonChildren != null) {
+					jsonObj.put("children", jsonChildren);
+				}
+				jsonArr.add(jsonObj);
+			}
+		}
+		
+		response.setContentType("text/html");
+		response.setCharacterEncoding("utf-8");
+		try {
+			PrintWriter out = response.getWriter();
+			out.print(jsonArr.toString());
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
 	public String editPurview() {
 		purview = iSysService.findPurviewById(purview.getId());
 		return "success";
@@ -316,4 +397,5 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	public String removeStaffRegCode() {
 		return null;
 	}
+
 }

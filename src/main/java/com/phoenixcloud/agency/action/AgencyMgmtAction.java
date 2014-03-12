@@ -289,6 +289,7 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 				//jsonObj.put("id", "cata-" + cata.getId());
 				//jsonObj.put("pid", "cata-" + cata.getParentCataId());
 				jsonObj.put("isParent", true);
+				jsonObj.put("nocheck", true);
 				jsonArr.add(jsonObj);
 			}
 			
@@ -300,6 +301,7 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 				//jsonObj.put("id", "org-" + org.getId());
 				//jsonObj.put("pid", "cata-" + org.getPubOrgCata().getId());
 				jsonObj.put("isParent", true);
+				jsonObj.put("nocheck", true);
 				jsonArr.add(jsonObj);
 			}
 		} else { 

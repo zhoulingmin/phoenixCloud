@@ -1,5 +1,6 @@
 package com.phoenixcloud.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -30,5 +31,12 @@ public class SysPurviewDao extends AbstractDao<SysPurview> {
 		Query query = entityManager.createQuery("select pur from SysPurview pur where pur.deleteState = 0 and pur.code = ?1");
 		query.setParameter(1, code);
 		return getSingleResultOrNull(query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SysPurview> findByParentId(BigInteger parentId) {
+		Query query = entityManager.createQuery("select pur from SysPurview pur where pur.deleteState = 0 and pur.parentId = ?1");
+		query.setParameter(1, parentId);
+		return query.getResultList();
 	}
 }

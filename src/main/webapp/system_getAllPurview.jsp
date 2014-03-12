@@ -100,7 +100,7 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 								<h5>账号列表</h5>
 							</div>
 							<div class="widget-content">
-								<div id="agencyTree" class="widget-box ztree" style="display:none; width:80%">
+								<div id="agencyTree" class="ztree" style="padding: 0px;">
 								</div>
 							</div>
 						</div>
@@ -113,39 +113,9 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 								</span>
 								<h5>权限点列表</h5>
 							</div>
-							<div class="widget-content" style="padding: 0px; border-left-width: 0px;">
-								<table id="purviewTabTable" class="table table-bordered data-table">
-									<thead>
-										<tr>
-											<th style="width:1%">
-												<div id="uniform-title-table-checkbox" class="checker">
-													<span class="">
-														<input id="title-table-checkbox" type="checkbox" name="title-table-checkbox" style="opacity: 0;">
-													</span>
-												</div>
-											</th>
-											<th>权限名称</th>
-											<th>备注</th>
-										</tr>
-									</thead>
-									<tbody>
-									<%
-									for (SysPurview pur : purviewList) {
-									%>
-										<tr>
-											<td style="width:1%">
-												<div id="uniform-undefined" class="checker">
-													<span class="">
-														<input type="checkbox" style="opacity: 0;" value="<%=pur.getId()%>">
-													</span>
-												</div>
-											</td>
-											<td><%=pur.getName() %></td>
-											<td><%=pur.getNotes() %></td>
-										</tr>
-									<%} %>
-									</tbody>
-								</table>
+							<div class="widget-content">
+								<div id="purTree" class="ztree" style="padding: 0px;">
+								</div>
 							</div>
 						</div>
 					</div>
@@ -307,8 +277,8 @@ function addItem() {
 	}
 }
 
-var zTreeObj,
-setting = {
+var zAgencyTreeObj,
+agencySetting = {
 	view: {
 		selectedMulti: false
 	},
@@ -322,21 +292,33 @@ setting = {
 		url: "<%=ctx%>/agency/agencyMgmt!getStaff.do",
 		autoParam: ["type", "selfId"]
 	},
-	// onAsyncError,onAsyncSuccess are used to deal with batch operation
-	callback: {
-		onClick: onSelStaff,
-	}
 },
-zTreeNodes = [];
+zAgencyTreeNodes = [];
 
-var toDelNodes = null;
+var zPurTreeObj,
+purSetting = {
+		view: {
+			selectedMulti: false
+		},
+		check:{//复选框设置 
+	        enable:true,
+	        chkStyle:"checkbox",
+			chkboxType:{"Y":"ps","N":"ps"}
+	    },
+		async: {
+			enable: false,
+			url: "<%=ctx%>/system/system_getAllPur.do",
+			autoParam: ["selfId"]
+		},
+	},
+zPurTreeNodes = [];
+
 var checkedNodes = null;
-var curStatus = "init";
-
 
 jQuery(document).ready(function() {
 	
-	zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, zTreeNodes);
+	zAgencyTreeObj = $.fn.zTree.init($("#agencyTree"), agencySetting, zAgencyTreeNodes);
+	zPurTreeObj = $.fn.zTree.init($("#purTree"), purSetting, zPurTreeNodes);
 	
 	// 设置激活tab
 	var activeTabId = "<%=tabId%>";

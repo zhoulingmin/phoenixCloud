@@ -372,12 +372,7 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
         }
     }
 
-	public String download() throws Exception{
-		RBookRe res = iBookService.findBookRes(bookRes.getResId());
-		if (res == null) {
-			throw new Exception("Not found the resource by id:" + bookRes.getResId());
-		}
-		
+	private void zipDownload(RBookRe res) throws Exception {
 		response.setContentType("application/zip");  //octet-stream
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(res.getName().getBytes(), "ISO8859-1") + ".zip\"");
 		try {
@@ -390,9 +385,33 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	        outputToInput(zos, fis);
 	        zos.closeEntry();
 	        zos.close();
+	        fis.close();
 		} catch (Exception e) {
 			MiscUtils.getLogger().info(e.toString());
 		}
+	}
+	
+	private void streamDownload(RBookRe res) throws Exception {
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(res.getName().getBytes(), "ISO8859-1") + "\"");
+		try {
+			FileInputStream fis = new FileInputStream(res.getLocalPath());
+			OutputStream out = response.getOutputStream();
+			outputToInput(out, fis);
+			out.close();
+			fis.close();
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
+	}
+	
+	public String download() throws Exception{
+		RBookRe res = iBookService.findBookRes(bookRes.getResId());
+		if (res == null) {
+			throw new Exception("Not found the resource by id:" + bookRes.getResId());
+		}
+		//zipDownload(res);
+		streamDownload(res);
 		return null;
 	}
 	
