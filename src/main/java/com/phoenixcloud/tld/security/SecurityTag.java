@@ -60,7 +60,7 @@ public class SecurityTag implements Tag{
        
     		SysStaffPurviewDao staffPurDao = (SysStaffPurviewDao)getAppContext().getBean(SysStaffPurviewDao.class);
         	SysStaffPurview staffPur = staffPurDao.findByStaffAndPurviewId(new BigInteger(curStaff.getId())
-        		, new BigInteger(purview.getPurviewId()));
+        		, new BigInteger(purview.getPurviewId()), false);
         	if (staffPur == null) {
         		break;
         	}

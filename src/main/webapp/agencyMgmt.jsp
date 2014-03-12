@@ -102,8 +102,8 @@ setting = {
 	// onAsyncError,onAsyncSuccess are used to deal with batch operation
 	callback: {
 		onRightClick: OnRightClick,
-		onAsyncError: onAsyncSuccess,
-		onAsyncSuccess: onAsyncError,
+		onAsyncError: onAsyncError,
+		onAsyncSuccess: onAsyncSuccess,
 		onDblClick: onDblClick,
 	}
 },

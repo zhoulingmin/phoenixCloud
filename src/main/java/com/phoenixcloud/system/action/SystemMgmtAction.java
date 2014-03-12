@@ -14,8 +14,10 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.struts2.dispatcher.RequestMap;
+import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.interceptor.SessionAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -27,16 +29,19 @@ import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
 import com.phoenixcloud.bean.SysStaffRegCode;
 import com.phoenixcloud.dao.SysPurviewDao;
+import com.phoenixcloud.dao.SysStaffPurviewDao;
 import com.phoenixcloud.system.service.ISysService;
+import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
 @Component
-public class SystemMgmtAction extends ActionSupport implements RequestAware,ServletResponseAware{
+public class SystemMgmtAction extends ActionSupport implements RequestAware,ServletResponseAware,SessionAware{
 	
 	private static final long serialVersionUID = 735713101705200424L;
 	
 	private RequestMap request;
 	private HttpServletResponse response;
+	private SessionMap session;
 	
 	@Resource(name="sysServiceImpl")
 	private ISysService iSysService;
@@ -59,8 +64,14 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	private String tabId;
 	
 	private BigInteger selfId;
+	
 	@Autowired
 	private SysPurviewDao sysPurDao;
+	
+	@Autowired
+	private SysStaffPurviewDao staffPurDao;
+	
+	private String staffIdArr;
 	
 	public void setiSysService(ISysService iSysService) {
 		this.iSysService = iSysService;
@@ -172,6 +183,14 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		return "success";
 	}
 	
+	public String getStaffIdArr() {
+		return staffIdArr;
+	}
+
+	public void setStaffIdArr(String staffIdArr) {
+		this.staffIdArr = staffIdArr;
+	}
+
 	public BigInteger getSelfId() {
 		return selfId;
 	}
@@ -264,7 +283,7 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	private JSONArray getSubPur(BigInteger parentId) {
 		JSONArray jsonArr = null;
 		List<SysPurview> purList = sysPurDao.findByParentId(parentId);
-		if (purList == null) {
+		if (purList == null || purList.size() == 0) {
 			return null;
 		}
 		jsonArr = new JSONArray();
@@ -282,6 +301,30 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		}
 		
 		return jsonArr;
+	}
+	
+	public String getPurByStaff() {
+		List<SysStaffPurview> staffPurList = staffPurDao.findByStaff(selfId);
+		if (staffPurList != null) {
+			JSONArray jsonArr = new JSONArray();
+			for (SysStaffPurview staffPur : staffPurList) {
+				jsonArr.add(staffPur.getPurviewId());
+			}
+			
+			response.setContentType("text/html");
+			response.setCharacterEncoding("utf-8");
+			
+			try {
+				PrintWriter out = response.getWriter();
+				out.print(jsonArr.toString());
+				out.flush();
+				out.close();
+			} catch (Exception e) {
+				MiscUtils.getLogger().info(e.toString());
+			}
+		}
+		
+		return null;
 	}
 	
 	public String getAllPur() {
@@ -366,10 +409,39 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	}
 	
 	public String saveStaffPur() {
-		staffPur.setUpdateTime(new Date());
-		iSysService.saveStaffPur(staffPur);
+		String[] staffId = staffIdArr.split(",");
+		String[] purId = purIdArr.split(",");
+		SysStaff curStaff = (SysStaff)session.get("user");
+		if (curStaff == null) {
+			return null;
+		}
+		Date date = new Date();
+		for (String id : staffId) {
+			staffPurDao.removeAllPurviewByStaff(new BigInteger(id));
+			for (String purviewId : purId) {
+				SysStaffPurview staffPurview = staffPurDao.findByStaffAndPurviewId(
+						new BigInteger(id), new BigInteger(purviewId), true);
+				if (staffPurview == null) {
+					staffPurview = new SysStaffPurview();
+					staffPurview.setCfgStaffId(new BigInteger(curStaff.getStaffId()));
+					staffPurview.setCreateTime(date);
+					staffPurview.setPurviewId(new BigInteger(purviewId));
+					staffPurview.setStaffId(new BigInteger(id));
+					staffPurview.setUpdateTime(date);
+					staffPurDao.persist(staffPurview);
+				} else {
+					staffPurview.setDeleteState((byte)0);
+					staffPurview.setUpdateTime(date);
+					staffPurview.setCfgStaffId(new BigInteger(curStaff.getStaffId()));
+					staffPurDao.merge(staffPurview);
+				}
+			}
+		}
+		
 		return null;
 	}
+	
+	
 	
 	public String removeStaffPur() {
 		if (staffPurIdArr.length() == 0) {
@@ -396,6 +468,12 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	
 	public String removeStaffRegCode() {
 		return null;
+	}
+
+	@Override
+	public void setSession(Map<String, Object> arg0) {
+		// TODO Auto-generated method stub
+		this.session = (SessionMap) arg0;
 	}
 
 }

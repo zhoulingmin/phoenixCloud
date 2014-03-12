@@ -119,6 +119,9 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 							</div>
 						</div>
 					</div>
+					<div class="span6">
+						<button class="btn btn-primary" type="button"  onclick="savePurCfg();">保存</button>
+					</div>
 				</div>
 				
 				<!-- 图书下载权限配置 -->
@@ -193,9 +196,6 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 						</tbody>
 					</table>		
 				</div>
-			</div>
-			<div class="widget-content nopadding">
-				
 			</div>
 		</div>
 	</div>
@@ -292,8 +292,73 @@ agencySetting = {
 		url: "<%=ctx%>/agency/agencyMgmt!getStaff.do",
 		autoParam: ["type", "selfId"]
 	},
+	callback: {
+		onClick: onClickUser,
+	}
 },
 zAgencyTreeNodes = [];
+
+function onClickUser(event, treeId, treeNode, clickFlag) {
+	if (treeNode.isParent) {
+		return;
+	}
+	unCheckAll();
+	jQuery.ajax({
+		url: "<%=ctx%>/system/system_getPurByStaff.do",
+		data: {selfId:treeNode.selfId},
+		async: false,
+		timeout: 30000,
+		dataType: "JSON",
+		success: function(ret) {
+			if (ret == null || ret.length == 0) {
+				alert("Unknown error");
+				return;
+			}
+			jQuery(zPurTreeObj.getNodes()).each(function () {
+				if (containsId(this.selfId, ret)) {
+					zPurTreeObj.checkNode(this, true, false, false);
+				}
+				checkPurNodes(ret, this.children);
+			});
+		},
+		error: function(XMLRequest, textInfo) {
+			if (textInfo != null) {
+				alert(textInfo);
+			} else {
+				alert("Unknown error!")
+			}
+		}
+	});
+}
+
+function unCheckAll() {
+	jQuery(zPurTreeObj.getNodes()).each(function() {
+		zPurTreeObj.checkNode(this, false, true, false);
+	});
+}
+
+function containsId(id, idArr) {
+	var flag = false;
+	jQuery(idArr).each(function() {
+		if (this == id) {
+			flag = true;
+			return false;
+		}
+	});
+	return flag;
+}
+
+function checkPurNodes(ret, children) {
+	if (children != null && children.length > 0) {
+		jQuery(children).each(function() {
+			if (containsId(this.selfId, ret)) {
+				zPurTreeObj.checkNode(this, true, false, false);
+			}
+			checkPurNodes(ret, this.children);
+		});
+	}
+}
+
 
 var zPurTreeObj,
 purSetting = {
@@ -306,14 +371,79 @@ purSetting = {
 			chkboxType:{"Y":"ps","N":"ps"}
 	    },
 		async: {
-			enable: false,
+			enable: true,
 			url: "<%=ctx%>/system/system_getAllPur.do",
 			autoParam: ["selfId"]
 		},
+		callback: {
+			onAsyncSuccess: onAsyncSuccess,
+		}
 	},
 zPurTreeNodes = [];
 
-var checkedNodes = null;
+function onAsyncSuccess(event, treeId, treeNode, msg) {
+	zPurTreeObj.setting.async.enable=false;
+}
+
+var checkedUsers = null, checkedPurs = null;
+
+function savePurCfg() {
+	if (checkedUsers != null || checkedPurs != null) {
+		alert("正在保存配置，请稍后重试！");
+		return;
+	}
+	
+	checkedUsers = zAgencyTreeObj.getCheckedNodes();
+	if (checkedUsers == null || checkedUsers.length == 0) {
+		checkedUsers = null;
+		alert("请选择要配置的账号！");
+		return;
+	}
+	
+	checkedPurs = zPurTreeObj.getCheckedNodes();
+	if (checkedPurs == null || checkedPurs.length == 0) {
+		checkedUsers = null;
+		checkedPurs = null;
+		alert("请选择要配置的权限！");
+		return;
+	}
+	
+	var staffIdArr = "", purIdArr = "";
+	jQuery(checkedUsers).each(function(idx) {
+		staffIdArr += this.selfId;
+		if (idx != (checkedUsers.length - 1)) {
+			staffIdArr += ",";
+		}
+	});
+	jQuery(checkedPurs).each(function(idx) {
+		purIdArr += this.selfId;
+		if (idx != (checkedPurs.length - 1)) {
+			purIdArr += ",";
+		}
+	});
+	
+	jQuery.ajax({
+		url: "<%=ctx%>/system/system_saveStaffPur.do",
+		data: {staffIdArr:staffIdArr, purIdArr:purIdArr},
+		async: true,
+		timeout: 30000,
+		success: function() {
+			alert("保存配置权限成功！");
+			checkedUsers = null;
+			checkedPurs = null;
+			window.location.reload(true);
+		}, 
+		error: function(XMLRequest, textInfo) {
+			if (textInfo != null) {
+				alert(textInfo);
+			} else {
+				alert("保存权限出错！");
+			}
+			checkedUsers = null;
+			checkedPurs = null;
+		}
+	});
+}
 
 jQuery(document).ready(function() {
 	

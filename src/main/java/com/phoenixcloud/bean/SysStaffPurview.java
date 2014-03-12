@@ -36,10 +36,10 @@ public class SysStaffPurview extends AbstractModel<String> implements Serializab
 	private Date createTime;
 
 	@Column(name="DELETE_STATE", nullable=false)
-	private byte deleteState;
+	private byte deleteState = (byte)0;
 
 	@Column(length=255)
-	private String notes;
+	private String notes = "";
 
 	@Column(name="PURVIEW_ID")
 	private BigInteger purviewId;

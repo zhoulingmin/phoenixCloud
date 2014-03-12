@@ -27,10 +27,27 @@ public class SysStaffPurviewDao extends AbstractDao<SysStaffPurview> {
 		return getSingleResultOrNull(query);
 	}
 	
-	public SysStaffPurview findByStaffAndPurviewId(BigInteger staffId, BigInteger purviewId) {
-		Query query = entityManager.createQuery("select sp from SysStaffPurview sp where sp.deleteState = 0 and sp.staffId = ?1 and sp.purviewId = ?2");
+	public SysStaffPurview findByStaffAndPurviewId(BigInteger staffId, BigInteger purviewId, boolean ignoreStatus) {
+		String sql = "select sp from SysStaffPurview sp where sp.staffId = ?1 and sp.purviewId = ?2";
+		if (!ignoreStatus) {
+			sql += " and sp.deleteState = 0";
+		}
+		Query query = entityManager.createQuery(sql);
 		query.setParameter(1, staffId);
 		query.setParameter(2, purviewId);
 		return getSingleResultOrNull(query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SysStaffPurview> findByStaff(BigInteger staffId) {
+		Query query = entityManager.createQuery("select sp from SysStaffPurview sp where sp.deleteState = 0 and sp.staffId = ?1");
+		query.setParameter(1, staffId);
+		return query.getResultList();
+	}
+	
+	public void removeAllPurviewByStaff(BigInteger staffId) {
+		Query query = entityManager.createQuery("update SysStaffPurview sp set sp.deleteState=1 where sp.deleteState = 0 and sp.staffId = ?1");
+		query.setParameter(1, staffId);
+		query.executeUpdate();
 	}
 }
