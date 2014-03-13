@@ -215,7 +215,7 @@ byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 									<a class="tip-top" data-original-title="目录" href="<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
 									</security:phoenixSec>
 									<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
-									<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=book.getId()%>"><i class="icon-file"></i></a>
+									<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=book.getId()%>&mode=<%=mode%>"><i class="icon-file"></i></a>
 									</security:phoenixSec>
 									<security:phoenixSec purviewCode="BOOK_ADUIT_OK">
 									<%if (book.getIsUpload() == (byte)1) {%>
@@ -294,7 +294,7 @@ function editBookRes() {
 		alert("请选择一本书籍后重试！");
 		return;
 	}
-	window.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=" + checkedItems[0].value;
+	window.location.href = "<%=ctx%>/book/bookRes_getAll.do?mode=<%=mode%>&bookRes.bookId=" + checkedItems[0].value;
 }
 
 function viewBook() {

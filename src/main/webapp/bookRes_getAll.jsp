@@ -21,6 +21,8 @@ if (resList == null) {
 
 PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 
+String mode = request.getParameter("mode");
+
 %>
 
 <head>
@@ -54,12 +56,29 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 		
 		<div class="widget-box">
 			<div class="widget-content">
-				<security:phoenixSec purviewCode="editBook">
+				<%if ("-1".equals(mode)) {%>
+				<security:phoenixSec purviewCode="BOOK_RES_ADD">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addRes" onclick="addRes();" value="新建"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeRes" onclick="editRes();" value="修改"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editRes" onclick="editRes();" value="修改"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="BOOK_RES_DELETE">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeRes" onclick="removeRes();" value="删除"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadRes" onclick="uploadRes();" value="上传资源"/>
 				</security:phoenixSec>
+				<security:phoenixSec purviewCode="BOOK_RES_ADUIT_UP">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadRes" onclick="uploadRes();" value="上传资源"/>
+				</security:phoenixSec>
+				<%} else if ("0".equals(mode)) { %>
+				<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadRes" onclick="uploadRes();" value="上传资源"/>
+				</security:phoenixSec>
+				<%} else if ("1".equals(mode)) { %>
+				<%} %>
+				
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewRes" onclick="viewRes();" value="详情"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="back" onclick="cancel();" value="返回"/>
 			</div>
@@ -132,26 +151,37 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 								<td><%=auditStatus %></td>
 								<td><%=res.getNotes() %></td>
 								<td>
-									<security:phoenixSec purviewCode="editBook">
+									<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
 									<%if (res.getIsUpload() == (byte)0) {%>
 									<a class="tip-top" data-original-title="上传" href="#" onclick="return editResFromIcon(<%=res.getId()%>)"><i class="icon-upload"></i></a>
 									<%} %>
 									</security:phoenixSec>
 									<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/bookRes_viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
-									<security:phoenixSec purviewCode="editBook">
+									<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
 									<a class="tip-top" data-original-title="修改" href="#" onclick="return editResFromIcon(<%=res.getId()%>)"><i class="icon-edit"></i></a>
 									</security:phoenixSec>
 									<%if (res.getIsUpload() == (byte)1) {%>
 									<a class="tip-top" data-original-title="下载" href="<%=ctx%>/book/bookRes_download.do?bookRes.resId=<%=res.getId()%>"><i class="icon-download-alt"></i></a>
 									<%} %>
-									<security:phoenixSec purviewCode="verifyBook">
+									
 									<%if (res.getIsAudit() == (byte)-1) {%>
-									<a class="tip-top" data-original-title="通过" href="<%=ctx%>/book/bookRes_auditRes.do?bookRes.resId=<%=res.getId()%>&flag=true"><i class="icon-ok-circle"></i></a>
-									<a class="tip-top" data-original-title="不通过" href="<%=ctx%>/book/bookRes_auditRes.do?bookRes.resId=<%=res.getId()%>&flag=false"><i class="icon-ban-circle"></i></a>
-									<%} %>
+									<security:phoenixSec purviewCode="BOOK_RES_ADUIT_UP">
+									<a name="commitRes" class="tip-top" data-original-title="提交审核" href="#"><i class="icon-ok-circle"></i></a>
 									</security:phoenixSec>
-									<security:phoenixSec purviewCode="editBook">
-									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
+									<%} else if (res.getIsAudit() == (byte)0) %>
+									<security:phoenixSec purviewCode="BOOK_RES_ADUIT_OK">
+									<a name="passRes" class="tip-top" data-original-title="提交发布" href="#"><i class="icon-ok-circle"></i></a>
+									</security:phoenixSec>
+									<security:phoenixSec purviewCode="BOOK_RES_ADUIT_NO">
+									<a name="rejectRes" class="tip-top" data-original-title="打回重新制作" href="#"><i class="icon-ban-circle"></i></a>
+									</security:phoenixSec>
+									<%} else if (res.getIsAudit() == (byte)1) { %>
+									<security:phoenixSec purviewCode="BOOK_RES_RELEASE">
+									<a name="releaseRes" class="tip-top" data-original-title="发布" href="#"><i class="icon-ok-circle"></i></a>
+									</security:phoenixSec>
+									<%} %>
+									<security:phoenixSec purviewCode="BOOK_RES_DELETE">
+									<a name="removeRes" class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
 									</security:phoenixSec>
 								</td>
 							</tr>

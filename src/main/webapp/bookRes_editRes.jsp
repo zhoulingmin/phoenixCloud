@@ -5,6 +5,7 @@
 <%@page import="com.phoenixcloud.util.SpringUtils" %>
 <%@page import="java.util.*" %>
 <%@taglib prefix="s" uri="/struts-tags" %>
+<%@taglib uri="/WEB-INF/security.tld" prefix="s" %>
 <%@page import="com.opensymphony.xwork2.util.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -47,7 +48,7 @@ if (ddv != null) {
 			<span class="icon"><i class="icon-align-justify"></i></span>
 			<h5>输入资源信息</h5>
 		</div>
-		
+		<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
 		<div class="widget-box">
 			<div class="widget-content">
 				<div class="fileinput fileinput-new" data-provides="fileinput">
@@ -68,7 +69,7 @@ if (ddv != null) {
 				</div>
 			</div>
 		</div>
-		
+		</security:phoenixSec>
 		<div class="widget-content nopadding">
 			<form id="editRes" class="form-horizontal" method="POST" action="#">
 				<input type="hidden" name="bookRes.resId" value="<s:property value="bookRes.resId"/>"/>
@@ -104,7 +105,9 @@ if (ddv != null) {
 				
 				
 				<div class="form-actions">
+					<secutiry:phoenixSec purviewCode="BOOK_RES_UPDATE">
 					<button class="btn btn-primary" type="button"  onclick="saveRes();">保存</button>
+					</secutiry:phoenixSec>
 					<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">取消</button>
 				</div>
 				
