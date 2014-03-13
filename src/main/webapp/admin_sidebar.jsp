@@ -35,11 +35,11 @@
 				<security:phoenixSec purviewCode="BOOK_ADUIT_MENU">
 				<li><a href="<%=request.getContextPath()%>/book/book_getAll.do?bookInfo.isAudit=0">书籍审核</a></li>
 				</security:phoenixSec>
-				<security:phoenixSec purviewCode="BOOK_RELESE_MENU">
+				<security:phoenixSec purviewCode="BOOK_RELEASE_MENU">
 				<li><a href="<%=request.getContextPath()%>/book/book_getAll.do?bookInfo.isAudit=1">书籍发布</a></li>
 				</security:phoenixSec>
 				<security:phoenixSec purviewCode="BOOK_QUERY_MENU">
-				<li><a href="#">书籍查询</a></li>
+				<li><a href="<%=request.getContextPath()%>/book_searchBook.jsp">书籍查询</a></li>
 				</security:phoenixSec>
 				<security:phoenixSec purviewCode="BOOK_RES_QUERY_MENU">
 				<li><a href="#">书籍资源查询</a></li>

@@ -15,6 +15,9 @@ String ctx = (String) request.getContextPath();
 
 RBook book = (RBook)request.getAttribute("book");
 List<RBookRe> resList = (List<RBookRe>)request.getAttribute("resList");
+if (resList == null) {
+	resList = new ArrayList<RBookRe>();
+}
 
 PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 

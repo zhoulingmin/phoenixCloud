@@ -41,6 +41,9 @@ public class RBookDao extends AbstractDao<RBook>{
 		String sql = "select rb from RBook rb where rb.deleteState = 0";
 		int index = 1;
 		Vector params = new Vector();
+		if (book.getName() != null && book.getName().trim().length() > 0) {
+			sql += " and rb.name like :name";
+		}
 		if (book.getStuSegId() != null && book.getStuSegId().compareTo(BigInteger.ZERO) != 0) {
 			sql += " and rb.stuSegId = ?" + index;
 			params.add(book.getStuSegId());
@@ -62,9 +65,17 @@ public class RBookDao extends AbstractDao<RBook>{
 			index++;
 		}
 		
+		if (book.getIsAudit() != (byte)-2) { // -2: indicates all book
+			sql += " and rb.isAudit = " + book.getIsAudit();
+		}
+		
 		Query query = entityManager.createQuery(sql);
 		for (int i = 0; i < params.size(); i++) {
 			query.setParameter((i + 1), params.get(i));
+		}
+		
+		if (book.getName() != null && book.getName().trim().length() > 0) {
+			query.setParameter("name", "%" + book.getName().trim() + "%");
 		}
 		
 		return query.getResultList();
@@ -74,6 +85,13 @@ public class RBookDao extends AbstractDao<RBook>{
 	public List<RBook> findByBookNo(String bookNo) {
 		Query query = entityManager.createQuery("select rb from RBook rb where rb.deleteState = 0 and rb.bookNo = ?1");
 		query.setParameter(1, bookNo);
+		return query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RBook> findByAuditStatus(byte isAudit) {
+		Query query = entityManager.createQuery("select rb from RBook rb where rb.deleteState = 0 and rb.isAudit = ?1");
+		query.setParameter(1, isAudit);
 		return query.getResultList();
 	}
 }

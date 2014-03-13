@@ -1,5 +1,9 @@
 package com.phoenixcloud.book.action;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.Collection;
@@ -18,6 +22,7 @@ import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.interceptor.SessionAware;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -25,11 +30,14 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.PubDdv;
 import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.RBook;
+import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.dao.PubDdvDao;
+import com.phoenixcloud.dao.RBookDao;
 import com.phoenixcloud.system.service.ISysService;
+import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
 @Component("bookMgmtAction")
@@ -45,15 +53,20 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 	@Resource
 	private PubDdvDao ddvDao;
 	
+	@Autowired
+	private RBookDao bookDao;
+	
+	private byte flag;
+	
+	private RBook bookInfo;
+	
+	private String bookIdArr; // used to remove book
+	
 	private PhoenixProperties prop = PhoenixProperties.getInstance();
 
 	public void setiSysService(ISysService iSysService) {
 		this.iSysService = iSysService;
 	}
-
-	private RBook bookInfo;
-	private String bookIdArr; // used to remove book
-	
 	
 	@Override
 	public void setServletResponse(HttpServletResponse response) {
@@ -108,9 +121,17 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 	}
 
 	public String getAll() {
-		List<RBook> bookList = iBookService.getAllBooks();
-		this.request.put("bookList", bookList);
+		List<RBook> bookList = bookDao.findByAuditStatus(bookInfo.getIsAudit());
+		request.put("bookList", bookList);
 		return "success";
+	}
+
+	public byte getFlag() {
+		return flag;
+	}
+
+	public void setFlag(byte flag) {
+		this.flag = flag;
 	}
 
 	public String addBook() {
@@ -186,8 +207,11 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 		
 		List<RBook> bookList = iBookService.searchBook(bookInfo);
 		this.request.put("bookList", bookList);
+		if (bookInfo.getIsAudit() != (byte) -2) {
+			return "editSearch";
+		}
 		
-		return "success";
+		return "querySearch";
 	}
 	
 	public void addActionError(String anErrorMessage) {
@@ -219,10 +243,6 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
     	
     	return null;
     }
-    
-    public String doPublish(){
-    	return null;
-    }
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -230,4 +250,50 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 		// TODO Auto-generated method stub
 		this.session = (SessionMap)session;
 	}
+	
+	public String changeAuditStatus() {
+		String[] bookIds = bookIdArr.split(",");
+		for (String bookId : bookIds) {
+			RBook book = bookDao.find(bookId);
+			if (book == null) {
+				continue;
+			}
+			book.setIsAudit(flag);
+			book.setUpdateTime(new Date());
+			bookDao.merge(book);
+		}
+		
+		return null;
+	}
+	private void streamDownload(RBook book) throws Exception {
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(book.getBookFileName().getBytes(), "ISO8859-1") + "\"");
+		try {
+			FileInputStream fis = new FileInputStream(book.getLocalPath());
+			OutputStream out = response.getOutputStream();
+			outputToInput(out, fis);
+			out.close();
+			fis.close();
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
+	}
+	
+	public String download() throws Exception {
+		RBook book = bookDao.find(bookInfo.getBookId());
+		if (book == null) {
+			throw new Exception("Not found the resource by id:" + bookInfo.getBookId());
+		}
+		//zipDownload(res);
+		streamDownload(book);
+		return null;
+	}
+	
+	private void outputToInput(OutputStream os, InputStream is) throws IOException {
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = is.read(buf)) > 0) {
+                os.write(buf, 0, len);
+        }
+    }
 }

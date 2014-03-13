@@ -70,6 +70,8 @@ if ((Byte)vs.findValue("bookInfo.isUpload") == (byte)1) {
 	isUpload = "已上传";
 }
 
+byte mode = (Byte)vs.findValue("bookInfo.isAudit");
+
 %>
 
 <head>
@@ -186,7 +188,7 @@ if ((Byte)vs.findValue("bookInfo.isUpload") == (byte)1) {
 					<font class="black"><s:property value="bookInfo.notes"/></font>
 				</div>
 				<div class="margin_top_5">
-					<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">返回</button>
+					<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();return false;">返回</button>
 				</div>
 				
 			</div>
@@ -197,12 +199,5 @@ if ((Byte)vs.findValue("bookInfo.isUpload") == (byte)1) {
 	<jsp:include page="footer.jsp" flush="true" />
 </body>
 
-<script type="text/javascript">
-
-function cancel() {
-	location.href = "<%=ctx%>/book/book_getAll.do";
-}
-
-</script>
 
 </html>

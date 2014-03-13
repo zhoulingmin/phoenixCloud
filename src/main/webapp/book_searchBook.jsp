@@ -7,6 +7,8 @@
 <%@page import="com.phoenixcloud.dao.*" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="com.phoenixcloud.util.*" %>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
@@ -24,7 +26,9 @@ List<PubDdv> stuSegList = ddvDao.findByTblAndField("r_book", "STU_SEG_ID");
 List<PubDdv> classList = ddvDao.findByTblAndField("r_book", "CLASS_ID");
 PubPressDao pressDao = (PubPressDao)SpringUtils.getBean(PubPressDao.class);
 List<PubPress> pressList = pressDao.getAll();
+
 %>
+
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -54,19 +58,22 @@ List<PubPress> pressList = pressDao.getAll();
 		<div id="content-header">
 			<h1>凤凰云端</h1>
 		</div>
-		
+		<security:phoenixSec purviewCode="BOOK_MANAGE">
 		<div class="widget-box">
 			<div class="widget-content">
-				<form id="searchBook" action="" method="post">
+				<form id="searchBook" action="<%=ctx %>/book/searchBook.do" method="post">
+					<input type="hidden" name="bookInfo.isAudit" value="-2" >
+					书名:
+					<input type="text" name="bookInfo.name" />
 					学段:
-					<select name="bookInfo.stuSegId" value="<s:property value="bookInfo.stuSegId"/>">
+					<select name="bookInfo.stuSegId">
 						<option value="0" selected="selected">全部</option>
 						<%for (PubDdv stu : stuSegList) { %>
 						<option value="<%=stu.getDdvId()%>"><%=stu.getValue() %></option>
 						<%} %>
 					</select>
 					&nbsp;&nbsp;&nbsp;&nbsp;学科:
-					<select name="bookInfo.subjectId" value="<s:property value="bookInfo.subjectId"/>">
+					<select name="bookInfo.subjectId">
 						<option value="0">全部</option>
 						<%for (PubDdv sub: subjectList) {%>
 						<option value="<%=sub.getDdvId() %>"><%=sub.getValue() %></option>
@@ -74,36 +81,24 @@ List<PubPress> pressList = pressDao.getAll();
 					</select>
 					<br />
 					年级:
-					<select name="bookInfo.classId" value="<s:property value="bookInfo.classId"/>">
+					<select name="bookInfo.classId">
 						<option value="0" selected="selected">全部</option>
 						<%for (PubDdv cls : classList) { %>
 						<option value="<%=cls.getDdvId()%>"><%=cls.getValue() %></option>
 						<%} %>
 					</select>
 					&nbsp;&nbsp;&nbsp;&nbsp;出版社:
-					<select name="bookInfo.pressId" value="<s:property value="bookInfo.pressId"/>">
+					<select name="bookInfo.pressId">
 						<option value="0" selected="selected">全部</option>
 						<%for (PubPress press : pressList) { %>
 						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
 						<%} %>
 					</select>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="button" onclick="searchBook();" style="margin-bottom:10px;width:50px;"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
 				</form>
 			</div>
 		</div>
 		
-		<div class="widget-box">
-			<div class="widget-content">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addBook();" value="新建"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="editBook();" value="修改"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeBooks();" value="删除"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadBook" onclick="uploadBook();" value="上传附件"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookDire" onclick="editBookDire();" value="编辑目录"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookRes" onclick="editBookRes();" value="编辑资源"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewBook();" value="详情"/>
-			</div>
-		</div>
-
 		<div><!-- this div node is just used to let $(this).parents('.widget-box') find only one node -->
 			<div class="widget-box">
 				<div class="widget-title">
@@ -123,16 +118,19 @@ List<PubPress> pressList = pressDao.getAll();
 							</th>
 							<th style="width:5%;">标识</th>
 							<th>书名</th>
+							<th>书籍编码</th>
 							<th>隶属机构</th>
 							<th>上传状态</th>
-							<th>备注</th>
+							<th>审核状态</th>
+							<th>创建人</th>
 							<th>创建时间</th>
 							<th>更新时间</th>
-							<th>操作</th>
+							<th>备注</th>
 							</tr>
 						</thead>
 						<tbody>
 							<%
+							SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 							SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 							for (RBook book : bookList) {
 								PubOrg org = iAgencyMgmt.findOrgById(book.getOrgId().toString());
@@ -142,6 +140,7 @@ List<PubPress> pressList = pressDao.getAll();
 								}
 								String createTime = sdf.format(book.getCreateTime());
 								String updateTime = sdf.format(book.getUpdateTime());
+								SysStaff staff = staffDao.find(book.getStaffId().toString());
 							%>
 							<tr>
 								<td style="width:1%">
@@ -152,22 +151,24 @@ List<PubPress> pressList = pressDao.getAll();
 									</div>
 								</td>
 								<td style="width:5%;"><%=book.getId() %></td>
-								<td><a href="<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>"><%=book.getName() %></a></td>
+								<td><a href="<%=ctx%>/book/book_viewBook.do?bookInfo.bookId=<%=book.getId()%>"><%=book.getName() %></a></td>
+								<td><%=book.getBookNo() %></td>
 								<td><%=orgName %></td>
 								<td><%if (book.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
+								<td>
+								<%if (book.getIsAudit() == (byte)-1) { %>
+								制作中
+								<%} else if (book.getIsAudit() == (byte)0){ %>
+								待审核
+								<%} else if (book.getIsAudit() == (byte)1){ %>
+								待发布
+								<%} else if (book.getIsAudit() == (byte)2){ %>
+								已发布
+								<%} %>
+								<td><%=staff.getName() %></td>
 								<td><%=createTime%></td>
 								<td><%=updateTime%></td>
 								<td><%=book.getNotes() %></td>
-								<td>
-									<%if (book.getIsUpload() == (byte)0) {%>
-									<a class="tip-top" data-original-title="上传" href="<%=ctx%>/book/book_editBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-upload"></i></a>
-									<%} %>
-									<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/book_viewBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-eye-open"></i></a>
-									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/book_editBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-edit"></i></a>
-									<a class="tip-top" data-original-title="目录" href="<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
-									<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=book.getId()%>"><i class="icon-file"></i></a>
-									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
-								</td>
 							</tr>
 							<%} %>
 						</tbody>
@@ -175,6 +176,7 @@ List<PubPress> pressList = pressDao.getAll();
 				</div>
 			</div>
 		</div>
+		</security:phoenixSec>
 	</div>
 
 	<jsp:include page="footer.jsp" flush="true" />
@@ -182,49 +184,6 @@ List<PubPress> pressList = pressDao.getAll();
 
 <script type="text/javascript">
 
-function searchBook() {
-	window.location.href = "<%=ctx%>/book/book_searchBook.do?" + jQuery("#searchBook").serialize(); 
-}
-
-function addBook() {
-	window.location.href = "<%=ctx%>/addBook.jsp";
-}
-
-function editBook() {
-	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
-	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
-		return;
-	}
-	window.location.href = "<%=ctx%>/book/book_editBook.do?bookInfo.bookId=" + checkedItems[0].value;
-}
-
-function uploadBook() {
-	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
-	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
-		return;
-	}
-	window.location.href = "<%=ctx%>/book/book_editBook.do?bookInfo.bookId=" + checkedItems[0].value;
-}
-
-function editBookDire() {
-	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
-	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
-		return;
-	}
-	window.location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=" + checkedItems[0].value;
-}
-
-function editBookRes() {
-	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
-	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
-		return;
-	}
-	window.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=" + checkedItems[0].value;
-}
 
 function viewBook() {
 	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
@@ -234,63 +193,6 @@ function viewBook() {
 	}
 	window.location.href = "<%=ctx%>/book/book_viewBook.do?bookInfo.bookId=" + checkedItems[0].value;
 }
-
-function removeBooks() {
-	var ids = "";
-	
-	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
-	if (checkedItems == null || checkedItems.length == 0) {
-		alert("请选择要删除的书籍！");
-		return;
-	}
-	for (var i = 0; i < checkedItems.length; i++) {
-		ids += checkedItems[i].value;
-		if (i != (checkedItems.length - 1)) {
-			ids += ",";
-		}
-	}
-	
-	jQuery.ajax({
-		url: "<%=ctx%>/book/book_removeBook.do",
-		type: "POST",
-		async: "false",
-		timeout: 30000,
-		data: {bookIdArr:ids},
-		success: function() {
-			alert("删除成功！");
-			window.location.href = "<%=ctx%>/book/book_getAll.do";
-		},
-		error: function() {
-			alert("删除失败！");
-		}
-	});
-
-}
-
-jQuery(document).ready(function() {
-	jQuery("td a.tip-top:last-child").on("click", function(e) {
-		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
-		jQuery.ajax({
-			url: "<%=ctx%>/book/book_removeBook.do",
-			type: "POST",
-			async: "false",
-			timeout: 30000,
-			data: {bookIdArr: id},
-			success: function() {
-				alert("删除成功！");
-				window.location.href = "<%=ctx%>/book/book_getAll.do";
-			},
-			error: function() {
-				alert("删除失败！");
-			}
-		});
-		return false;
-	});
-	
-	jQuery("select").each(function() {
-		jQuery(this).val(this.getAttribute("value"));
-	});
-});
 
 </script>
 

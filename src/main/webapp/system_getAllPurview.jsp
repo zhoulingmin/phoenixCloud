@@ -77,14 +77,10 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		</div>
 		</security:phoenixSec>
 		<div class="widget-box">
-			
 			<div class="widget-title">
 				<ul class="nav nav-tabs">
 					<li class="">
 						<a href="#staffPurTab" data-toggle="tab">功能权限配置</a>
-					</li>
-					<li class="" style="display:none">
-						<a href="#staffRegCodeTab" data-toggle="tab">图书下载权限配置</a>
 					</li>
 				</ul>
 			</div>
@@ -120,81 +116,8 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 						</div>
 					</div>
 					<div class="span6">
-						<button class="btn btn-primary" type="button"  onclick="savePurCfg();">保存</button>
+						<button class="btn btn-primary" type="button" style="float: right; margin-right: 20px;" onclick="savePurCfg();">保存</button>
 					</div>
-				</div>
-				
-				<!-- 图书下载权限配置 -->
-				<div id="staffRegCodeTab" class="tab-pane">
-					<table id="staffRegCodeTabTable" class="table table-bordered data-table">
-						<thead>
-							<tr>
-								<th style="width:1%">
-									<div id="uniform-title-table-checkbox" class="checker">
-										<span class="">
-											<input id="title-table-checkbox" type="checkbox" name="title-table-checkbox" style="opacity: 0;">
-										</span>
-									</div>
-								</th>
-								<th style="width:5%">标识</th>
-								<th>账号</th>
-								<th>书籍标识</th>
-								<th>注册码</th>
-								<th>失效日期</th>
-								<th>是否有效</th>
-								<th>创建时间</th>
-								<th>更新时间</th>
-								<th>备注</th>
-								<th>操作</th>
-							</tr>
-						</thead>
-						<tbody>
-						<%
-						for (SysStaffRegCode regCode : staffRegCodeList) {
-							String createTime = sdf.format(regCode.getCreateTime());
-							String updateTime = sdf.format(regCode.getUpdateTime());
-							String acntName = "无";
-							SysStaff staff = iSysService.findStaffById(regCode.getStaffId().toString());
-							if (staff != null) {
-								acntName = staff.getName();
-							}
-							String codeVal = "无";
-							String expireDate = "无";
-							String isValid = "否";
-							RRegCode bookRgcode = iBookService.findRegCode(regCode.getRegCodeId().toString());
-							if (bookRgcode != null) {
-								codeVal = bookRgcode.getCode();
-								expireDate = new SimpleDateFormat("yyyy/MM/dd").format(bookRgcode.getValidDate());
-								if (bookRgcode.getIsValid() == (byte)1) {
-									isValid = "是";
-								}
-							}
-						%>
-							<tr>
-								<td style="width:1%">
-									<div id="uniform-undefined" class="checker">
-										<span class="">
-											<input type="checkbox" style="opacity: 0;" value="<%=regCode.getId()%>">
-										</span>
-									</div>
-								</td>
-								<td style="width:5%"><%=regCode.getId() %></td>
-								<td><%=acntName %></td>
-								<td><%=regCode.getBookId() %></td>
-								<td><%=codeVal %></td>
-								<td><%=expireDate %></td>
-								<td><%=isValid %></td>
-								<td><%=createTime %></td>
-								<td><%=updateTime %></td>
-								<td><%=regCode.getNotes() %></td>
-								<td>
-									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/system/system_editStaffRegCode.do?staffRegCode.ssrcId=<%=regCode.getId()%>"><i class="icon-edit"></i></a>
-									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
-								</td>
-							</tr>
-						<%} %>
-						</tbody>
-					</table>		
 				</div>
 			</div>
 		</div>

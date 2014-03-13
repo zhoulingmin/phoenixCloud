@@ -17,6 +17,8 @@ List<PubDdv> cataAddrList = ddvDao.findByTblAndField("r_book", "CATA_ADDR_ID");
 
 PubPressDao pressDao = (PubPressDao)SpringUtils.getBean(PubPressDao.class);
 List<PubPress> pressList = pressDao.getAll();
+
+String isAudit = request.getParameter("isAudit");
 %>
 
 <head>
@@ -196,12 +198,12 @@ function addBook() {
 		dataType: "json",
 		success: function() {
 			alert("创建书籍成功！");
-			location.href = "<%=ctx%>/book/book_getAll.do";
+			location.href = "<%=ctx%>/book/book_getAll.do?bookInfo.isAudit=<%=isAudit%>";
 		},
 		error: function() {
 			alert("创建书籍失败！");
 		}
-	})
+	});
 }
 
 function cancel() {

@@ -285,4 +285,16 @@ public class RBook extends AbstractModel<String> implements Serializable {
 		
 		return localPath;
 	}
+	
+	public String getBookFileName() {
+		if (isUpload == (byte)0 || allAddr == null || allAddr.trim().length() == 0) {
+			return "";
+		}
+		int lastIdx = allAddr.lastIndexOf("/");
+		if (lastIdx == (allAddr.length() - 1)) {
+			return "";
+		}
+
+		return allAddr.substring(lastIdx + 1);
+	}
 }

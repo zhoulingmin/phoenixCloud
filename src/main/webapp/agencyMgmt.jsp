@@ -54,6 +54,7 @@
 		<div id="content-header">
 			<h1>凤凰云端</h1>
 		</div>
+		<security:phoenixSec purviewCode="ORG_MANAGE">
 		<div class="widget-box">
 			<div class="widget-content">
 			<form id="searchAgency" action="" method="POST">
@@ -68,9 +69,13 @@
 		
 		<div class="widget-box">
 			<div class="widget-content">
-				<security:phoenixSec purviewCode="manageAgency">
+				<security:phoenixSec purviewCode="ORG_ADD">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addAgency" onclick="popUpAddAgency();" value="新建"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="ORG_UPDATE">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeAgency" onclick="removeAgency();" value="删除"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="ORG_DELETE">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editAgency" onclick="popUpEditAgency();" value="修改"/>
 				</security:phoenixSec>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewAgency" onclick="popUpViewAgency();" value="详情"/>
@@ -78,6 +83,7 @@
 		</div>
 		<div id="agencyTree" class="widget-box ztree">
 		</div>
+		</security:phoenixSec>
 	</div>
 	<jsp:include page="footer.jsp" flush="true" />
 </body>
@@ -517,7 +523,9 @@ function searchAgency() {
 }
 
 $(document).ready(function(){
+	<security:phoenixSec purviewCode="ORG_MENU">
 	zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, zTreeNodes);
+	</security:phoenixSec>
 });
 
 
