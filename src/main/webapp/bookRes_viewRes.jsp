@@ -31,9 +31,11 @@ if ((Byte)vs.findValue("bookRes.isAudit") != (byte)-1) {
 		auditStaffName = staff.getName();
 	}
 	if ((Byte)vs.findValue("bookRes.isAudit") == 0) {
-		auditStatus = "审核不通过";
-	} else {
-		auditStatus = "审核通过";
+		auditStatus = "待审核";
+	} else if ((Byte)vs.findValue("bookRes.isAudit") == 1){
+		auditStatus = "待发布";
+	} else if ((Byte)vs.findValue("bookRes.isAudit") == 2){
+		auditStatus = "已发布";
 	}
 }
 
@@ -145,7 +147,7 @@ if (parentRes != null) {
 					<font class="black"><s:property value="bookRes.notes"/></font>
 				</div>
 				<div class="margin_top_5">
-					<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">返回</button>
+					<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();return false;">返回</button>
 				</div>
 				
 			</div>
@@ -155,13 +157,5 @@ if (parentRes != null) {
 	
 	<jsp:include page="footer.jsp" flush="true" />
 </body>
-
-<script type="text/javascript">
-
-function cancel() {
-	location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=bookId%>";
-}
-
-</script>
 
 </html>

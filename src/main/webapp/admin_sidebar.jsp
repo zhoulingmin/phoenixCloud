@@ -42,7 +42,7 @@
 				<li><a href="<%=request.getContextPath()%>/book_searchBook.jsp">书籍查询</a></li>
 				</security:phoenixSec>
 				<security:phoenixSec purviewCode="BOOK_RES_QUERY_MENU">
-				<li><a href="#">书籍资源查询</a></li>
+				<li><a href="<%=request.getContextPath()%>/bookRes_queryAll.jsp">书籍资源查询</a></li>
 				</security:phoenixSec>
 			</ul>
 		</li>

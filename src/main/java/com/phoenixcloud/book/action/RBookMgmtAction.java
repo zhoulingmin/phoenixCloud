@@ -121,8 +121,8 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 	}
 
 	public String getAll() {
-		List<RBook> bookList = bookDao.findByAuditStatus(bookInfo.getIsAudit());
-		request.put("bookList", bookList);
+		//List<RBook> bookList = bookDao.findByAuditStatus(bookInfo.getIsAudit());
+		//request.put("bookList", bookList);
 		return "success";
 	}
 
@@ -258,6 +258,17 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 			if (book == null) {
 				continue;
 			}
+			
+			if (flag == (byte)-1 && book.getIsAudit() != (byte)0) { // 打回重新制作
+				continue;
+			} else if (flag == (byte)0 && book.getIsAudit() != (byte)-1) { // 提交审核
+				continue;
+			} else if (flag == (byte)1 && book.getIsAudit() != (byte)0) { // 提交发布
+				continue;
+			} else if (flag == (byte)2 && book.getIsAudit() != (byte)1) { // 发布
+				continue;
+			}
+			
 			book.setIsAudit(flag);
 			book.setUpdateTime(new Date());
 			bookDao.merge(book);

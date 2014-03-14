@@ -42,7 +42,9 @@ public class RBookDao extends AbstractDao<RBook>{
 		int index = 1;
 		Vector params = new Vector();
 		if (book.getName() != null && book.getName().trim().length() > 0) {
-			sql += " and rb.name like :name";
+			sql += " and rb.name like ?" + index;
+			params.add("%" + book.getName().trim() + "%");
+			index++;
 		}
 		if (book.getStuSegId() != null && book.getStuSegId().compareTo(BigInteger.ZERO) != 0) {
 			sql += " and rb.stuSegId = ?" + index;
@@ -74,9 +76,9 @@ public class RBookDao extends AbstractDao<RBook>{
 			query.setParameter((i + 1), params.get(i));
 		}
 		
-		if (book.getName() != null && book.getName().trim().length() > 0) {
-			query.setParameter("name", "%" + book.getName().trim() + "%");
-		}
+		//if (book.getName() != null && book.getName().trim().length() > 0) {
+		//	query.setParameter("name", "%" + book.getName().trim() + "%");
+		//}
 		
 		return query.getResultList();
 	}

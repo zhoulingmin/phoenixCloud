@@ -14,7 +14,12 @@ public class DateTypeConvertor extends StrutsTypeConverter{
 	public Object convertFromString(Map context, String[] values, @SuppressWarnings("rawtypes") Class toClass) {
 		Date date=null;
 		if(values!=null&&values.length>0){
-			SimpleDateFormat df=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			SimpleDateFormat df = null;
+			if (values[0].length() == "yyyy/MM/dd".length()) {
+				df = new SimpleDateFormat("yyyy/MM/dd");
+			} else {
+				df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			}
 			try {
 				date = df.parse(values[0]);
 			} catch (ParseException e) {

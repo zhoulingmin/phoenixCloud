@@ -17,7 +17,7 @@ if (parentId == null || "null".equalsIgnoreCase(parentId)) {
 PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 List<PubDdv> formatList = ddvDao.findByTblAndField("r_book_res", "FORMAT");
 
-
+String mode = request.getParameter("mode");
 %>
 
 <html>
@@ -116,7 +116,7 @@ function addRes() {
 		success: function() {
 			alert("创建资源成功！");
 			if (window.opener != null) {
-				window.opener.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=bookId%>";
+				window.opener.location.href = "<%=ctx%>/book/searchRes.do?bookInfo.isAudit=<%=mode%>&bookRes.bookId=<%=bookId%>";
 			}
 			self.close();
 		},

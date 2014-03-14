@@ -70,6 +70,18 @@ if ((Byte)vs.findValue("bookInfo.isUpload") == (byte)1) {
 	isUpload = "已上传";
 }
 
+String isAudit = "";
+byte audit = (Byte)vs.findValue("bookInfo.isAudit");
+if (audit == (byte)-1) {
+	isAudit = "制作中";
+} else if (audit == (byte)0) {
+	isAudit = "待审核";
+} else if (audit == (byte)1) {
+	isAudit = "待发布";
+} else if (audit == (byte)2) {
+	isAudit = "已发布";
+}
+
 byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 
 %>
@@ -170,6 +182,10 @@ byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 				<div class="margin_top_5">
 					<font class="blue">是否上传: </font>
 					<font class="black"><%=isUpload %></font>
+				</div>
+				<div class="margin_top_5">
+					<font class="blue">审核状态: </font>
+					<font class="black"><%=isAudit%></font>
 				</div>
 				<div class="margin_top_5">
 					<font class="blue">创建时间: </font>

@@ -49,14 +49,18 @@ if (codeList == null) {
 		<div id="content-header">
 			<h1>凤凰云端</h1>
 		</div>
-		<security:phoenixSec purviewCode="manageRegcode">
+		
 		<div class="widget-box">
 			<div class="widget-content">
+				<security:phoenixSec purviewCode="BOOK_REG_CODE_ADD">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addRegCode" onclick="addRegCode();" value="新建"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="BOOK_REG_CODE_DELETE">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeCodes" onclick="removeCodes();" value="删除"/>
+				</security:phoenixSec>
 			</div>
 		</div>
-		</security:phoenixSec>
+		
 		<div><!-- this div node is just used to let $(this).parents('.widget-box') find only one node -->
 			<div class="widget-box">
 				<div class="widget-title">
@@ -117,12 +121,11 @@ if (codeList == null) {
 								<td><%=updateTime%></td>
 								<td><%=code.getStaffId() %></td>
 								<td><%=code.getNotes() %></td>
-								<security:phoenixSec purviewCode="manageRegcode">
 								<td>
-									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/bookRegCode_edit.do?regCode.regCodeId=<%=code.getId()%>"><i class="icon-edit"></i></a>
+									<security:phoenixSec purviewCode="BOOK_REG_CODE_DELETE">
 									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
+									</security:phoenixSec>
 								</td>
-								</security:phoenixSec>
 							</tr>
 							<%} %>
 						</tbody>

@@ -175,7 +175,7 @@ String isAudit = request.getParameter("isAudit");
 				
 					<div class="form-actions">
 						<button class="btn btn-primary" type="button"  onclick="addBook();">创建</button>
-						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">取消</button>
+						<button class="btn btn-primary" style="margin-left:50px" onclick="history.back()();return false;">取消</button>
 					</div>
 				</form>
 			</div>
@@ -204,10 +204,6 @@ function addBook() {
 			alert("创建书籍失败！");
 		}
 	});
-}
-
-function cancel() {
-	location.href = "<%=ctx%>/book/book_getAll.do";
 }
 
 function onfocusOrg() {

@@ -49,15 +49,21 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 		<div id="content-header">
 			<h1>凤凰云端</h1>
 		</div>
-		<security:phoenixSec purviewCode="manageUser">
+		
 		<div class="widget-box">
 			<div class="widget-content">
+				<security:phoenixSec purviewCode="STAFF_ADD">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addUser" onclick="addUser();" value="新建"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="STAFF_UPDATE">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="modifyUser" onclick="modifyUser();" value="修改"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="STAFF_DELETE">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeUser" onclick="removeUsers();" value="删除"/>
+				</security:phoenixSec>
 			</div>
 		</div>
-		</security:phoenixSec>
+		
 		
 		<!-- 显示账号列表  -->
 		<div class="widget-box">
@@ -125,12 +131,14 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 							<td><%=createTime %></td>
 							<td><%=updateTime %></td>
 							<td><%=staff.getNotes() %></td>
-							<security:phoenixSec purviewCode="manageUser">
 							<td>
+								<security:phoenixSec purviewCode="STAFF_UPDATE">
 								<a class="tip-top" data-original-title="修改" href="<%=ctx%>/system/system_editUser.do?staff.staffId=<%=staff.getId()%>"><i class="icon-edit"></i></a>
+								</security:phoenixSec>
+								<security:phoenixSec purviewCode="STAFF_DELETE">
 								<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
+								</security:phoenixSec>
 							</td>
-							</security:phoenixSec>
 						</tr>
 					<%} %>
 					</tbody>
@@ -141,17 +149,23 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 	<jsp:include page="footer.jsp" flush="true" />
 </body>
 <script type="text/javascript">
-
+<security:phoenixSec purviewCode="STAFF_DELETE">
+var chkItems = null;
 function removeUsers() {
-	var ids = "";
-	var checkedItems = jQuery("#userTable tbody").find("input:checked");
-	if (checkedItems == null || checkedItems.length == 0) {
-		alert("请选择要删除的账号！");
+	if (chkItems != null) {
+		alert("网络繁忙，请稍后重试！");
 		return;
 	}
-	for (var i = 0; i < checkedItems.length; i++) {
-		ids += checkedItems[i].value;
-		if (i != (checkedItems.length - 1)) {
+	var ids = "";
+	chkItems = jQuery("#userTable tbody").find("input:checked");
+	if (chkItems == null || chkItems.length == 0) {
+		alert("请选择要删除的账号！");
+		chkItems = null;
+		return;
+	}
+	for (var i = 0; i < chkItems.length; i++) {
+		ids += chkItems[i].value;
+		if (i != (chkItems.length - 1)) {
 			ids += ",";
 		}
 	}
@@ -164,18 +178,22 @@ function removeUsers() {
 		data: {userIdArr:ids},
 		success: function() {
 			alert("删除成功！");
-			window.location.href = "<%=ctx%>/system/system_getAllUser.do";
+			jQuery(chkItems).parents("tr").remove();
+			chkItems = null;
 		},
 		error: function() {
 			alert("删除失败！");
+			chkItems = null;
 		}
 	});
 }
-
+</security:phoenixSec>
+<security:phoenixSec purviewCode="STAFF_ADD">
 function addUser() {
 	location.href = "<%=ctx%>/addUser.jsp";
 }
-
+</security:phoenixSec>
+<security:phoenixSec purviewCode="STAFF_UPDATE">
 function modifyUser() {
 	var checkedItems = jQuery("#userTable tbody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
@@ -184,10 +202,17 @@ function modifyUser() {
 	}
 	window.location.href = "<%=ctx%>/system/system_editUser.do?staff.staffId=" + checkedItems[0].value;
 }
+</security:phoenixSec>
 
 jQuery(document).ready(function() {
+	<security:phoenixSec purviewCode="STAFF_DELETE">
 	jQuery("td a.tip-top:last-child").on("click", function(e) {
-		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
+		if (chkItems != null) {
+			alert("网络繁忙，请稍后重试！");
+			return;
+		}
+		chkItems = jQuery(this.parentNode.parentNode).find("input:first-child");
+		var id = chkItems.val().toString();
 		jQuery.ajax({
 			url: "<%=ctx%>/system/system_removeUser.do",
 			type: "POST",
@@ -196,14 +221,17 @@ jQuery(document).ready(function() {
 			data: {userIdArr: id},
 			success: function() {
 				alert("删除成功！");
-				window.location.href = "<%=ctx%>/system/system_getAllUser.do";
+				jQuery(chkItems).parents("tr").remove();
+				chkItems = null;
 			},
 			error: function() {
 				alert("删除失败！");
+				chkItems = null;
 			}
 		});
 		return false;
 	});
+	</security:phoenixSec>
 });
 </script>
 </html>

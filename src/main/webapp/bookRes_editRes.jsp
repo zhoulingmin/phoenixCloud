@@ -5,7 +5,6 @@
 <%@page import="com.phoenixcloud.util.SpringUtils" %>
 <%@page import="java.util.*" %>
 <%@taglib prefix="s" uri="/struts-tags" %>
-<%@taglib uri="/WEB-INF/security.tld" prefix="s" %>
 <%@page import="com.opensymphony.xwork2.util.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 

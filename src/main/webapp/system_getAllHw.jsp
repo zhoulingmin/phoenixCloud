@@ -6,6 +6,7 @@
 <%@page import="com.phoenixcloud.bean.*"%>
 <%@page import="com.phoenixcloud.system.service.ISysService" %>
 <%@page import="com.phoenixcloud.util.SpringUtils, com.phoenixcloud.dao.*" %>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
@@ -52,9 +53,15 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 
 		<div class="widget-box">
 			<div class="widget-content">
+				<security:phoenixSec purviewCode="HARDWARE_ADD">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addHw" onclick="addHw();" value="新建"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="HARDWARE_UPDATE">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="modifyHw" onclick="modifyHw();" value="修改"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="HARDWARE_DELETE">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeHw" onclick="removeHws();" value="删除"/>
+				</security:phoenixSec>
 			</div>
 		</div>
 		
@@ -120,8 +127,12 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 							<td><%=updateTime %></td>
 							<td><%=hw.getNotes() %></td>
 							<td>
+								<security:phoenixSec purviewCode="HARDWARE_UPDATE">
 								<a class="tip-top" data-original-title="修改" href="<%=ctx%>/system/system_editHw.do?hw.hwId=<%=hw.getId()%>"><i class="icon-edit"></i></a>
+								</security:phoenixSec>
+								<security:phoenixSec purviewCode="HARDWARE_DELETE">
 								<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
+								</security:phoenixSec>
 							</td>
 						</tr>
 					<%} %>
@@ -144,11 +155,20 @@ function modifyHw() {
 	window.loaction.href = "<%=ctx%>/system/system_editHw.do?hw.hwId=" + checkedItems[0].value;
 }
 
+var checkedItems = null;
+
 function removeHws() {
+	
+	if (checkedItems != null) {
+		alert("网络繁忙，请稍后重试！");
+		return;
+	}
+	
 	var ids = "";
-	var checkedItems = jQuery("#hwTable tbody").find("input:checked");
+	checkedItems = jQuery("#hwTable tbody").find("input:checked");
 	if (checkedItems == null || checkedItems.length == 0) {
 		alert("请选择要删除的硬件！");
+		checkedItems = null;
 		return;
 	}
 	for (var i = 0; i < checkedItems.length; i++) {
@@ -166,10 +186,12 @@ function removeHws() {
 		data: {hwIdArr:ids},
 		success: function() {
 			alert("删除成功！");
-			window.location.href = "<%=ctx%>/system/system_getAllHw.do";
+			jQuery(checkedItems).parents("tr").remove();
+			checkedItems = null;
 		},
 		error: function() {
 			alert("删除失败！");
+			checkedItems = null;
 		}
 	});
 }
@@ -180,7 +202,12 @@ function addHw() {
 
 jQuery(document).ready(function() {
 	jQuery("td a.tip-top:nth-child(2)").on("click", function(e) {
-		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
+		if (checkedItems != null) {
+			alert("网络繁忙，请稍后重试！");
+			return;
+		}
+		checkedItems = jQuery(this.parentNode.parentNode).find("input:first-child")
+		var id = checkedItems.val().toString();
 		jQuery.ajax({
 			url: "<%=ctx%>/system/system_removeHw.do",
 			type: "POST",
@@ -189,10 +216,12 @@ jQuery(document).ready(function() {
 			data: {hwIdArr: id},
 			success: function() {
 				alert("删除成功！");
-				window.location.href = "<%=ctx%>/system/system_getAllHw.do";
+				jQuery(checkedItems).parents("tr").remove();
+				checkedItems = null;
 			},
 			error: function() {
 				alert("删除失败！");
+				checkedItems = null;
 			}
 		});
 		return false;

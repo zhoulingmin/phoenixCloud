@@ -27,6 +27,7 @@ public interface IRBookMgmtService {
 	List<RBookRe> getAllRes();
 	void saveBookRes(RBookRe bookRes);
 	void removeRes(String resId);
+	List<RBookRe> searchRes(RBook book, RBookRe res);
 	
 	RRegCode findRegCode(String id);
 	List<RRegCode> getAllRegCodes();

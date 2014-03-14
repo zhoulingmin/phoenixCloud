@@ -22,7 +22,7 @@ import javax.persistence.TemporalType;
 @Table(name="r_book_res")
 public class RBookRe extends AbstractModel<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="RES_ID", unique=true, nullable=false)
@@ -77,7 +77,7 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 
 	public RBookRe() {
 	}
-
+	
 	public String getResId() {
 		return this.resId;
 	}

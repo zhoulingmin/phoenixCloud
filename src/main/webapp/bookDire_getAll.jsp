@@ -21,6 +21,8 @@ RBook book = (RBook)request.getAttribute("book");
 int maxLevel = (Integer)request.getAttribute("maxLevel");
 JSONArray direArr = (JSONArray)request.getAttribute("direArr");
 
+String mode = request.getParameter("mode");
+
 %>
 
 <html>
@@ -65,8 +67,12 @@ JSONArray direArr = (JSONArray)request.getAttribute("direArr");
 	
 	<div id="contextMenu" class="dropdown clearfix">
 	    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:absolute;margin-bottom:5px;">
+	    	<security:phoenixSec purviewCode="BOOK_DIR_ADD">
 	        <li><a tabindex="1" href="#">新建</a></li>
+	        </security:phoenixSec>
+	        <security:phoenixSec purviewCode="BOOK_DIR_DELETE">
 	        <li><a tabindex="2" href="#">删除</a></li>
+	        </security:phoenixSec>
 	    </ul>
 	</div>
 	
@@ -132,8 +138,8 @@ JSONArray direArr = (JSONArray)request.getAttribute("direArr");
 			<br />
 			<br />
 			<br />
-			<input style="float:right; margin-right:30px;" type="button" name="cancel" class="btn btn-primary" onclick="cancel();return false;" value="返回" />
-			<security:phoenixSec purviewCode="editBook">
+			<input style="float:right; margin-right:30px;" type="button" name="cancel" class="btn btn-primary" onclick="history.back();return false;" value="返回" />
+			<security:phoenixSec purviewCode="BOOK_DIR_UPDATE">
 			<input style="float:right; margin-right:30px;" class="btn btn-primary" type="button" name="update" onclick="updateDire();return false;" value="保存" />
 			</security:phoenixSec>
 		</div>
@@ -142,10 +148,6 @@ JSONArray direArr = (JSONArray)request.getAttribute("direArr");
 </body>
 
 <script type="text/javascript">
-
-function cancel() {
-	window.location.href = "<%=ctx%>/book/book_getAll.do";
-}
 
 var count = 0;
 var updatedCount = 0;
@@ -213,7 +215,7 @@ var $curDire;
 // 初始化，手动初始化
 // 初始化之后，开启异步加载
 $(document).ready(function(){
-	<security:phoenixSec purviewCode="editBook">
+	<%if (Byte.toString(book.getIsAudit()).equals(mode)) {%>
 	$("tbody tr").on("contextmenu", function(event) {
 		$contextMenu.css({
 			  display: "block",
@@ -223,7 +225,7 @@ $(document).ready(function(){
 		$curDire = this;
 		return false;
 	});
-	</security:phoenixSec>
+	<%}%>
 	
 	$("tbody tr").on("mouseover", function(event) {
 		$(this).attr("bgcolor", "#E6E6FA");
@@ -241,10 +243,10 @@ $(document).ready(function(){
 		}
 	});
 	
-	
 	$(document).click(function () {
 	    $contextMenu.hide();
 	});
+	
 	
 	$("#contextMenu").on("click", "a", function(e) {
 		var tabIndex = e.target.getAttribute("tabindex");
@@ -279,6 +281,7 @@ $(document).ready(function(){
 		$contextMenu.hide();
 		return false;
 	});
+	
 });
 
 </script>

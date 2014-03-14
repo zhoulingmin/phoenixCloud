@@ -107,6 +107,7 @@ byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 				<security:phoenixSec purviewCode="BOOK_ADD">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addBook();" value="新建"/>
 				</security:phoenixSec>
+				<%} %>
 				<security:phoenixSec purviewCode="BOOK_UPDATE">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="editBook();" value="修改"/>
 				</security:phoenixSec>
@@ -116,12 +117,10 @@ byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 				<security:phoenixSec purviewCode="BOOK_UPLOAD_AFFIX">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadBook" onclick="uploadBook();" value="上传附件"/>
 				</security:phoenixSec>
-				<security:phoenixSec purviewCode="BOOK_DIR_ADD">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookDire" onclick="editBookDire();" value="编辑目录"/>
-				</security:phoenixSec>
-				<security:phoenixSec purviewCode="BOOK_RES_ADD">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookRes" onclick="editBookRes();" value="编辑资源"/>
-				</security:phoenixSec>
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookDire" onclick="editBookDire();" value="目录"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookRes" onclick="editBookRes();" value="资源"/>
+				<%if (mode == (byte)-1) { %>
 				<security:phoenixSec purviewCode="BOOK_ADUIT_UP">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="commitBook" onclick="changeBookAuditStatus(0);" value="提交审核"/>
 				</security:phoenixSec>
@@ -163,6 +162,7 @@ byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 							<th>书籍编码</th>
 							<th>隶属机构</th>
 							<th>上传状态</th>
+							<th>审核状态</th>
 							<th>创建人</th>
 							<th>创建时间</th>
 							<th>更新时间</th>
@@ -197,6 +197,17 @@ byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 								<td><%=book.getBookNo() %></td>
 								<td><%=orgName %></td>
 								<td><%if (book.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
+								<td>
+								<%if (book.getIsAudit() == (byte)-1) { %>
+								制作中
+								<%} else if (book.getIsAudit() == (byte)0){ %>
+								待审核
+								<%} else if (book.getIsAudit() == (byte)1){ %>
+								待发布
+								<%} else if (book.getIsAudit() == (byte)2){ %>
+								已发布
+								<%} %>
+								</td>
 								<td><%=staff.getName() %></td>
 								<td><%=createTime%></td>
 								<td><%=updateTime%></td>
@@ -212,11 +223,9 @@ byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 									<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/book_editBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-edit"></i></a>
 									</security:phoenixSec>
 									<security:phoenixSec purviewCode="BOOK_DIR_UPDATE">
-									<a class="tip-top" data-original-title="目录" href="<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
+									<a class="tip-top" data-original-title="目录" href="<%=ctx%>/book/bookDire_getAll.do?mode=<%=mode %>&bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
 									</security:phoenixSec>
-									<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
-									<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=book.getId()%>&mode=<%=mode%>"><i class="icon-file"></i></a>
-									</security:phoenixSec>
+									<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=book.getId()%>&bookInfo.isAudit=<%=mode%>"><i class="icon-file"></i></a>
 									<security:phoenixSec purviewCode="BOOK_ADUIT_OK">
 									<%if (book.getIsUpload() == (byte)1) {%>
 									<a class="tip-top" data-original-title="下载" href="<%=ctx%>/book/book_download.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-download-alt"></i></a>
@@ -238,9 +247,11 @@ byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 									<a name="releaseBook" class="tip-top" data-original-title="发布" href="#"><i class=" icon-share-alt"></i></a>
 									</security:phoenixSec>
 									<%} %>
+									<%if (Byte.toString(book.getIsAudit()).equals(mode)) { %>
 									<security:phoenixSec purviewCode="BOOK_DELETE">
 									<a name="removeBook" class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
 									</security:phoenixSec>
+									<%} %>
 								</td>
 							</tr>
 							<%} %>
@@ -285,16 +296,16 @@ function editBookDire() {
 		alert("请选择一本书籍后重试！");
 		return;
 	}
-	window.location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=" + checkedItems[0].value;
+	window.location.href = "<%=ctx%>/book/bookDire_getAll.do?mode=<%=mode %>&bookId=" + checkedItems[0].value;
 }
 
 function editBookRes() {
 	var checkedItems = jQuery("#bookContent tbody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
+		window.location.href = "<%=ctx%>/bookRes_getAll.jsp?mode=<%=mode%>";
 		return;
 	}
-	window.location.href = "<%=ctx%>/book/bookRes_getAll.do?mode=<%=mode%>&bookRes.bookId=" + checkedItems[0].value;
+	window.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookInfo.isAudit=<%=mode%>&bookRes.bookId=" + checkedItems[0].value;
 }
 
 function viewBook() {
@@ -377,7 +388,7 @@ function changeBookAuditStatus(flag) {
 			} else if (flag == 1) {
 				alert("提交发布成功！");
 			} else if (flag == -1) {
-				alert("打回继续制作成功！");
+				alert("打回重新制作成功！");
 			} else if (flag == 2) {
 				alert("书籍发布成功！");
 			}

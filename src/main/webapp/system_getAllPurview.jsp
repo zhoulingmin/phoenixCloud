@@ -68,14 +68,7 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		<div id="content-header">
 			<h1>凤凰云端</h1>
 		</div>
-		<security:phoenixSec purviewCode="managePurview">
-		<div class="widget-box">
-			<div class="widget-content">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addItem" onclick="addItem();" value="新建"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeItems" onclick="removeItems();" value="删除"/>
-			</div>
-		</div>
-		</security:phoenixSec>
+		
 		<div class="widget-box">
 			<div class="widget-title">
 				<ul class="nav nav-tabs">
@@ -115,9 +108,11 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 							</div>
 						</div>
 					</div>
+					<security:phoenixSec purviewCode="PURVIEW_CONF">
 					<div class="span6">
 						<button class="btn btn-primary" type="button" style="float: right; margin-right: 20px;" onclick="savePurCfg();">保存</button>
 					</div>
+					</security:phoenixSec>
 				</div>
 			</div>
 		</div>
@@ -125,81 +120,6 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 	<jsp:include page="footer.jsp" flush="true" />
 </body>
 <script type="text/javascript">
-
-function removeItems() {
-	var ids = "";
-	var tabId = jQuery(".tab-content > div").filter(".active")[0].id;
-	var checkedItems = jQuery("#" + tabId +" tbody").find("input:checked");
-	if (checkedItems == null || checkedItems.length == 0) {
-		alert("请选择要删除的项目！");
-		return;
-	}
-	for (var i = 0; i < checkedItems.length; i++) {
-		ids += checkedItems[i].value;
-		if (i != (checkedItems.length - 1)) {
-			ids += ",";
-		}
-	}
-	
-	if (tabId == "purviewTab") {
-		jQuery.ajax({
-			url: "<%=ctx%>/system/system_removePurview.do",
-			type: "POST",
-			async: "false",
-			timeout: 30000,
-			data: {purIdArr:ids},
-			success: function() {
-				alert("删除成功！");
-				window.location.href = "<%=ctx%>/system/system_getAllPurview.do?tabId=" + tabId;
-			},
-			error: function() {
-				alert("删除失败！");
-			}
-		});
-	} else if (tabId == "staffPurTab") {
-		jQuery.ajax({
-			url: "<%=ctx%>/system/system_removeStaffPur.do",
-			type: "POST",
-			async: "false",
-			timeout: 30000,
-			data: {staffPurIdArr:ids},
-			success: function() {
-				alert("删除成功！");
-				window.location.href = "<%=ctx%>/system/system_getAllPurview.do?tabId=" + tabId;
-			},
-			error: function() {
-				alert("删除失败！");
-			}
-		});
-	} else if (tabId == "staffRegCodeTab") {
-		jQuery.ajax({
-			url: "<%=ctx%>/system/system_removeStaffRegCode.do",
-			type: "POST",
-			async: "false",
-			timeout: 30000,
-			data: {staffRegCodeIdArr:ids},
-			success: function() {
-				alert("删除成功！");
-				window.location.href = "<%=ctx%>/system/system_getAllPurview.do?tabId=" + tabId;
-			},
-			error: function() {
-				alert("删除失败！");
-			}
-		});
-	}
-}
-
-function addItem() {
-	var tabId = jQuery(".tab-content > div").filter(".active")[0].id;
-	if (tabId == "purviewTab") {
-		location.href = "<%=ctx%>/addPurview.jsp";
-	} else if (tabId == "staffPurTab") {
-		location.href = "<%=ctx%>/addStaffPur.jsp";
-	} else if (tabId == "staffRegCodeTab") {
-		location.href = "<%=ctx%>/addStaffRegCode.jsp";
-	}
-}
-
 var zAgencyTreeObj,
 agencySetting = {
 	view: {
@@ -215,9 +135,11 @@ agencySetting = {
 		url: "<%=ctx%>/agency/agencyMgmt!getStaff.do",
 		autoParam: ["type", "selfId"]
 	},
+	<security:phoenixSec purviewCode="PURVIEW_QUERY">
 	callback: {
 		onClick: onClickUser,
 	}
+	</security:phoenixSec>
 },
 zAgencyTreeNodes = [];
 
@@ -234,7 +156,7 @@ function onClickUser(event, treeId, treeNode, clickFlag) {
 		dataType: "JSON",
 		success: function(ret) {
 			if (ret == null || ret.length == 0) {
-				alert("Unknown error");
+				alert("该用户无任何权限！");
 				return;
 			}
 			jQuery(zPurTreeObj.getNodes()).each(function () {
@@ -291,7 +213,7 @@ purSetting = {
 		check:{//复选框设置 
 	        enable:true,
 	        chkStyle:"checkbox",
-			chkboxType:{"Y":"ps","N":"ps"}
+			chkboxType:{"Y":"s","N":"s"}
 	    },
 		async: {
 			enable: true,
@@ -374,7 +296,7 @@ jQuery(document).ready(function() {
 	zPurTreeObj = $.fn.zTree.init($("#purTree"), purSetting, zPurTreeNodes);
 	
 	// 设置激活tab
-	var activeTabId = "<%=tabId%>";
+	/*var activeTabId = "<%=tabId%>";
 	jQuery("#" + activeTabId).addClass("active");
 	if (activeTabId == "purviewTab") {
 		jQuery(".nav-tabs > li:eq(0)").addClass("active");
@@ -382,67 +304,7 @@ jQuery(document).ready(function() {
 		jQuery(".nav-tabs > li:eq(1)").addClass("active");
 	} else if (activeTabId == "staffRegCodeTab") {
 		jQuery(".nav-tabs > li:eq(2)").addClass("active");
-	}
-	
-	// 删除权限
-	jQuery("#purviewTabTable").on("click", "td a.tip-top:nth-child(2)", function(e) {
-		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
-		jQuery.ajax({
-			url: "<%=ctx%>/system/system_removePurview.do",
-			type: "POST",
-			async: "false",
-			timeout: 30000,
-			data: {purIdArr: id},
-			success: function() {
-				alert("删除成功！");
-				window.location.href = "<%=ctx%>/system/system_getAllPurview.do?tabId=purviewTab";
-			},
-			error: function() {
-				alert("删除失败！");
-			}
-		});
-		return false;
-	});
-	
-	// 删除权限配置
-	jQuery("#staffPurTabTable").on("click", "td a.tip-top:nth-child(2)", function(e) {
-		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
-		jQuery.ajax({
-			url: "<%=ctx%>/system/system_removeStaffPur.do",
-			type: "POST",
-			async: "false",
-			timeout: 30000,
-			data: {staffPurIdArr: id},
-			success: function() {
-				alert("删除成功！");
-				window.location.href = "<%=ctx%>/system/system_getAllPurview.do?tabId=staffPurTab";
-			},
-			error: function() {
-				alert("删除失败！");
-			}
-		});
-		return false;
-	});
-	
-	// 删除注册码
-	jQuery("#staffRegCodeTabTable").on("click", "td a.tip-top:nth-child(2)", function(e) {
-		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
-		jQuery.ajax({
-			url: "<%=ctx%>/system/system_removeStaffRegCode.do",
-			type: "POST",
-			async: "false",
-			timeout: 30000,
-			data: {staffRegCodeIdArr: id},
-			success: function() {
-				alert("删除成功！");
-				window.location.href = "<%=ctx%>/system/system_getAllPurview.do?tabId=staffRegCodeTab";
-			},
-			error: function() {
-				alert("删除失败！");
-			}
-		});
-		return false;
-	});
+	}*/
 	
 });
 </script>

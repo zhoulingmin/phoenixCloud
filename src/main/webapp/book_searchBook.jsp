@@ -99,6 +99,12 @@ List<PubPress> pressList = pressDao.getAll();
 			</div>
 		</div>
 		
+		<div class="widget-box">
+			<div class="widget-content">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewBook();" value="详情"/>
+			</div>
+		</div>
+		
 		<div><!-- this div node is just used to let $(this).parents('.widget-box') find only one node -->
 			<div class="widget-box">
 				<div class="widget-title">
@@ -126,6 +132,7 @@ List<PubPress> pressList = pressDao.getAll();
 							<th>创建时间</th>
 							<th>更新时间</th>
 							<th>备注</th>
+							<th>操作</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -165,10 +172,16 @@ List<PubPress> pressList = pressDao.getAll();
 								<%} else if (book.getIsAudit() == (byte)2){ %>
 								已发布
 								<%} %>
+								</td>
 								<td><%=staff.getName() %></td>
 								<td><%=createTime%></td>
 								<td><%=updateTime%></td>
 								<td><%=book.getNotes() %></td>
+								<td>
+								<%if (book.getIsUpload() == (byte)1) {%>
+								<a class="tip-top" data-original-title="下载" href="<%=ctx%>/book/book_download.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-download-alt"></i></a>
+								<%} %>
+								</td>
 							</tr>
 							<%} %>
 						</tbody>

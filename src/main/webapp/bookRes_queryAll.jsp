@@ -7,15 +7,26 @@
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="com.phoenixcloud.util.*" %>
 <%@page import="com.phoenixcloud.dao.*" %>
-<%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@taglib  uri="/WEB-INF/security.tld" prefix="security"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%
 String ctx = (String) request.getContextPath();
 
 List<RBookRe> resList = (List<RBookRe>)request.getAttribute("resList");
+if (resList == null) {
+	resList = new ArrayList<RBookRe>();
+}
 
 PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
+List<PubDdv> subjectList = ddvDao.findByTblAndField("r_book", "SUBJECT_ID");
+List<PubDdv> stuSegList = ddvDao.findByTblAndField("r_book", "STU_SEG_ID");
+List<PubDdv> classList = ddvDao.findByTblAndField("r_book", "CLASS_ID");
+PubPressDao pressDao = (PubPressDao)SpringUtils.getBean(PubPressDao.class);
+List<PubPress> pressList = pressDao.getAll();
+
+
+RBookDao bookDao = (RBookDao)SpringUtils.getBean("RBookDao");
 
 %>
 
@@ -50,13 +61,50 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 		
 		<div class="widget-box">
 			<div class="widget-content">
-				<security:phoenixSec purviewCode="editBook">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeRes" onclick="editRes();" value="修改"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeRes" onclick="removeRes();" value="删除"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadRes" onclick="uploadRes();" value="上传资源"/>
-				</security:phoenixSec>
+				<form id="searchBook" action="<%=ctx %>/book/searchRes.do" method="post">
+					<input type="hidden" name="bookRes.isAudit" value="-2">
+					<input type="hidden" name="bookInfo.isAudit" value="-2">
+					书名:
+					<input type="text" name="bookInfo.name" />
+					资源名:
+					<input type="text" name="bookRes.name" />
+					学段:
+					<select name="bookInfo.stuSegId">
+						<option value="0" selected="selected">全部</option>
+						<%for (PubDdv stu : stuSegList) { %>
+						<option value="<%=stu.getDdvId()%>"><%=stu.getValue() %></option>
+						<%} %>
+					</select>
+					&nbsp;&nbsp;&nbsp;&nbsp;学科:
+					<select name="bookInfo.subjectId">
+						<option value="0">全部</option>
+						<%for (PubDdv sub: subjectList) {%>
+						<option value="<%=sub.getDdvId() %>"><%=sub.getValue() %></option>
+						<%} %>
+					</select>
+					<br />
+					年级:
+					<select name="bookInfo.classId">
+						<option value="0" selected="selected">全部</option>
+						<%for (PubDdv cls : classList) { %>
+						<option value="<%=cls.getDdvId()%>"><%=cls.getValue() %></option>
+						<%} %>
+					</select>
+					&nbsp;&nbsp;&nbsp;&nbsp;出版社:
+					<select name="bookInfo.pressId">
+						<option value="0" selected="selected">全部</option>
+						<%for (PubPress press : pressList) { %>
+						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
+						<%} %>
+					</select>
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+				</form>
+			</div>
+		</div>
+		
+		<div class="widget-box">
+			<div class="widget-content">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewRes" onclick="viewRes();" value="详情"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="back" onclick="cancel();" value="返回"/>
 			</div>
 		</div>
 
@@ -78,6 +126,7 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 								</div>
 							</th>
 							<th style="width:5%;">标识</th>
+							<th>书名</th>
 							<th>资源名称</th>
 							<th>格式</th>
 							<th>是否上传</th>
@@ -94,20 +143,22 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 							for (RBookRe res : resList) {
 								String createTime = sdf.format(res.getCreateTime());
 								String updateTime = sdf.format(res.getUpdateTime());
-								
+								RBook bookTmp = bookDao.find(res.getBookId().toString());
 								String format = "";
 								PubDdv ddv = ddvDao.find(res.getFormat().toString());
 								if (ddv != null) {
 									format = ddv.getValue();
 								}
 								
-								String auditStatus = "未知状态";
+								String auditStatus = "";
 								if (res.getIsAudit() == (byte)-1) {
-									auditStatus = "未审核";
-								} else if (res.getIsAudit() == (byte)1) {
-									auditStatus = "审核通过";
+									auditStatus = "制作中";
 								} else if (res.getIsAudit() == (byte)0) {
-									auditStatus = "审核不通过";
+									auditStatus = "待审核";
+								} else if (res.getIsAudit() == (byte)1) {
+									auditStatus = "待发布";
+								} else if (res.getIsAudit() == (byte)2) {
+									auditStatus = "已发布";
 								}
 							%>
 							<tr>
@@ -119,7 +170,8 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 									</div>
 								</td>
 								<td style="width:5%;"><%=res.getId() %></td>
-								<td><%=res.getName() %></a></td>
+								<td><%=bookTmp.getName() %></td>
+								<td><a href="<%=ctx%>/book/bookRes_viewRes.do?bookRes.resId=<%=res.getId()%>"><%=res.getName() %></a></td>
 								<td><%=format %></td>
 								<td><%if (res.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
 								<td><%=createTime%></td>
@@ -127,27 +179,9 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 								<td><%=auditStatus %></td>
 								<td><%=res.getNotes() %></td>
 								<td>
-									<security:phoenixSec purviewCode="editBook">
-									<%if (res.getIsUpload() == (byte)0) {%>
-									<a class="tip-top" data-original-title="上传" href="#" onclick="return editResFromIcon(<%=res.getId()%>)"><i class="icon-upload"></i></a>
-									<%} %>
-									</security:phoenixSec>
-									<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/bookRes_viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
-									<security:phoenixSec purviewCode="editBook">
-									<a class="tip-top" data-original-title="修改" href="#" onclick="return editResFromIcon(<%=res.getId()%>)"><i class="icon-edit"></i></a>
-									</security:phoenixSec>
 									<%if (res.getIsUpload() == (byte)1) {%>
 									<a class="tip-top" data-original-title="下载" href="<%=ctx%>/book/bookRes_download.do?bookRes.resId=<%=res.getId()%>"><i class="icon-download-alt"></i></a>
 									<%} %>
-									<security:phoenixSec purviewCode="verifyBook">
-									<%if (res.getIsAudit() == (byte)-1) {%>
-									<a class="tip-top" data-original-title="通过" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=true"><i class="icon-ok-circle"></i></a>
-									<a class="tip-top" data-original-title="不通过" href="<%=ctx%>/book/bookRes_doAudit.do?bookRes.resId=<%=res.getId()%>&flag=false"><i class="icon-ban-circle"></i></a>
-									<%} %>
-									</security:phoenixSec>
-									<security:phoenixSec purviewCode="editBook">
-									<a class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
-									</security:phoenixSec>
 								</td>
 							</tr>
 							<%} %>
@@ -163,53 +197,6 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 
 <script type="text/javascript">
 
-function cancel() {
-	window.location.href = "<%=ctx%>/book/book_queryAll.do";
-}
-
-function editRes() {
-	var checkedItems = jQuery("#resContent tbody").find("input:checked");
-	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一个资源后重试！");
-		return;
-	}
-	
-	var url = "<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=" + checkedItems[0].value;
-	var title = "修改书籍资源";
-	var params = "height=470,width=635,top=" 
-		+ (window.screen.availHeight - 30 - 470) / 2 
-		+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
-		+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
-	window.open(url, title, params);
-}
-
-function editResFromIcon(resId) {
-	var url = "<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=" + resId;
-	var title = "修改书籍资源";
-	var params = "height=470,width=635,top=" 
-		+ (window.screen.availHeight - 30 - 470) / 2 
-		+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
-		+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
-	window.open(url, title, params);
-	return false;
-}
-
-function uploadRes() {
-	var checkedItems = jQuery("#resContent tbody").find("input:checked");
-	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一个资源后重试！");
-		return;
-	}
-	
-	var url = "<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=" + checkedItems[0].value;
-	var title = "修改书籍资源";
-	var params = "height=400,width=635,top=" 
-		+ (window.screen.availHeight - 30 - 400) / 2 
-		+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
-		+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
-	window.open(url, title, params);
-}
-
 function viewRes() {
 	var checkedItems = jQuery("#resContent tbody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
@@ -218,59 +205,6 @@ function viewRes() {
 	}
 	window.location.href = "<%=ctx%>/book/bookRes_viewRes.do?bookRes.resId=" + checkedItems[0].value;
 }
-
-function removeRes() {
-	var ids = "";
-	
-	var checkedItems = jQuery("#resContent tbody").find("input:checked");
-	if (checkedItems == null || checkedItems.length == 0) {
-		alert("请选择要删除的资源！");
-		return;
-	}
-	for (var i = 0; i < checkedItems.length; i++) {
-		ids += checkedItems[i].value;
-		if (i != (checkedItems.length - 1)) {
-			ids += ",";
-		}
-	}
-	
-	jQuery.ajax({
-		url: "<%=ctx%>/book/bookRes_removeRes.do",
-		type: "POST",
-		async: "false",
-		timeout: 30000,
-		data: {resIdArr:ids},
-		success: function() {
-			alert("删除成功！");
-			window.location.href = "<%=ctx%>/book/bookRes_queryAll.do";
-		},
-		error: function() {
-			alert("删除失败！");
-		}
-	});
-
-}
-
-jQuery(document).ready(function() {
-	jQuery("td a.tip-top:last-child").on("click", function(e) {
-		var id = jQuery(this.parentNode.parentNode).find("input:first-child").val().toString();
-		jQuery.ajax({
-			url: "<%=ctx%>/book/bookRes_removeRes.do",
-			type: "POST",
-			async: "false",
-			timeout: 30000,
-			data: {resIdArr: id},
-			success: function() {
-				alert("删除成功！");
-				window.location.href = "<%=ctx%>/book/bookRes_queryAll.do";
-			},
-			error: function() {
-				alert("删除失败！");
-			}
-		});
-		return false;
-	});
-});
 
 </script>
 

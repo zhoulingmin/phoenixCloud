@@ -4,10 +4,15 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookDire;
@@ -37,6 +42,9 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 	
 	@Resource
 	private RRegCodeDao regCodeDao;
+	
+	@PersistenceContext
+	protected EntityManager entityManager = null;
 	
 	public void setBookDao(RBookDao bookDao) {
 		this.bookDao = bookDao;
@@ -223,5 +231,70 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 			code.setDeleteState((byte)1);
 			regCodeDao.merge(code);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<RBookRe> searchRes(RBook book, RBookRe res) {
+		String sql = "";
+		int index = 1;
+		Vector params = new Vector();
+		String bookId = book.getId();
+		if (bookId == null || "0".equals(bookId)) {
+			if (res.getBookId() != null) {
+				bookId = res.getBookId().toString();
+			}
+		}
+		if (bookId != null && !"0".equals(bookId)) {
+			sql = "select rr from RBookRe rr where rr.deleteState = 0 and rr.bookId = " + bookId;
+		} else {
+			sql = "select rr from RBookRe rr, RBook rb where rr.bookId = rb.bookId " +
+					"and rr.deleteState = 0 and rb.deleteState = 0";
+			if (book.getName() != null && book.getName().trim().length() > 0) {
+				sql += " and rb.name like ?" + index;
+				params.add("%" + book.getName().trim() + "%");
+				index++;
+			}
+			if (book.getStuSegId() != null && book.getStuSegId().compareTo(BigInteger.ZERO) != 0) {
+				sql += " and rb.stuSegId = ?" + index;
+				params.add(book.getStuSegId());
+				index++;
+			}
+			if (book.getSubjectId() != null && book.getSubjectId().compareTo(BigInteger.ZERO) != 0) {
+				sql += " and rb.subjectId = ?" + index;
+				params.add(book.getSubjectId());
+				index++;
+			}
+			if (book.getClassId() != null && book.getClassId().compareTo(BigInteger.ZERO) != 0) {
+				sql += " and rb.classId = ?" + index;
+				params.add(book.getClassId());
+				index++;
+			}
+			if (book.getPressId() != null && book.getPressId().compareTo(BigInteger.ZERO) != 0) {
+				sql += " and rb.pressId = ?" + index;
+				params.add(book.getPressId());
+				index++;
+			}
+			if (book.getIsAudit() != (byte) -2) {
+				sql += " and rb.isAudit = " + book.getIsAudit();
+			}
+		}
+		
+		if (res.getName() != null && res.getName().trim().length() > 0) {
+			sql += " and rr.name like ?" + index;
+			params.add("%" + res.getName().trim() + "%");
+			index++;
+		}
+		
+		if (res.getIsAudit() != (byte)-2) { // -2: indicates all book
+			sql += " and rr.isAudit = " + res.getIsAudit();
+		}
+				
+		Query query = entityManager.createQuery(sql);
+		for (int i = 0; i < params.size(); i++) {
+			query.setParameter((i + 1), params.get(i));
+		}
+		
+		return query.getResultList();
 	}
 }

@@ -39,6 +39,7 @@ import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.book.vo.BookResNode;
 import com.phoenixcloud.dao.PubServerAddrDao;
+import com.phoenixcloud.dao.RBookReDao;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
@@ -59,14 +60,16 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	@Autowired
 	private PubServerAddrDao serAddrDao;
 	
-	private int start;
-	private int end;
-	
-	private boolean flag;
+	private byte flag;
 	private String resId;
 	
 	private RBookRe bookRes;
+	private RBook bookInfo;
 	private String resIdArr;
+	
+	@Autowired
+	private RBookReDao resDao;
+	
 	
 	public String getResIdArr() {
 		return resIdArr;
@@ -98,30 +101,6 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		this.response = response; 
 	}
 	
-	public int getStart() {
-		return start;
-	}
-
-	public void setStart(int start) {
-		this.start = start;
-	}
-
-	public int getEnd() {
-		return end;
-	}
-
-	public void setEnd(int end) {
-		this.end = end;
-	}
-	
-	public boolean isFlag() {
-		return flag;
-	}
-
-	public void setFlag(boolean flag) {
-		this.flag = flag;
-	}
-
 	public String getResId() {
 		return resId;
 	}
@@ -228,64 +207,27 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		return "success";
 	}
 	
+	public RBook getBookInfo() {
+		return bookInfo;
+	}
+
+	public void setBookInfo(RBook bookInfo) {
+		this.bookInfo = bookInfo;
+	}
+
+	public byte getFlag() {
+		return flag;
+	}
+
+	public void setFlag(byte flag) {
+		this.flag = flag;
+	}
+
 	public String queryAll() {
 		List<RBookRe> resList = iBookService.getAllRes();
 		request.put("resList", resList);
 		return "success";
 	}
-	
-	public String getAll_ext() {
-		// key: type_id, type: cata,org  or key: root
-		Map<String,BookResNode> resNodeMap = new HashMap<String, BookResNode>();
-		BookResNode root = new BookResNode();
-		root.setType("root");
-		root.setLevel(0);
-		root.setChildren(new ArrayList<String>());
-		root.setParentNode(null);
-		root.setBookIds(null);
-		root.setId("0");
-		resNodeMap.put("root", root);
-		
-		int maxLevel = 0;
-		List<BigInteger> bookIds = iBookService.getBookIdsHaveRes();
-		for (BigInteger bookId : bookIds) {
-			RBook book = iBookService.findBook(bookId.toString());
-			if (book == null) {
-				continue;
-			}
-			BookResNode resNode = resNodeMap.get("org_" + book.getOrgId());
-			if (resNode == null) {
-				resNode = getDepthAddParent(book.getOrgId(), resNodeMap);
-				if (resNode == null) {
-					continue;
-				}
-			}
-			resNode.getBookIds().add(bookId.toString());
-			int curLv = resNode.getLevel();
-			if (maxLevel < curLv) {
-				maxLevel = curLv;
-			}
-		}
-
-		request.put("maxLevel", maxLevel);
-		request.put("resNodeMap", resNodeMap);
-		//request.put("bookIds", bookIds);
-		//request.put("agencyIds", agencyIds);
-		start = 0;
-		end = 0;
-		return "success";
-	}
-	
-	public String auditRes() {
-		RBookRe res = iBookService.findBookRes(resId);
-		if (flag) {
-			res.setIsAudit((byte)1);
-		} else {
-			res.setIsAudit((byte)0);
-		}
-		iBookService.saveBookRes(res);
-		return null;
-	}	
 	
 	public String removeRes() {
 		if (resIdArr == null) {
@@ -438,5 +380,40 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 
     public void addFieldError(String fieldName, String errorMessage) {
         //validationAware.addFieldError(fieldName, errorMessage);
+    }
+    
+    public String changeAuditStatus() {
+    	String[] resIds = resIdArr.split(",");
+		for (String resId : resIds) {
+			RBookRe res = resDao.find(resId);
+			if (res == null) {
+				continue;
+			}
+			
+			if (flag == (byte)-1 && res.getIsAudit() != (byte)0) { // 打回重新制作
+				continue;
+			} else if (flag == (byte)0 && res.getIsAudit() != (byte)-1) { // 提交审核
+				continue;
+			} else if (flag == (byte)1 && res.getIsAudit() != (byte)0) { // 提交发布
+				continue;
+			} else if (flag == (byte)2 && res.getIsAudit() != (byte)1) { // 发布
+				continue;
+			}
+			
+			res.setIsAudit(flag);
+			res.setUpdateTime(new Date());
+			resDao.merge(res);
+		}
+		
+		return null;
+    }
+    
+    public String searchRes() {
+    	List<RBookRe> resList = iBookService.searchRes(bookInfo, bookRes);    	
+		this.request.put("resList", resList);
+		if (bookInfo.getIsAudit() == (byte)-2 && bookRes.getIsAudit() == (byte)-2) {
+			return "querySearch";
+		}
+		return "editSearch";
     }
 }

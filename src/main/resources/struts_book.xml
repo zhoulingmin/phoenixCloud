@@ -16,6 +16,10 @@
 			<result name="editSearch">/book_getAll.jsp</result>
 			<result name="querySearch">/book_searchBook.jsp</result>
 		</action>
+		<action name="searchRes" class="bookResMgmtAction" method="searchRes">
+			<result name="editSearch">/bookRes_getAll.jsp</result>
+			<result name="querySearch">/bookRes_queryAll.jsp</result>
+		</action>
 		
 		<action name="*_*" class="{1}MgmtAction" method="{2}" >
 			<result name="success">/{1}_{2}.jsp</result>
