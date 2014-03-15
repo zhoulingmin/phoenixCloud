@@ -1,5 +1,6 @@
 package com.phoenixcloud.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -26,4 +27,10 @@ public class RRegCodeDao extends AbstractDao<RRegCode>{
 		return query.getResultList();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<RRegCode> findByBookId(BigInteger bookId) {
+		Query query = entityManager.createQuery("select rr from RRegCode rr where rr.deleteState=0 and rr.bookId = ?1");
+		query.setParameter(1, bookId);
+		return query.getResultList();
+	}
 }

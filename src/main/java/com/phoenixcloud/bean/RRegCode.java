@@ -45,7 +45,7 @@ public class RRegCode extends AbstractModel<String> implements Serializable {
 	private byte isValid = (byte)1;
 
 	@Column(length=255)
-	private String notes;
+	private String notes = "";
 
 	@Column(name="STAFF_ID", nullable=false)
 	private BigInteger staffId;

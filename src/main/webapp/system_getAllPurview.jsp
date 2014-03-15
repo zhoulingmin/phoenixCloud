@@ -109,8 +109,8 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 						</div>
 					</div>
 					<security:phoenixSec purviewCode="PURVIEW_CONF">
-					<div class="span6">
-						<button class="btn btn-primary" type="button" style="float: right; margin-right: 20px;" onclick="savePurCfg();">保存</button>
+					<div class="span6" style="float: right;">
+						<button class="btn btn-primary" type="button" style="margin-right: 20px; margin-bottom: 20px;" onclick="savePurCfg();">保存</button>
 					</div>
 					</security:phoenixSec>
 				</div>

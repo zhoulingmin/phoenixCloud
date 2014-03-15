@@ -67,7 +67,7 @@
 		<li id="settings_menu" onclick="javascript:void(0);" class="submenu"><a href="#"><i class="icon icon-cog"></i> <span>注册码管理</span> </a>
 			<ul>
 				<security:phoenixSec purviewCode="BOOK_REG_CODE_MENU">
-				<li><a href="<%=request.getContextPath()%>/book/bookRegCode_getAll.do">书籍注册码</a></li>
+				<li><a href="<%=request.getContextPath()%>/manageRegcode.jsp">书籍注册码</a></li>
 				</security:phoenixSec>
 			</ul>
 		</li>
