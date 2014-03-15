@@ -280,7 +280,7 @@ function batchUploadRes() {
 	if (checkedItems != null && checkedItems.length == 1) {
 		parentId = checkedItems[0].value;
 	}
-	var url = "<%=ctx%>/bookRes_batchUpload.jsp?bookId=<%=book.getBookId()%>&parentId=" + parentId;
+	var url = "<%=ctx%>/bookRes_batchUpload.jsp?mode=<%=book.getIsAudit()%>&bookId=<%=book.getBookId()%>&parentId=" + parentId;
 	var title = "批量上传书籍资源";
 	var params = "height=400,width=635,top=" 
 		+ (window.screen.availHeight - 30 - 400) / 2 
@@ -315,7 +315,7 @@ function editRes() {
 		return;
 	}
 	
-	var url = "<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=" + checkedItems[0].value;
+	var url = "<%=ctx%>/book/bookRes_editRes.do?mode=<%=mode%>&bookRes.resId=" + checkedItems[0].value;
 	var title = "修改书籍资源";
 	var params = "height=470,width=635,top=" 
 		+ (window.screen.availHeight - 30 - 470) / 2 
@@ -325,7 +325,7 @@ function editRes() {
 }
 
 function editResFromIcon(resId) {
-	var url = "<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=" + resId;
+	var url = "<%=ctx%>/book/bookRes_editRes.do?mode=<%=mode%>&bookRes.resId=" + resId;
 	var title = "修改书籍资源";
 	var params = "height=470,width=635,top=" 
 		+ (window.screen.availHeight - 30 - 470) / 2 
@@ -346,7 +346,7 @@ function uploadRes() {
 		return;
 	}
 	
-	var url = "<%=ctx%>/book/bookRes_editRes.do?bookRes.resId=" + checkedItems[0].value;
+	var url = "<%=ctx%>/book/bookRes_editRes.do?mode=<%=mode%>&bookRes.resId=" + checkedItems[0].value;
 	var title = "修改书籍资源";
 	var params = "height=400,width=635,top=" 
 		+ (window.screen.availHeight - 30 - 400) / 2 

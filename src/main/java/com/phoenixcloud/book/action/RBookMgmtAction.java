@@ -181,7 +181,6 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 		} else {
 			RBook book = iBookService.findBook(bookInfo.getBookId());
 			if (book != null) {
-				book.setCataAddrId(bookInfo.getCataAddrId());
 				book.setClassId(bookInfo.getClassId());
 				book.setKindId(bookInfo.getKindId());
 				book.setName(bookInfo.getName());

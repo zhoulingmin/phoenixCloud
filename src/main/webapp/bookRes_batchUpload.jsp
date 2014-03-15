@@ -26,6 +26,8 @@ if (parentId == null) {
 String fileNameMarker = "${fileName_}";
 String fileSizeMarker = "${fileSize_}";
 
+String mode = request.getParameter("mode");
+
 %>
 
 <html>
@@ -127,25 +129,6 @@ function cancel() {
 }
 
 function saveRes() {
-	/*jQuery.ajax({
-		url: "<%=ctx%>/book/bookRes_saveRes.do",
-		type: "post",
-		data: jQuery("#editRes").serialize(),
-		async: "false",
-		timeout: 30000,
-		success: function() {
-			alert("保存资源成功！");
-			if (window.opener != null) {
-				window.opener.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=bookId%>";
-			}
-			self.close();
-		},
-		error: function() {
-			alert("保存资源失败！");
-		}
-	});*/
-	
-	
 	jQuery(".start:eq(0)").trigger("click");
 }
 
@@ -194,7 +177,7 @@ $(function() {
         	} else {
         		alert("上传资源成功！");
         		if (window.opener != null) {
-    				window.opener.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=bookId%>";
+    				window.opener.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=bookId%>&bookInfo.isAudit=<%=mode%>";
     			}
         		self.close();
         	}

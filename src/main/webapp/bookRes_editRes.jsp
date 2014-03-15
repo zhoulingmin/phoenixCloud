@@ -19,7 +19,7 @@ String resFormatName = "";
 if (ddv != null) {
 	resFormatName = ddv.getValue();
 }
-
+String mode = request.getParameter("mode");
 %>
 
 <html>
@@ -63,6 +63,7 @@ if (ddv != null) {
 						<input type="hidden" name="bookRes.resId" value="<s:property value="bookRes.resId"/>" />
 						<input type="hidden" name="bookRes.isUpload" value="<s:property value="bookRes.isUpload"/>" />
 						<input type="hidden" name="bookRes.cataAddr" value="<s:property value="bookRes.cataAddr"/>" />
+						<input type="hidden" name="bookInfo.isAudit" value="<%=mode %>" />
 						<input id="uploadBtn" type="submit" class="btn" onclick="return checkfile();" name="submit" value="上传"/>						
 					</form>
 				</div>
@@ -140,7 +141,7 @@ function saveRes() {
 		success: function() {
 			alert("保存资源成功！");
 			if (window.opener != null) {
-				window.opener.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<s:property value="bookRes.bookId"/>";
+				window.opener.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookInfo.isAudit=<%=mode%>&bookRes.bookId=<s:property value="bookRes.bookId"/>";
 			}
 			self.close();
 		},

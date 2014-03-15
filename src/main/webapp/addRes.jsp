@@ -84,7 +84,7 @@ String mode = request.getParameter("mode");
 				<div class="control-group" >
 					<label class="control-label">数目</label>
 					<div class="controls">
-						<input type="text" name="num">
+						<input type="text" name="num" value="1">
 					</div>
 				</div>
 				
@@ -116,7 +116,7 @@ function addRes() {
 		success: function() {
 			alert("创建资源成功！");
 			if (window.opener != null) {
-				window.opener.location.href = "<%=ctx%>/book/searchRes.do?bookInfo.isAudit=<%=mode%>&bookRes.bookId=<%=bookId%>";
+				window.opener.location.href = "<%=ctx%>/book/bookRes_getAll.do?bookInfo.isAudit=<%=mode%>&bookRes.bookId=<%=bookId%>";
 			}
 			self.close();
 		},

@@ -43,16 +43,12 @@ INSERT INTO pub_press VALUES(NULL,'凤凰出版社',1,CURRENT_TIMESTAMP,CURRENT_
 (NULL,'人民教育出版社',2,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,0,''),
 (NULL,'江苏教育出版社',3,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,0,'');
 
-INSERT INTO pub_ddv VALUES(NULL,35,'r_book','CATA_ADDR_ID','/res/',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,0,''),
-(NULL,36,'r_book','CATA_ADDR_ID','/resource/',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,0,''),
-(NULL,37,'r_book','CATA_ADDR_ID','/rs/',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,0,'');
-
 INSERT INTO pub_ddv VALUES(NULL, 38, 'r_book_res', 'FORMAT', '图片', CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,0,''),
 (NULL, 39, 'r_book_res', 'FORMAT', '文档', CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,0,''),
 (NULL, 40, 'r_book_res', 'FORMAT', '音频', CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,0,''),
 (NULL, 41, 'r_book_res', 'FORMAT', '视频', CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,0,'');
 
-INSERT INTO pub_server_addr VALUES(NULL, 1, '127.0.0.1', 'phoenixCloud', 'root', 'lySin@mANa84', '', '127.0.0.1', 'D:\\book\\', '127.0.0.1', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, '');
+INSERT INTO pub_server_addr VALUES(NULL, 1, '127.0.0.1', 'phoenixCloud', 'root', 'lySin@mANa84', '', '127.0.0.1', 'D:\\book\\', 'D:\\res\\', '127.0.0.1', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, '');
 INSERT INTO pub_org_cata values(NULL, '机构目录1', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, '');
 INSERT INTO pub_org values(null, '机构1', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, '');
 INSERT INTO sys_staff values(null, 1, 32, '张莉', 'zhangli', '1', '9999-01-01', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, '');

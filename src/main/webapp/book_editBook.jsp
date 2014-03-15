@@ -181,17 +181,6 @@ String mode = vs.findString("bookInfo.isAudit");
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label">资源目录地址</label>
-						<div class="controls">
-							<select name="bookInfo.cataAddrId" value="<s:property value="bookInfo.cataAddrId"/>">
-							<%for (PubDdv cataAddr : cataAddrList) { %>
-								<option value="<%=cataAddr.getDdvId() %>"><%=cataAddr.getValue() %></option>
-							<%} %>
-							</select>
-						</div>
-					</div>
-					
-					<div class="control-group">
 						<label class="control-label">服务器IP地址</label>
 						<div class="controls">
 							<input type="text" name="bookInfo.ipAddr" value="<s:property value="bookInfo.ipAddr"/>" readonly="readonly">

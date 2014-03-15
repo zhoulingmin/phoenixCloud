@@ -52,6 +52,7 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 	private String resFileFileName;
 
 	private RBookRe bookRes;
+	private RBook bookInfo;
 	
 	@Resource(name="bookMgmtServiceImpl")
 	private IRBookMgmtService iBookService;
@@ -128,6 +129,14 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 		this.bookRes = bookRes;
 	}
 
+	public RBook getBookInfo() {
+		return bookInfo;
+	}
+
+	public void setBookInfo(RBook bookInfo) {
+		this.bookInfo = bookInfo;
+	}
+
 	public String uploadRes() throws Exception {
 		
 		if (resFile == null) {
@@ -153,10 +162,20 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 		}
 		
 		PubServerAddr addr = serAddrDao.find(staff.getOrgId().toString());
-		PubDdv cataAddr = ddvDao.find(book.getCataAddrId().toString());
+		
 		
 		StringBuffer outPath = new StringBuffer();
-		String localPath = "";
+		if (addr != null) {
+			outPath.append(addr.getResDir());
+		} else {
+			outPath.append(phoenixProp.getProperty("book_res_folder"));
+		}
+		outPath.append(File.separator);
+		
+		outPath.append(book.getBookNo());
+		outPath.append(File.separator);
+		
+		/*String localPath = "";
 		if (book.getIsUpload() == (byte)0) {
 			if (addr != null) {
 				localPath = addr.getBookDir();
@@ -173,15 +192,13 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 				localPath = localPath.substring(0, lastIdx);
 			}
 			outPath.append(localPath);
-		}
-		outPath.append(File.separator);
-		outPath.append(cataAddr.getValue());
+		}*/
 		
 		outPath.append(File.separator);
 		outPath.append(bookRes.getCataAddr());
 		
-		outPath.append(File.separator);
-		outPath.append(res.getResId());
+		//outPath.append(File.separator);
+		//outPath.append(res.getResId());
 
 		File resFolder = new File(outPath.toString());
 		if (!resFolder.exists()) {

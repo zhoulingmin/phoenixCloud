@@ -128,6 +128,7 @@ CREATE TABLE `pub_server_addr` (
   `DB_STRING` varchar(60) NOT NULL,
   `BOOK_SER_IP` varchar(16) NOT NULL,
   `BOOK_DIR` varchar(255) NOT NULL,
+  `RES_DIR` varchar(255) NOT NULL,
   `APP_SER_IP` varchar(15) NOT NULL,
   `APP_USER_NAME` varchar(15) NOT NULL,
   `APP_PASSWORD` varchar(16) NOT NULL,

@@ -39,6 +39,9 @@ public class PubServerAddr extends AbstractModel<String> implements Serializable
 
 	@Column(name="BOOK_DIR", nullable=false, length=255)
 	private String bookDir;
+	
+	@Column(name="RES_DIR", nullable=false, length=255)
+	private String resDir;
 
 	@Column(name="BOOK_SER_IP", nullable=false, length=16)
 	private String bookSerIp;
@@ -210,6 +213,14 @@ public class PubServerAddr extends AbstractModel<String> implements Serializable
 	public String getId() {
 		// TODO Auto-generated method stub
 		return saddrId;
+	}
+
+	public String getResDir() {
+		return resDir;
+	}
+
+	public void setResDir(String resDir) {
+		this.resDir = resDir;
 	}
 
 }

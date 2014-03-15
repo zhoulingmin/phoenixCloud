@@ -31,9 +31,6 @@ public class RBook extends AbstractModel<String> implements Serializable {
 	@Column(name="ALL_ADDR", length=60)
 	private String allAddr;
 
-	@Column(name="CATA_ADDR_ID")
-	private BigInteger cataAddrId;
-
 	@Column(name="CLASS_ID", nullable=false)
 	private BigInteger classId;
 
@@ -104,14 +101,6 @@ public class RBook extends AbstractModel<String> implements Serializable {
 
 	public void setAllAddr(String allAddr) {
 		this.allAddr = allAddr;
-	}
-
-	public BigInteger getCataAddrId() {
-		return this.cataAddrId;
-	}
-
-	public void setCataAddrId(BigInteger cataAddrId) {
-		this.cataAddrId = cataAddrId;
 	}
 
 	public BigInteger getClassId() {

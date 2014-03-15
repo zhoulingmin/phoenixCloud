@@ -141,17 +141,6 @@ String isAudit = request.getParameter("isAudit");
 						</div>
 					</div>
 					
-					<div class="control-group">
-						<label class="control-label">资源目录地址</label>
-						<div class="controls">
-							<select name="bookInfo.cataAddrId">
-							<%for (PubDdv cataAddr : cataAddrList) { %>
-								<option value="<%=cataAddr.getDdvId() %>"><%=cataAddr.getValue() %></option>
-							<%} %>
-							</select>
-						</div>
-					</div>
-					
 					<div class="control-group" style="display:none">
 						<label class="control-label">服务器IP</label>
 						<div class="controls">

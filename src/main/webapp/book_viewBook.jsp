@@ -52,12 +52,6 @@ if (ddv != null) {
 	kindName = ddv.getValue();
 }
 
-String cataAddr = "";
-ddv = ddvDao.find(vs.findString("bookInfo.cataAddrId"));
-if (ddv != null) {
-	cataAddr = ddv.getValue();
-}
-
 String staffName = "";
 SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 SysStaff staff = staffDao.find(vs.findString("bookInfo.staffId"));
@@ -166,10 +160,6 @@ byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 				<div class="margin_top_5">
 					<font class="blue">页数: </font>
 					<font class="black"><s:property value="bookInfo.pageNum"/></font>
-				</div>
-				<div class="margin_top_5">
-					<font class="blue">资源目录地址: </font>
-					<font class="black"><%=cataAddr %></font>
 				</div>
 				<div class="margin_top_5">
 					<font class="blue">服务器IP: </font>
