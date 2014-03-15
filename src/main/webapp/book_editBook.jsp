@@ -35,6 +35,8 @@ if (staff != null) {
 	accntName = staff.getName();
 }
 
+String mode = vs.findString("bookInfo.isAudit");
+
 %>
 
 <head>
@@ -220,7 +222,7 @@ if (staff != null) {
 				
 					<div class="form-actions">
 						<button class="btn btn-primary" type="button"  onclick="saveBook();">保存</button>
-						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();return false;">返回</button>
+						<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();return false;">返回</button>
 					</div>
 				</form>
 			</div>
@@ -308,16 +310,12 @@ function saveBook() {
 		data: jQuery("#bookForm").serialize(),
 		success: function() {
 			alert("修改书籍成功！");
-			location.href = "<%=ctx%>/book/book_getAll.do";
+			location.href = "<%=ctx%>/book/book_getAll.do?bookInfo.isAudit=<%=mode%>";
 		},
 		error: function() {
 			alert("修改书籍失败！");
 		}
 	});
-}
-
-function cancel() {
-	location.href = "<%=ctx%>/book/book_getAll.do";
 }
 
 jQuery(function() {
