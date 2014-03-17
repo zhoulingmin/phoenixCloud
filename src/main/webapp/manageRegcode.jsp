@@ -4,7 +4,7 @@
 <%@page import="java.util.List" %>
 <%@page import="java.util.ArrayList" %>
 <%@page import="com.phoenixcloud.bean.*" %>
-<%@page import="com.phoenixcloud.dao.*" %>
+<%@page import="com.phoenixcloud.dao.res.*" %>
 <%@page import="com.phoenixcloud.util.*" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@taglib uri="/WEB-INF/security.tld" prefix="security"%>

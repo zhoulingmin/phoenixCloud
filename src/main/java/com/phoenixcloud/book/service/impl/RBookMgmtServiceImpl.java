@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,32 +20,32 @@ import com.phoenixcloud.bean.RBookDire;
 import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.bean.RRegCode;
 import com.phoenixcloud.book.service.IRBookMgmtService;
-import com.phoenixcloud.dao.RBookDao;
-import com.phoenixcloud.dao.RBookDireDao;
-import com.phoenixcloud.dao.RBookLogDao;
-import com.phoenixcloud.dao.RBookReDao;
-import com.phoenixcloud.dao.RRegCodeDao;
+import com.phoenixcloud.dao.res.RBookDao;
+import com.phoenixcloud.dao.res.RBookDireDao;
+import com.phoenixcloud.dao.res.RBookLogDao;
+import com.phoenixcloud.dao.res.RBookReDao;
+import com.phoenixcloud.dao.res.RRegCodeDao;
 
 @Service("bookMgmtServiceImpl")
 public class RBookMgmtServiceImpl implements IRBookMgmtService {
 	
-	@Resource
+	@Autowired
 	private RBookDao bookDao;
 	
-	@Resource
+	@Autowired
 	private RBookDireDao bookDireDao;
 	
-	@Resource
+	@Autowired
 	private RBookLogDao bookLogDao;
 	
-	@Resource
+	@Autowired
 	private RBookReDao bookReDao;
 	
-	@Resource
+	@Autowired
 	private RRegCodeDao regCodeDao;
 	
-	@PersistenceContext
-	protected EntityManager entityManager = null;
+	@PersistenceContext(unitName="resDbUnit")
+	protected EntityManager resEm = null;
 	
 	public void setBookDao(RBookDao bookDao) {
 		this.bookDao = bookDao;
@@ -290,7 +291,7 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 			sql += " and rr.isAudit = " + res.getIsAudit();
 		}
 				
-		Query query = entityManager.createQuery(sql);
+		Query query = resEm.createQuery(sql);
 		for (int i = 0; i < params.size(); i++) {
 			query.setParameter((i + 1), params.get(i));
 		}

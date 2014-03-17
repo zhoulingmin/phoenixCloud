@@ -27,7 +27,7 @@ import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.PhoenixProperties;
-import com.phoenixcloud.dao.PubServerAddrDao;
+import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")

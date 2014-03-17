@@ -3,7 +3,7 @@
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="java.util.*" %>
 <%@page import="com.phoenixcloud.bean.*"%>
-<%@page import="com.phoenixcloud.dao.*"%>
+<%@page import="com.phoenixcloud.dao.res.*"%>
 <%@page import="com.phoenixcloud.system.service.ISysService" %>
 <%@page import="com.phoenixcloud.agency.service.IAgencyMgmtService" %>
 <%@taglib uri="/WEB-INF/security.tld" prefix="security" %>

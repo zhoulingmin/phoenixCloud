@@ -10,35 +10,22 @@
 	<!--
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 	 -->
-	<bean id="dataSource" class="com.phoenixcloud.util.TrackingBasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="${db_driver}" />
-		<property name="url" value="${db_uri}${db_name}" />
-		<property name="defaultAutoCommit" value="true" />
-
-		<property name="username" value="${db_username}" />
-		<property name="password" value="${db_password}" />
-
-		<property name="maxActive" value="1000" />
-		<property name="maxIdle" value="20" />
-		<property name="maxWait" value="10000" />
-
-		<property name="testOnBorrow" value="true" />
-		<property name="validationQuery" value="${db_validationQuery}" />
-
-		<property name="maxOpenPreparedStatements" value="320" />
-		<!-- bug in the connector 3.11 driver which prevents this from being used, we need to upgrade drivers before re-enabling -->
-		<property name="poolPreparedStatements" value="false" />
-		<!-- abandoned features are deprecated and have no effect, don't expect the below to do anything -->
-		<!--
-		<property name="removeAbandoned" value="true" />
-		<property name="removeAbandonedTimeout" value="15" />
-		<property name="logAbandoned" value="true" />
-		 -->
+	
+	<!-- JPA ctrl db -->
+	<bean id="ctrlDbXaDS" class="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource" lazy-init="true">
+		<property name="pinGlobalTxToPhysicalConnection" value="true" />
+		<property name="user" value="${ctrl_db_username}" />
+		<property name="password" value="${ctrl_db_password}" />
+		<property name="url" value="${ctrl_db_uri}${ctrl_db_name}" />
 	</bean>
-
-	<!-- JPA -->
-	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="dataSource" ref="dataSource" />
+	<bean id="ctrlDbSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
+		<property name="uniqueResourceName" value="ctrlDS" />
+		<property name="xaDataSource" ref="ctrlDbXaDS" />
+		<property name="poolSize" value="3" />
+	</bean>
+	<bean id="ctrlDbEmFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="ctrlDbUnit" />
+		<property name="dataSource" ref="ctrlDbSource" />
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
 		</property>
@@ -55,12 +42,94 @@
 			</props>
 		</property>
 	</bean>
+	
+	<!-- JPA res db -->
+	<bean id="resDbXaDS" class="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource" lazy-init="true">
+		<property name="pinGlobalTxToPhysicalConnection" value="true" />
+		<property name="user" value="${res_db_username}" />
+		<property name="password" value="${res_db_password}" />
+		<property name="url" value="${res_db_uri}${res_db_name}" />
+	</bean>
+	<bean id="resDbSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
+		<property name="uniqueResourceName" value="resDS" />
+		<property name="xaDataSource" ref="resDbXaDS" />
+		<property name="poolSize" value="3" />
+	</bean>
+	<bean id="resDbEmFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="resDbUnit" />
+		<property name="dataSource" ref="resDbSource" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
+
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
+				<prop key="hibernate.cache.use_query_cache">false</prop>
+
+				<prop key="hibernate.max_fetch_depth">3</prop>
+			</props>
+		</property>
+	</bean>
+	
 	<!-- JPA annotations bean post processor -->
-	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+	<!-- <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" /> -->
 
 	<!-- TransactionManager -->
-	<bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager" autowire="byName" />
+	
+	<!-- <bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager" autowire="byName" />
 	<tx:annotation-driven transaction-manager="txManager" />
+	-->
+	<tx:annotation-driven />
+	<tx:jta-transaction-manager />
+	
+	
+	<bean id="userTransactionService" class="com.atomikos.icatch.config.UserTransactionServiceImp"
+    init-method="init" destroy-method="shutdownForce">
+	    <constructor-arg>
+	        <!-- IMPORTANT: specify all Atomikos properties here -->
+	        <props>
+	            <prop key="com.atomikos.icatch.service">com.atomikos.icatch.standalone.UserTransactionServiceFactory</prop>
+	            <prop key="com.atomikos.icatch.console_file_name">tm.out</prop>
+	            <prop key="com.atomikos.icatch.output_dir">${atomikos_output_dir}</prop>
+	            <prop key="com.atomikos.icatch.log_base_dir">${atomikos_log_base_dir}</prop>
+	            <prop key="com.atomikos.icatch.log_base_name">tmlog</prop>
+	            <prop key="com.atomikos.icatch.tm_unique_name">com.atomikos.spring.jdbc.tm</prop>
+	            <prop key="com.atomikos.icatch.console_log_level">${console_log_level}</prop>
+	        </props>
+	    </constructor-arg>
+	</bean>
+
+	<bean id="atomikosTransactionManager" class="com.atomikos.icatch.jta.UserTransactionManager"
+		init-method="init" destroy-method="close" depends-on="userTransactionService">
+		<!-- When close is called, should we force transactions to terminate? -->
+		<property name="forceShutdown" value="false" />
+		<!-- Do not create a transaction service as we have specified the bean in this file -->
+    	<property name="startupTransactionService" value="false" />
+	</bean>
+
+	<bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.J2eeUserTransaction">
+		<property name="transactionTimeout" value="300" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.transaction.jta.JtaTransactionManager"
+		depends-on="atomikosTransactionManager,atomikosUserTransaction">
+		<property name="transactionManager" ref="atomikosTransactionManager" />
+		<property name="userTransaction" ref="atomikosUserTransaction" />
+		<property name="allowCustomIsolationLevels" value="true" />
+	</bean>
+	
+	<bean id="ctrlDbSharedEm" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+		<property name="entityManagerFactory" ref="ctrlDbEmFactory" />
+	</bean>
+	
+	<bean id="resDbSharedEm" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+		<property name="entityManagerFactory" ref="resDbEmFactory" />
+	</bean>
 
 	<!-- Managed Beans -->
 	<context:component-scan base-package="com.phoenixcloud" />

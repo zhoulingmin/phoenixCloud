@@ -2,7 +2,7 @@
 <%@taglib prefix="s" uri="/struts-tags" %>
 <%@page import="com.phoenixcloud.util.*" %>
 <%@page import="com.phoenixcloud.bean.*" %>
-<%@page import="com.phoenixcloud.dao.*" %>
+<%@page import="com.phoenixcloud.dao.res.*" %>
 <%@page import="java.util.List" %>
 <%@page import="com.opensymphony.xwork2.util.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">

@@ -1,4 +1,4 @@
-package com.phoenixcloud.dao;
+package com.phoenixcloud.dao.ctrl;
 
 import org.springframework.stereotype.Repository;
 

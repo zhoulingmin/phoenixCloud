@@ -28,8 +28,8 @@ import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
 import com.phoenixcloud.bean.SysStaffRegCode;
-import com.phoenixcloud.dao.SysPurviewDao;
-import com.phoenixcloud.dao.SysStaffPurviewDao;
+import com.phoenixcloud.dao.ctrl.SysPurviewDao;
+import com.phoenixcloud.dao.ctrl.SysStaffPurviewDao;
 import com.phoenixcloud.system.service.ISysService;
 import com.phoenixcloud.util.MiscUtils;
 

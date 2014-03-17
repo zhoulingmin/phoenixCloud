@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.phoenixcloud.bean.PubHw;
@@ -15,33 +16,33 @@ import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
 import com.phoenixcloud.bean.SysStaffRegCode;
-import com.phoenixcloud.dao.PubHwDao;
-import com.phoenixcloud.dao.PubServerAddrDao;
-import com.phoenixcloud.dao.SysPurviewDao;
-import com.phoenixcloud.dao.SysStaffDao;
-import com.phoenixcloud.dao.SysStaffPurviewDao;
-import com.phoenixcloud.dao.SysStaffRegCodeDao;
+import com.phoenixcloud.dao.ctrl.PubHwDao;
+import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
+import com.phoenixcloud.dao.ctrl.SysPurviewDao;
+import com.phoenixcloud.dao.ctrl.SysStaffDao;
+import com.phoenixcloud.dao.ctrl.SysStaffPurviewDao;
+import com.phoenixcloud.dao.ctrl.SysStaffRegCodeDao;
 import com.phoenixcloud.system.service.ISysService;
 
 @Service
 public class SysServiceImpl implements ISysService{
 	
-	@Resource
+	@Autowired
 	private SysStaffDao staffDao;
 	
-	@Resource
+	@Autowired
 	private PubHwDao hwDao;
 	
-	@Resource
+	@Autowired
 	private SysPurviewDao purviewDao;
 	
-	@Resource
+	@Autowired
 	private SysStaffPurviewDao staffPurDao;
 	
-	@Resource
+	@Autowired
 	private SysStaffRegCodeDao staffRegCodeDao;
 	
-	@Resource
+	@Autowired
 	private PubServerAddrDao serverAddrDao;
 	
 	public void setPurviewDao(SysPurviewDao purviewDao) {

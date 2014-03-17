@@ -25,7 +25,7 @@ import com.phoenixcloud.agency.service.IAgencyMgmtService;
 import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.PubOrgCata;
 import com.phoenixcloud.bean.SysStaff;
-import com.phoenixcloud.dao.SysStaffDao;
+import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")

@@ -7,7 +7,7 @@
 <%@page import="com.phoenixcloud.util.MiscUtils" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="java.math.BigInteger" %>
-<%@page import="com.phoenixcloud.dao.PubDdvDao" %>
+<%@page import="com.phoenixcloud.dao.ctrl.PubDdvDao" %>
 <%@page import="com.phoenixcloud.bean.PubDdv" %>
 <%@page import="com.phoenixcloud.util.SpringUtils" %>
 <%@page import="java.util.List" %>

@@ -6,7 +6,7 @@
 <%@page import="com.phoenixcloud.bean.*" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="com.phoenixcloud.util.*" %>
-<%@page import="com.phoenixcloud.dao.*" %>
+<%@page import="com.phoenixcloud.dao.res.*" %>
 <%@taglib  uri="/WEB-INF/security.tld" prefix="security"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>

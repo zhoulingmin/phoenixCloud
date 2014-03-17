@@ -27,9 +27,9 @@ import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RRegCode;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
-import com.phoenixcloud.dao.RBookDao;
-import com.phoenixcloud.dao.RRegCodeDao;
-import com.phoenixcloud.dao.SysStaffDao;
+import com.phoenixcloud.dao.ctrl.SysStaffDao;
+import com.phoenixcloud.dao.res.RBookDao;
+import com.phoenixcloud.dao.res.RRegCodeDao;
 import com.phoenixcloud.util.MiscUtils;
 import com.phoenixcloud.util.SpringUtils;
 

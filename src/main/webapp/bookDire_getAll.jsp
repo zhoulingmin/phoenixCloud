@@ -7,7 +7,7 @@
 <%@page import="java.math.BigInteger" %>
 <%@page import="com.phoenixcloud.util.*" %>
 <%@page import="com.phoenixcloud.bean.*" %>
-<%@page import="com.phoenixcloud.dao.*" %>
+<%@page import="com.phoenixcloud.dao.res.*" %>
 <%@page import="java.util.Date" %>
 <%@page import="net.sf.json.JSONArray" %>
 <%@page import="net.sf.json.JSONObject" %>

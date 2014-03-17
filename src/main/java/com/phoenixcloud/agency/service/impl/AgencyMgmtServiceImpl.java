@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.phoenixcloud.agency.service.IAgencyMgmtService;
 import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.PubOrgCata;
-import com.phoenixcloud.dao.PubOrgCataDao;
-import com.phoenixcloud.dao.PubOrgDao;
+import com.phoenixcloud.dao.ctrl.PubOrgCataDao;
+import com.phoenixcloud.dao.ctrl.PubOrgDao;
 
 @Service
 public class AgencyMgmtServiceImpl implements IAgencyMgmtService {

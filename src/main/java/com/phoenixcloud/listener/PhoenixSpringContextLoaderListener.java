@@ -71,7 +71,7 @@ public class PhoenixSpringContextLoaderListener extends ContextLoaderListener {
         }
 
 		wac.setConfigLocations(configLocations.toArray(new String[0]));
-		wac.refresh();
+		//wac.refresh();
 		
         if (SpringUtils.beanFactory==null) SpringUtils.beanFactory=wac;
 	}

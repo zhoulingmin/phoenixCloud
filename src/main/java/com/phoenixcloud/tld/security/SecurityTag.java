@@ -15,8 +15,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
-import com.phoenixcloud.dao.SysPurviewDao;
-import com.phoenixcloud.dao.SysStaffPurviewDao;
+import com.phoenixcloud.dao.ctrl.SysPurviewDao;
+import com.phoenixcloud.dao.ctrl.SysStaffPurviewDao;
 
 public class SecurityTag implements Tag{
 

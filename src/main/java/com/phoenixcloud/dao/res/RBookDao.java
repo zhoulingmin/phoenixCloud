@@ -1,4 +1,4 @@
-package com.phoenixcloud.dao;
+package com.phoenixcloud.dao.res;
 
 import java.math.BigInteger;
 import java.util.Date;
@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import com.phoenixcloud.bean.RBook;
+import com.phoenixcloud.dao.ctrl.AbstractDao;
 
 @Repository
 public class RBookDao extends AbstractDao<RBook>{

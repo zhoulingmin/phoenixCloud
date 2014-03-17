@@ -29,10 +29,10 @@ import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.PhoenixProperties;
-import com.phoenixcloud.dao.PubDdvDao;
-import com.phoenixcloud.dao.PubServerAddrDao;
-import com.phoenixcloud.dao.RBookDao;
-import com.phoenixcloud.dao.RBookReDao;
+import com.phoenixcloud.dao.ctrl.PubDdvDao;
+import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
+import com.phoenixcloud.dao.res.RBookDao;
+import com.phoenixcloud.dao.res.RBookReDao;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
