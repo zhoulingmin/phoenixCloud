@@ -21,6 +21,7 @@ import org.apache.struts2.interceptor.SessionAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.PubHw;
@@ -407,7 +408,7 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		staffPur = iSysService.findStaffPurById(staffPur.getId());
 		return "success";
 	}
-	
+
 	public String saveStaffPur() {
 		String[] staffId = staffIdArr.split(",");
 		String[] purId = purIdArr.split(",");
@@ -476,4 +477,12 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		this.session = (SessionMap) arg0;
 	}
 
+	public void addActionError(String anErrorMessage) {
+    }
+
+    public void addActionMessage(String aMessage) {
+    }
+
+    public void addFieldError(String fieldName, String errorMessage) {
+    }
 }

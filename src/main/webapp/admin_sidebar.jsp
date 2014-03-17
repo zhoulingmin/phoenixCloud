@@ -54,7 +54,7 @@
 				<li><a href="<%=request.getContextPath()%>/system/system_getAllUser.do">账号管理</a></li>
 				</security:phoenixSec>
 				<security:phoenixSec purviewCode="PURVIEW_MANAGE_MENU">
-				<li><a href="<%=request.getContextPath()%>/system/system_getAllPurview.do?tabId=purviewTab">权限管理</a></li>
+				<li><a href="<%=request.getContextPath()%>/system/system_getAllPurview.do">权限管理</a></li>
 				</security:phoenixSec>
 				<security:phoenixSec purviewCode="HARDWARE_MANAGE_MENU">
 				<li><a href="<%=request.getContextPath()%>/system/system_getAllHw.do">硬件管理</a></li>
