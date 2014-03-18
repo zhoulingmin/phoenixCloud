@@ -8,10 +8,9 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import com.phoenixcloud.bean.RRegCode;
-import com.phoenixcloud.dao.ctrl.AbstractDao;
 
 @Repository
-public class RRegCodeDao extends AbstractDao<RRegCode>{
+public class RRegCodeDao extends AbstractResDao<RRegCode>{
 	public RRegCodeDao() {
 		super(RRegCode.class);
 	}

@@ -8,10 +8,9 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import com.phoenixcloud.bean.RBookDire;
-import com.phoenixcloud.dao.ctrl.AbstractDao;
 
 @Repository
-public class RBookDireDao extends AbstractDao<RBookDire>{
+public class RBookDireDao extends AbstractResDao<RBookDire>{
 	
 	public RBookDireDao() {
 		super(RBookDire.class);

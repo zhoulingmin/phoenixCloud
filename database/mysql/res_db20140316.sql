@@ -21,15 +21,15 @@ USE `res_db`;
 DROP TABLE IF EXISTS `r_book`;
 
 CREATE TABLE `r_book` (
-  `BOOK_ID` decimal(12,0) NOT NULL,
-  `ORG_ID` decimal(12,0) NOT NULL,
+  `BOOK_ID` bigint(12) NOT NULL AUTO_INCREMENT,
+  `ORG_ID` bigint(12) NOT NULL,
   `NAME` varchar(255) NOT NULL,
   `BOOK_NO` varchar(60) NOT NULL COMMENT '整个系统唯一，包含跨机构和数据库',
-  `PRESS_ID` decimal(12,0) NOT NULL,
-  `SUBJECT_ID` decimal(12,0) NOT NULL COMMENT '参照PUB_DDV表',
-  `STU_SEG_ID` decimal(12,0) NOT NULL COMMENT '幼儿、小学、初中、高中，参照PUB_DDV表',
-  `CLASS_ID` decimal(12,0) NOT NULL COMMENT '参照PUB_DDV表',
-  `KIND_ID` decimal(12,0) NOT NULL COMMENT '参照PUB_DDV表',
+  `PRESS_ID` bigint(12) NOT NULL,
+  `SUBJECT_ID` bigint(12) NOT NULL COMMENT '参照PUB_DDV表',
+  `STU_SEG_ID` bigint(12) NOT NULL COMMENT '幼儿、小学、初中、高中，参照PUB_DDV表',
+  `CLASS_ID` bigint(12) NOT NULL COMMENT '参照PUB_DDV表',
+  `KIND_ID` bigint(12) NOT NULL COMMENT '参照PUB_DDV表',
   `PAGE_NUM` tinyint(4) NOT NULL,
   `IP_ADDR` varchar(15) DEFAULT NULL,
   `ALL_ADDR` text,
@@ -38,7 +38,7 @@ CREATE TABLE `r_book` (
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
-  `STAFF_ID` decimal(12,0) NOT NULL,
+  `STAFF_ID` bigint(12) NOT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`BOOK_ID`),
   UNIQUE KEY `IND_BOOK_NO` (`BOOK_NO`)
@@ -51,18 +51,18 @@ CREATE TABLE `r_book` (
 DROP TABLE IF EXISTS `r_book_dire`;
 
 CREATE TABLE `r_book_dire` (
-  `DIRE_ID` decimal(12,0) NOT NULL,
-  `BOOK_ID` decimal(12,0) NOT NULL,
+  `DIRE_ID` bigint(12) NOT NULL AUTO_INCREMENT,
+  `BOOK_ID` bigint(12) NOT NULL,
   `NAME` varchar(60) NOT NULL,
   `B_PAGE_NUM` tinyint(4) NOT NULL,
   `E_PAGE_NUM` tinyint(4) NOT NULL,
-  `PARENT_DIRE_ID` decimal(12,0) DEFAULT NULL,
+  `PARENT_DIRE_ID` bigint(12) DEFAULT NULL,
   `LEVEL` tinyint(1) NOT NULL COMMENT '0,1,2,3',
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
   `NOTES` varchar(255) DEFAULT NULL,
-  `STAFF_ID` decimal(12,0) NOT NULL,
+  `STAFF_ID` bigint(12) NOT NULL,
   PRIMARY KEY (`DIRE_ID`),
   KEY `FK_FK_BOOK_DIRE_BOOK_ID` (`BOOK_ID`),
   CONSTRAINT `FK_FK_BOOK_DIRE_BOOK_ID` FOREIGN KEY (`BOOK_ID`) REFERENCES `r_book` (`BOOK_ID`)
@@ -75,12 +75,12 @@ CREATE TABLE `r_book_dire` (
 DROP TABLE IF EXISTS `r_book_log`;
 
 CREATE TABLE `r_book_log` (
-  `LOG_ID` decimal(18,0) NOT NULL,
-  `BOOK_ID` decimal(12,0) DEFAULT NULL,
-  `LOG_TYPE_ID` decimal(12,0) NOT NULL COMMENT '参照PUB_DDV表',
-  `FUNCTION_ID` decimal(12,0) NOT NULL COMMENT '参照PUB_DDV表',
+  `LOG_ID` bigint(18) NOT NULL AUTO_INCREMENT,
+  `BOOK_ID` bigint(12) DEFAULT NULL,
+  `LOG_TYPE_ID` bigint(12) NOT NULL COMMENT '参照PUB_DDV表',
+  `FUNCTION_ID` bigint(12) NOT NULL COMMENT '参照PUB_DDV表',
   `CONTENT` varchar(1000) CHARACTER SET gbk COLLATE gbk_bin DEFAULT NULL,
-  `STAFF_ID` decimal(12,0) NOT NULL,
+  `STAFF_ID` bigint(12) NOT NULL,
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
@@ -95,14 +95,14 @@ CREATE TABLE `r_book_log` (
 DROP TABLE IF EXISTS `r_book_page_res`;
 
 CREATE TABLE `r_book_page_res` (
-  `PAGE_RES_ID` decimal(12,0) NOT NULL,
-  `BOOK_ID` decimal(12,0) NOT NULL,
+  `PAGE_RES_ID` bigint(12) NOT NULL AUTO_INCREMENT,
+  `BOOK_ID` bigint(12) NOT NULL,
   `PAGE_NUM` tinyint(4) DEFAULT NULL,
-  `RES_ID` decimal(12,0) DEFAULT NULL,
+  `RES_ID` bigint(12) DEFAULT NULL,
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
-  `STAFF_ID` decimal(12,0) NOT NULL,
+  `STAFF_ID` bigint(12) NOT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`PAGE_RES_ID`),
   KEY `FK_FK_BPR_BOOK_ID` (`BOOK_ID`),
@@ -118,11 +118,11 @@ CREATE TABLE `r_book_page_res` (
 DROP TABLE IF EXISTS `r_book_res`;
 
 CREATE TABLE `r_book_res` (
-  `RES_ID` decimal(12,0) NOT NULL,
-  `BOOK_ID` decimal(12,0) NOT NULL,
+  `RES_ID` bigint(12) NOT NULL AUTO_INCREMENT,
+  `BOOK_ID` bigint(12) NOT NULL,
   `NAME` varchar(60) NOT NULL,
-  `FORMAT` decimal(12,0) NOT NULL,
-  `PARENT_RES_ID` decimal(12,0) DEFAULT NULL,
+  `FORMAT` bigint(12) NOT NULL,
+  `PARENT_RES_ID` bigint(12) DEFAULT NULL,
   `IP_ADDR` varchar(15) DEFAULT NULL,
   `CATA_ADDR` varchar(255) DEFAULT NULL COMMENT '参照PUB_DDV表',
   `ALL_ADDR` text,
@@ -131,8 +131,8 @@ CREATE TABLE `r_book_res` (
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
   `IS_AUDIT` tinyint(1) NOT NULL COMMENT '-1:制作中、0:待审核、1:待发布、2:待上架、3:上架',
-  `AUDIT_STAFF_ID` decimal(12,0) NOT NULL,
-  `STAFF_ID` decimal(12,0) NOT NULL,
+  `AUDIT_STAFF_ID` bigint(12) NOT NULL,
+  `STAFF_ID` bigint(12) NOT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`RES_ID`),
   KEY `FK_FK_BOOK_RES_BOOK_ID` (`BOOK_ID`),
@@ -146,15 +146,15 @@ CREATE TABLE `r_book_res` (
 DROP TABLE IF EXISTS `r_reg_code`;
 
 CREATE TABLE `r_reg_code` (
-  `REG_CODE_ID` decimal(12,0) NOT NULL,
-  `BOOK_ID` decimal(12,0) NOT NULL,
+  `REG_CODE_ID` bigint(12) NOT NULL AUTO_INCREMENT,
+  `BOOK_ID` bigint(12) NOT NULL,
   `CODE` varchar(60) NOT NULL,
   `IS_VALID` tinyint(1) NOT NULL COMMENT '1：是，0：否',
   `VALID_DATE` date DEFAULT NULL,
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
-  `STAFF_ID` decimal(12,0) NOT NULL,
+  `STAFF_ID` bigint(12) NOT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`REG_CODE_ID`),
   KEY `FK_FK_REG_CODE_BOOK_ID` (`BOOK_ID`),

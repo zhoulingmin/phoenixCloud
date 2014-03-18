@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.phoenixcloud.bean.PubHw;
 
 @Repository
-public class PubHwDao extends AbstractDao<PubHw> {
+public class PubHwDao extends AbstractCtrlDao<PubHw> {
 	public PubHwDao() {
 		super(PubHw.class);
 	}

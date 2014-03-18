@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.phoenixcloud.bean.SysStaff;
 
 @Repository
-public class SysStaffDao extends AbstractDao<SysStaff> {
+public class SysStaffDao extends AbstractCtrlDao<SysStaff> {
 	public SysStaffDao() {
 		super(SysStaff.class);
 	}

@@ -2,6 +2,7 @@
 <%@page import="java.math.BigInteger" %>
 <%@page import="com.phoenixcloud.bean.*" %>
 <%@page import="com.phoenixcloud.dao.res.*" %>
+<%@page import="com.phoenixcloud.dao.ctrl.*" %>
 <%@page import="com.phoenixcloud.util.SpringUtils" %>
 <%@page import="java.util.*" %>
 <%@taglib prefix="s" uri="/struts-tags" %>

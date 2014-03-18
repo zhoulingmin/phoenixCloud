@@ -8,10 +8,10 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import com.phoenixcloud.bean.RBookRe;
-import com.phoenixcloud.dao.ctrl.AbstractDao;
+import com.phoenixcloud.dao.ctrl.AbstractCtrlDao;
 
 @Repository("rBookReDao")
-public class RBookReDao extends AbstractDao<RBookRe>{
+public class RBookReDao extends AbstractResDao<RBookRe>{
 	public RBookReDao() {
 		super(RBookRe.class);
 	}

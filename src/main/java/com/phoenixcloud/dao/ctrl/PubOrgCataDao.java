@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.phoenixcloud.bean.PubOrgCata;
 
 @Repository
-public class PubOrgCataDao extends AbstractDao<PubOrgCata>{
+public class PubOrgCataDao extends AbstractCtrlDao<PubOrgCata>{
 	
 	public PubOrgCataDao() {
 		super(PubOrgCata.class);

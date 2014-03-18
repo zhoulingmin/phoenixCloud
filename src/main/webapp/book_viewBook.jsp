@@ -2,6 +2,7 @@
 <%@taglib prefix="s" uri="/struts-tags" %>
 <%@page import="com.phoenixcloud.bean.*" %>
 <%@page import="com.phoenixcloud.dao.res.*" %>
+<%@page import="com.phoenixcloud.dao.ctrl.*" %>
 <%@page import="com.phoenixcloud.util.SpringUtils" %>
 <%@page import="java.util.List" %>
 <%@page import="com.opensymphony.xwork2.util.*"%>

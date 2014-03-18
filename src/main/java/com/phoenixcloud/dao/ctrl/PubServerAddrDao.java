@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.phoenixcloud.bean.PubServerAddr;
 
 @Repository
-public class PubServerAddrDao extends AbstractDao<PubServerAddr> {
+public class PubServerAddrDao extends AbstractCtrlDao<PubServerAddr> {
 	public PubServerAddrDao() {
 		super(PubServerAddr.class);
 	}

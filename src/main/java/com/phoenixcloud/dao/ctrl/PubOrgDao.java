@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.phoenixcloud.bean.PubOrg;
 
 @Repository
-public class PubOrgDao extends AbstractDao<PubOrg>{
+public class PubOrgDao extends AbstractCtrlDao<PubOrg>{
 	
 	public PubOrgDao() {
 		super(PubOrg.class);

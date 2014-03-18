@@ -10,6 +10,7 @@ String level = request.getParameter("level");
 if (level == null || "null".equalsIgnoreCase(level)) {
 	level = "0";
 }
+String mode = request.getParameter("mode");
 %>
 
 <html>
@@ -113,7 +114,7 @@ function addDire() {
 		success: function() {
 			alert("创建目录成功！");
 			if (window.opener != null) {
-				window.opener.location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=<%=bookId%>";
+				window.opener.location.href = "<%=ctx%>/book/bookDire_getAll.do?mode=<%=mode%>&bookId=<%=bookId%>";
 			}
 			self.close();
 		},

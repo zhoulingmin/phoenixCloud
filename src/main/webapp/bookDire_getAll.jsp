@@ -252,7 +252,7 @@ $(document).ready(function(){
 		var tabIndex = e.target.getAttribute("tabindex");
 		switch (parseInt(tabIndex)) {
 		case 1: // 新建
-			var url = "<%=ctx%>/addBookDire.jsp?bookId=<%=book.getId()%>&parentId=" 
+			var url = "<%=ctx%>/addBookDire.jsp?mode=<%=mode%>&bookId=<%=book.getId()%>&parentId=" 
 					+ $curDire.getAttribute("direId") + "&level=" + $curDire.getAttribute("level");
 			var title = "创建书籍目录";
 			var params = "height=245,width=635,top=" 
@@ -270,7 +270,7 @@ $(document).ready(function(){
 				timeout: 30000,
 				success: function() {
 					alert("删除书籍目录成功！");
-					window.location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>"; 
+					window.location.href = "<%=ctx%>/book/bookDire_getAll.do?bookId=<%=book.getId()%>&mode=<%=mode%>"; 
 				},
 				error: function() {
 					alert("删除书籍目录失败！");

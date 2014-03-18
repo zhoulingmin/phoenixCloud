@@ -20,7 +20,7 @@
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
  */
-package com.phoenixcloud.dao.ctrl;
+package com.phoenixcloud.dao.res;
 
 import java.util.List;
 
@@ -34,13 +34,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.phoenixcloud.bean.AbstractModel;
 
 @Transactional
-public abstract class AbstractDao<T extends AbstractModel<?>> {
+public abstract class AbstractResDao<T extends AbstractModel<?>> {
 	protected Class<T> modelClass;
 
-	@PersistenceContext(unitName="ctrlDbUnit")
+	@PersistenceContext(unitName="resDbUnit")
 	protected EntityManager entityManager = null;
 
-	protected AbstractDao(Class<T> modelClass) {
+	protected AbstractResDao(Class<T> modelClass) {
 		this.modelClass = modelClass;
 	}
 
@@ -49,6 +49,7 @@ public abstract class AbstractDao<T extends AbstractModel<?>> {
 	 */
 	public void merge(T o) {
 		entityManager.merge(o);
+		entityManager.flush();
 	}
 
 	/**
