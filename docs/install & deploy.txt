@@ -1,0 +1,51 @@
+1.环境准备 (tomcat6 + mysql5.5)
+1.1 安装并配置JDK运行环境
+1) 下载JDK: 
+Windows 32位机器:
+http://download.oracle.com/otn/java/jdk/6u37-b06/jdk-6u37-windows-i586.exe
+Windows 64位机器:
+http://download.oracle.com/otn/java/jdk/6u37-b06/jdk-6u37-windows-x64.exe
+2) 安装后，配置环境变量:
+JAVA_HOME=%YOUR_JDK_INSTALL_PATH%
+classpath=.;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\toos.jar;%JAVA_HOME%\lib\ext\servlet-api.jar
+
+1.2 安装tomcat6
+1) 下载tomcat6:
+Windows 32位机器:
+http://apache.fayea.com/apache-mirror/tomcat/tomcat-6/v6.0.39/bin/apache-tomcat-6.0.39-windows-x86.zip
+Windows 64位机器:
+http://apache.fayea.com/apache-mirror/tomcat/tomcat-6/v6.0.39/bin/apache-tomcat-6.0.39-windows-x64.zip
+
+2) 设置tomcat6为服务并设置为自启动(此步骤可选，后续描述中都认为没有设置)
+第一步: 打开DOS命令行窗口, cd 命令至tomcat解压目录, cd bin目录，执行: service install
+第二步: 在开始菜单中，打开运行窗口(XP系统)或在搜索窗口(win7及上系统) 输入services.msc，打开服务列表窗口，找到 Apache Tomcat 6服务，双击打开设置启动类型为自动
+
+1.3 验证tomcat6环境
+在tomcat的解压目录的bin中，点击start.bat，启动tomcat服务器。
+在IE中输入http://localhost:8080/, 如果出现正常的页面, 并有Apache Software Foundation字样，即表示tomcat服务器安装配置成功
+
+1.4 安装数据库
+1) 下载mysql 
+http://dev.mysql.com/downloads/mysql/5.5.html 
+在网页最下方，有下载链接
+
+注意:
+安装过程中，请记住root密码，用于配置凤凰书城运行参数。
+
+2.数据导入
+2.1 导入数据库
+mysql -uroot -pdb_pass < ctrl_db.sql
+mysql -uroot -pdb_pass < res_db.sql
+
+3.部署凤凰书城应用
+3.1 配置凤凰书城运行参数
+拷贝phoenixCloud.properties至当前用户的home目录，修改db_password
+
+3.2 部署凤凰书城应用
+拷贝phoenixCloud.war至tomcat解压目录中webapps目录下。
+如果tomcat已经启动，F5刷新webapps目录后，war将自动运行。如果tomcat未启动，双击start.bat，启动tomcat。
+
+半分钟后，在IE中输入http://localhost:8080/phoenixCloud打开凤凰书城云端管理界面
+默认用户名: sysAdmin
+密码: 1
+
