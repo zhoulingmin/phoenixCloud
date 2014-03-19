@@ -92,7 +92,6 @@ CREATE TABLE `pub_org` (
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ORG_ID`),
-  UNIQUE KEY `IND_PORG_ORG_ID` (`ORG_ID`),
   KEY `FK_PUB_ORG_CATA_ID` (`ORG_CATA_ID`),
   CONSTRAINT `FK_PUB_ORG_CATA_ID` FOREIGN KEY (`ORG_CATA_ID`) REFERENCES `pub_org_cata` (`ORG_CATA_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=gbk;
@@ -112,8 +111,7 @@ CREATE TABLE `pub_org_cata` (
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
   `NOTES` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ORG_CATA_ID`),
-  UNIQUE KEY `IND_POC_ORG_CATA_ID` (`ORG_CATA_ID`)
+  PRIMARY KEY (`ORG_CATA_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=gbk;
 
 /*Data for the table `pub_org_cata` */
@@ -131,8 +129,7 @@ CREATE TABLE `pub_press` (
   `UPDATE_TIME` datetime NOT NULL,
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
   `NOTES` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`PRESS_ID`),
-  UNIQUE KEY `IND_PPR_PRESS_ID` (`PRESS_ID`)
+  PRIMARY KEY (`PRESS_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=gbk;
 
 /*Data for the table `pub_press` */
@@ -152,6 +149,7 @@ CREATE TABLE `pub_server_addr` (
   `PASSWORD` varchar(15) NOT NULL,
   `DB_STRING` varchar(60) NOT NULL,
   `BOOK_SER_IP` varchar(15) NOT NULL,
+  `BOOK_SER_PORT` int(10) NOT NULL,
   `BOOK_DIR` varchar(255) NOT NULL,
   `RES_DIR` varchar(255) NOT NULL,
   `APP_SER_IP` varchar(15) NOT NULL,

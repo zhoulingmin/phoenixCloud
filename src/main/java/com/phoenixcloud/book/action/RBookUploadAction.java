@@ -5,12 +5,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.mail.Session;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
+
+import net.sf.json.JSONObject;
 
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.dispatcher.SessionMap;
@@ -19,8 +23,10 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.interceptor.SessionAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+
 import org.springframework.stereotype.Component;
 
+import com.google.gson.JsonObject;
 import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.RBook;
@@ -29,6 +35,11 @@ import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
 import com.phoenixcloud.util.MiscUtils;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.multipart.file.FileDataBodyPart;
 
 @Scope("prototype")
 @Component("bookUploadAction")
@@ -100,89 +111,70 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 			throw new Exception("没有合适用户！");
 		}
 		
-		FileInputStream fis = null;
-		FileOutputStream os = null;
-		
 		PubServerAddr addr = serAddrDao.find(staff.getOrgId().toString());
-
-		StringBuffer outPath = new StringBuffer();
-		if (addr != null) {
-			outPath.append(addr.getBookDir());
-		} else {
-			outPath.append(phoenixProp.getProperty("book_file_folder"));
+		
+		if (addr == null) {
+			throw new Exception(new String("没有找到对应的资源服务器！".getBytes(), "ISO-8859-1"));
 		}
-		outPath.append(File.separator);
 		
 		RBook book = iBookService.findBook(bookId);
 		if (book == null) {
 			throw new Exception("数据库中无法找到目标书籍！");
 		}
 		
-		outPath.append(book.getBookNo());
-		outPath.append(File.separator);
+		StringBuffer baseURL = new StringBuffer();
+		baseURL.append("http://");
+		baseURL.append(addr.getBookSerIp() + ":" + addr.getBookSerPort() + "/");
+		baseURL.append(phoenixProp.getProperty("res_server_appname"));
+		baseURL.append("/rest/book/");
+
+		StringBuffer suffixURL = new StringBuffer();
+		suffixURL.append("/" + book.getBookNo());
+		suffixURL.append("/" + bookFileFileName);
 		
-		File bookFolder = new File(outPath.toString());
-		if (!bookFolder.exists()) {
-			try {
-				bookFolder.mkdirs();
-			} catch (SecurityException e) {
-				MiscUtils.getLogger().info(e.toString());
-			}
+		JSONObject retObj = upoadBookToResServer(baseURL.toString() + "uploadFile" + suffixURL);
+		if ((Integer)retObj.get("ret") == 1) {
+			MiscUtils.getLogger().info(retObj.get("error"));
+			return "success";
 		}
 		
-		outPath.append(bookFileFileName);
-		
-		File file = new File(outPath.toString());
-		try {
-			if (file.exists()) {
-				file.delete();
-			}
-			fis = new FileInputStream(bookFile);
-			os = new FileOutputStream(file);
-			byte[] buffer = new byte[1024 * 16];
-			try {
-				while ((fis.read(buffer)) != -1) {
-					try {
-						os.write(buffer);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			// 上传成功后，更新书籍存放地址
-			String localPath = outPath.toString().replace(File.separator, "/");
-			String tmpPath = "";
-			do {
-				tmpPath = localPath;
-				localPath = localPath.replaceAll("//", "/");
-			} while (tmpPath.length() != localPath.length());
-			if (!localPath.startsWith("/")) {
-				localPath = "/" + localPath;
-			}
-			String protocol = phoenixProp.getProperty("protocol_file_transfer");
-			String port = phoenixProp.getProperty("hfs_port");
-			book.setAllAddr(protocol + "://" + book.getIpAddr() + ":" + port + localPath);
-			book.setUpdateTime(new Date());
-			book.setIsUpload((byte)1);
-			iBookService.saveBook(book);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				fis.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				os.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		book.setAllAddr(baseURL.toString() + "downloadFile" + suffixURL);
+		book.setUpdateTime(new Date());
+		book.setIsUpload((byte)1);
+		iBookService.saveBook(book);
+			
 		
 		return "success";
+	}
+	
+	private JSONObject upoadBookToResServer(String url) throws Exception {
+		
+		Client client = new Client();
+		WebResource webRes = client.resource(url);
+		webRes.accept(MediaType.APPLICATION_JSON);
+		
+		String contentDisposition = "attachment; filename=\"" + bookFileFileName;
+		JSONObject responseObj = webRes.type(MediaType.APPLICATION_OCTET_STREAM)
+			.header("Content-Disposition", contentDisposition)
+			.header("Content-Type", bookFileContentType).post(JSONObject.class, new FileInputStream(bookFile));
+		
+//		if (bookFile.length() < 10 * 1024) {
+//			FormDataMultiPart form = new FormDataMultiPart();
+//	        form.bodyPart(new FileDataBodyPart("file", bookFile, MediaType.MULTIPART_FORM_DATA_TYPE));
+//	        webRes.accept(MediaType.APPLICATION_JSON);
+//	        webRes.path(book.getBookNo()).path(bookFileFileName);
+//	        String contentDisposition = "attachment; filename=\"" + bookFileFileName;
+//	        webRes.type(MediaType.APPLICATION_OCTET_STREAM).
+//	        JSONObject responseObj = webRes.type(MediaType.MULTIPART_FORM_DATA)
+//	        		.header("Content-Disposition", contentDisposition)
+//	        		.header("Content-Type", bookFileContentType).post(JSONObject.class, form);
+//		} else {
+//			InputStream fileInStream = new FileInputStream(bookFile);
+//			String sContentDisposition = "attachment; filename=\"" + bookFile.getName()+"\"";
+//			response = webRes.type(MediaType.APPLICATION_OCTET_STREAM).header("Content-Disposition", 
+//					sContentDisposition).post(ClientResponse.class, fileInStream);
+//		}
+		return responseObj;
 	}
 
 	@Override

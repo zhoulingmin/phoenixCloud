@@ -41,7 +41,7 @@ CREATE TABLE `r_book` (
   `STAFF_ID` bigint(12) NOT NULL,
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`BOOK_ID`),
-  UNIQUE KEY `IND_BOOK_NO` (`BOOK_NO`)
+  UNIQUE KEY `IND_BOOK_NO` (`BOOK_NO`, `DELETE_STATE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=gbk;
 
 /*Data for the table `r_book` */

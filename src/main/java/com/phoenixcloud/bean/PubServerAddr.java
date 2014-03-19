@@ -45,6 +45,9 @@ public class PubServerAddr extends AbstractModel<String> implements Serializable
 
 	@Column(name="BOOK_SER_IP", nullable=false, length=16)
 	private String bookSerIp;
+	
+	@Column(name="BOOK_SER_PORT", nullable=false, length=10)
+	private int bookSerPort;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="CREATE_TIME", nullable=false)
@@ -151,6 +154,14 @@ public class PubServerAddr extends AbstractModel<String> implements Serializable
 
 	public void setDbSerIp(String dbSerIp) {
 		this.dbSerIp = dbSerIp;
+	}
+
+	public int getBookSerPort() {
+		return bookSerPort;
+	}
+
+	public void setBookSerPort(int bookSerPort) {
+		this.bookSerPort = bookSerPort;
 	}
 
 	public String getDbString() {

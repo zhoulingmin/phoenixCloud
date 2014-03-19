@@ -156,6 +156,7 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 			if (serAddr != null) {
 				bookInfo.setIpAddr(serAddr.getBookSerIp());
 			}
+			bookInfo.setOrgId(curStaff.getOrgId());
 		} else {
 			bookInfo.setStaffId(BigInteger.ZERO);
 		}
