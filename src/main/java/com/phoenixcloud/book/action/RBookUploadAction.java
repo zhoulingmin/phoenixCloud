@@ -156,7 +156,7 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 		String contentDisposition = "attachment; filename=\"" + bookFileFileName;
 		JSONObject responseObj = webRes.type(MediaType.APPLICATION_OCTET_STREAM)
 			.header("Content-Disposition", contentDisposition)
-			.header("Content-Type", bookFileContentType).post(JSONObject.class, new FileInputStream(bookFile));
+			.post(JSONObject.class, new FileInputStream(bookFile));
 		
 //		if (bookFile.length() < 10 * 1024) {
 //			FormDataMultiPart form = new FormDataMultiPart();

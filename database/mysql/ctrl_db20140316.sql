@@ -165,7 +165,7 @@ CREATE TABLE `pub_server_addr` (
 
 /*Data for the table `pub_server_addr` */
 
-insert  into `pub_server_addr`(`SADDR_ID`,`ORG_ID`,`DB_SER_IP`,`DB_NAME`,`USER_NAME`,`PASSWORD`,`DB_STRING`,`BOOK_SER_IP`,`BOOK_DIR`,`RES_DIR`,`APP_SER_IP`,`APP_USER_NAME`,`APP_PASSWORD`,`CREATE_TIME`,`UPDATE_TIME`,`DELETE_STATE`,`NOTES`) values ('1','1','127.0.0.1','phoenixCloud','root','lySin@mANa84','','127.0.0.1','D:\\book\\','D:\\res\\','127.0.0.1','','','2014-03-15 22:43:38','2014-03-15 22:43:38',0,'');
+insert  into `pub_server_addr`(`SADDR_ID`,`ORG_ID`,`DB_SER_IP`,`DB_NAME`,`USER_NAME`,`PASSWORD`,`DB_STRING`,`BOOK_SER_IP`,`BOOK_DIR`,`RES_DIR`,`APP_SER_IP`,`APP_USER_NAME`,`APP_PASSWORD`,`CREATE_TIME`,`UPDATE_TIME`,`DELETE_STATE`,`NOTES`) values ('1','1','127.0.0.1','phoenixCloud','root','lySin@mANa84','','127.0.0.1','8080','D:\\book\\','D:\\res\\','127.0.0.1','','','2014-03-15 22:43:38','2014-03-15 22:43:38',0,'');
 
 /*Table structure for table `sys_log` */
 
