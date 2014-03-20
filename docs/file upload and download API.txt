@@ -1,0 +1,54 @@
+概述:
+1.书籍上传及下载
+2.资源上传及下载
+3.URL解析及编码
+
+1.书籍上传及下载
+1.1 上传
+请求: curl -X POST --data-binary @pom.xml http://192.168.1.100:8080/resserver/rest/book/uploadFile/123456/pom.xml
+返回 http状态码 200
+http body:
+成功: 
+{"ret":0}
+失败:
+{"ret":1,"error":"错误的详细信息"}
+
+1.2 下载
+请求:
+curl -X GET http://192.168.1.100:8080/resserver/rest/book/downloadFile/123456/pom.xml > down-pom.xml
+成功: http 状态码 200，http body为要下载的文件流
+失败: http 状态码 404，表示不存在
+
+
+2.资源上传及下载
+2.1 上传
+请求: curl -X POST --data-binary @README.md http://192.168.1.100:8080/resserver/rest/res/uploadFile/123456/docs/README.md
+返回 http状态码 200
+http body:
+成功: 
+{"ret":0}
+失败:
+{"ret":1,"error":"错误的详细信息"}
+
+2.2 下载
+请求: curl -X GET http://192.168.1.100:8080/resserver/rest/res/downloadFile/123456/docs/README.md
+成功: http 状态码 200，http body为要下载的文件流
+失败: http 状态码 404，表示不存在
+
+
+3.URL解析及编码
+
+curl -X GET http://192.168.1.100:8080/resserver/rest/book/downloadFile/123456/pom.xml > down-pom.xml
+
+3.1 URL解析
+(1)http 访问协议
+(2)192.168.1.100 资源服务器ip或域名
+(3)8080 服务端口
+(4)resserver 资源服务器web应用名称
+(5)rest/book/downloadFile/ 下载文件时的动作类型
+(6)123456 书籍编码
+(7)pom.xml 书籍文档名字
+
+3.2 编码
+书籍文件的名字中可以有空格及中文，在发送时，要对它们进行URL编码，采用utf-8格式进行编码。
+
