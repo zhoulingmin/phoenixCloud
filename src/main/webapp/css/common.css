@@ -1,0 +1,53 @@
+/**** Base styles ****/
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+ul li,em{ list-style:none; font-style:normal;}
+
+body { 
+  font: 13px '宋体', Arial, sans-serif;
+  
+}
+a,a:visited{  text-decoration: none; cursor:pointer; color:#125687;}
+a,area { blr:expression(this.onFocus=this.blur()) } /* for IE */
+:focus { -moz-outline-style: none; } /* for Firefox */
+a:hover{ text-decoration: none; color:#e5a639;}
+.red{ color:#f63434;}
+.f_999{ color:#999;}
+.font_weight{ font-weight:bolder; font-size:15px;}
+/**** Clearfix ****/
+.clearfix:before, .clearfix:after { content: ""; display: table; }
+.clearfix:after { clear: both; }
+.clearfix { zoom: 1; }
+.clr{ clear: both;}                                                                                                   
+.fl{ float:left;}
+.fr{ float:right;}
+.margin_top_5{ margin-top:5px;}
+.margin_top_10{ margin-top:10px;}
+.margin_top_15{ margin-top:15px;}
+.margin_top_20{ margin-top:20px;}
+.margin_top_25{ margin-top:25px;}
+.margin_top_15{ margin-bottom:15px;}
+.margin_bottom_20{ margin-bottom:20px;}
+.margin_bottom_25{ margin-bottom:25px;}
+.padding_bottom_15{ padding-bottom:15px;}
+.vertical_middle{vertical-align:middle; }

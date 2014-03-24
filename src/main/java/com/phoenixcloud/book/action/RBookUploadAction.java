@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Map;
 
@@ -123,15 +125,14 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 		}
 		
 		StringBuffer baseURL = new StringBuffer();
-		baseURL.append("http://");
+		baseURL.append(phoenixProp.getProperty("protocol_file_transfer") + "://");
 		baseURL.append(addr.getBookSerIp() + ":" + addr.getBookSerPort() + "/");
 		baseURL.append(phoenixProp.getProperty("res_server_appname"));
 		baseURL.append("/rest/book/");
 
 		StringBuffer suffixURL = new StringBuffer();
 		suffixURL.append("/" + book.getBookNo());
-		suffixURL.append("/" + bookFileFileName);
-		
+		suffixURL.append("/" + URLEncoder.encode(bookFileFileName, "utf-8"));
 		JSONObject retObj = upoadBookToResServer(baseURL.toString() + "uploadFile" + suffixURL);
 		if ((Integer)retObj.get("ret") == 1) {
 			MiscUtils.getLogger().info(retObj.get("error"));
@@ -152,11 +153,13 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 		Client client = new Client();
 		WebResource webRes = client.resource(url);
 		webRes.accept(MediaType.APPLICATION_JSON);
-		
-		String contentDisposition = "attachment; filename=\"" + bookFileFileName;
-		JSONObject responseObj = webRes.type(MediaType.APPLICATION_OCTET_STREAM)
+		client.setChunkedEncodingSize(1024 * 16);
+		String contentDisposition = "attachment; filename=\"" + bookFileFileName + "\"";
+		String responseObj = webRes.type(MediaType.APPLICATION_OCTET_STREAM)
 			.header("Content-Disposition", contentDisposition)
-			.post(JSONObject.class, new FileInputStream(bookFile));
+			.post(String.class, new FileInputStream(bookFile));
+		
+		return JSONObject.fromObject(responseObj);
 		
 //		if (bookFile.length() < 10 * 1024) {
 //			FormDataMultiPart form = new FormDataMultiPart();
@@ -174,7 +177,26 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 //			response = webRes.type(MediaType.APPLICATION_OCTET_STREAM).header("Content-Disposition", 
 //					sContentDisposition).post(ClientResponse.class, fileInStream);
 //		}
-		return responseObj;
+//		return responseObj;
+	}
+	
+	private void uploadByForm(String url) {
+		url = "http://localhost:8080/resserver/rest/book/test/";
+		Client client = new Client();
+		WebResource webRes = client.resource(url);
+		webRes.accept(MediaType.APPLICATION_JSON);
+		client.setChunkedEncodingSize(1024 * 16);
+		String contentDisposition = "attachment; filename=\"" + bookFileFileName;
+		
+		FormDataMultiPart form = new FormDataMultiPart();
+        form.bodyPart(new FileDataBodyPart("file", bookFile, MediaType.MULTIPART_FORM_DATA_TYPE));
+        form.field("fileName", "testFileName");
+        webRes.accept(MediaType.APPLICATION_JSON);
+		
+        String responseObj = webRes.type(MediaType.MULTIPART_FORM_DATA)
+        		.header("Content-Disposition", contentDisposition)
+        		.post(String.class, form);
+        MiscUtils.getLogger().info(responseObj);
 	}
 
 	@Override

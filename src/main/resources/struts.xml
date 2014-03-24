@@ -7,7 +7,7 @@
 	<constant name="struts.i18n.encoding" value="UTF-8" />
 	<constant name="struts.custom.i18n.resources" value="message" />
 	<constant name="struts.ui.theme" value="simple" />
-	<constant name="struts.devMode" value="true" />
+	<!-- <constant name="struts.devMode" value="true" /> -->
 	<constant name="struts.date.format" value="yyyy-MM-dd HH:mm:ss" />
 	<!-- max 100MB -->
 	<constant name="struts.multipart.maxSize" value="209715200" />

@@ -135,6 +135,10 @@ byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 					<font class="black"><s:property value="bookInfo.name"/></font>
 				</div>
 				<div class="margin_top_5">
+					<font class="blue">书籍编码: </font>
+					<font class="black"><s:property value="bookInfo.bookNo"/></font>
+				</div>
+				<div class="margin_top_5">
 					<font class="blue">机构: </font>
 					<font class="black"><%=orgName %></font>
 				</div>

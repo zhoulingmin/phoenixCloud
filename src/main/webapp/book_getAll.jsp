@@ -229,7 +229,7 @@ byte mode = (Byte)vs.findValue("bookInfo.isAudit");
 									<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookRes_getAll.do?bookRes.bookId=<%=book.getId()%>&bookInfo.isAudit=<%=mode%>"><i class="icon-file"></i></a>
 									<security:phoenixSec purviewCode="BOOK_ADUIT_OK">
 									<%if (book.getIsUpload() == (byte)1) {%>
-									<a class="tip-top" data-original-title="下载" href="<%=ctx%>/book/book_download.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-download-alt"></i></a>
+									<a class="tip-top" data-original-title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
 									<%} %>
 									</security:phoenixSec>
 									<%if (book.getIsAudit() == (byte)-1) { %>

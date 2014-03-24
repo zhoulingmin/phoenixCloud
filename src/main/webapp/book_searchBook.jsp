@@ -180,7 +180,7 @@ List<PubPress> pressList = pressDao.getAll();
 								<td><%=book.getNotes() %></td>
 								<td>
 								<%if (book.getIsUpload() == (byte)1) {%>
-								<a class="tip-top" data-original-title="下载" href="<%=ctx%>/book/book_download.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-download-alt"></i></a>
+								<a class="tip-top" data-original-title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
 								<%} %>
 								</td>
 							</tr>

@@ -6,11 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
+
+import net.sf.json.JSONObject;
 
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.dispatcher.SessionMap;
@@ -34,6 +38,8 @@ import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
 import com.phoenixcloud.dao.res.RBookDao;
 import com.phoenixcloud.dao.res.RBookReDao;
 import com.phoenixcloud.util.MiscUtils;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
 
 @Scope("prototype")
 @Component("bookResUploadAction")
@@ -153,9 +159,6 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 			throw new Exception("没有合适用户！");
 		}
 		
-		FileInputStream fis = null;
-		FileOutputStream os = null;
-		
 		RBook book = bookDao.find(bookRes.getBookId().toString());
 		if (book == null) {
 			throw new Exception("没有找到相应的书籍！");
@@ -163,112 +166,44 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 		
 		PubServerAddr addr = serAddrDao.find(staff.getOrgId().toString());
 		
-		
-		StringBuffer outPath = new StringBuffer();
-		if (addr != null) {
-			outPath.append(addr.getResDir());
-		} else {
-			outPath.append(phoenixProp.getProperty("book_res_folder"));
-		}
-		outPath.append(File.separator);
-		
-		outPath.append(book.getBookNo());
-		outPath.append(File.separator);
-		
-		/*String localPath = "";
-		if (book.getIsUpload() == (byte)0) {
-			if (addr != null) {
-				localPath = addr.getBookDir();
-			} else {
-				localPath = phoenixProp.getProperty("book_file_folder");
-			}
-			localPath += File.separator;
-			outPath.append(localPath);
-			outPath.append(book.getBookNo());
-		} else {
-			localPath = book.getLocalPath();
-			int lastIdx = localPath.lastIndexOf("/");
-			if (lastIdx != -1) {
-				localPath = localPath.substring(0, lastIdx);
-			}
-			outPath.append(localPath);
-		}*/
-		
-		outPath.append(File.separator);
-		outPath.append(bookRes.getCataAddr());
-		
-		//outPath.append(File.separator);
-		//outPath.append(res.getResId());
+		StringBuffer baseURL = new StringBuffer();
+		baseURL.append("http://");
+		baseURL.append(addr.getBookSerIp() + ":" + addr.getBookSerPort() + "/");
+		baseURL.append(phoenixProp.getProperty("res_server_appname"));
+		baseURL.append("/rest/res/");
 
-		File resFolder = new File(outPath.toString());
-		if (!resFolder.exists()) {
-			try {
-				resFolder.mkdirs();
-			} catch (SecurityException e) {
-				MiscUtils.getLogger().info(e.toString());
-			}
+		StringBuffer suffixURL = new StringBuffer();
+		suffixURL.append("/" + book.getBookNo());
+		suffixURL.append("/" +  URLEncoder.encode(bookRes.getCataAddr(), "utf-8"));
+		suffixURL.append("/" + URLEncoder.encode(resFileFileName, "utf-8"));
+		JSONObject retObj = upoadResToResServer(baseURL.toString() + "uploadFile" + suffixURL);
+		if ((Integer)retObj.get("ret") == 1) {
+			MiscUtils.getLogger().info(retObj.get("error"));
+			return "success";
 		}
-		
-		outPath.append(File.separator);
-		outPath.append(resFileFileName);
-		
-		File file = new File(outPath.toString());
-		try {
-			if (file.exists()) {
-				file.delete();
-			}
-			fis = new FileInputStream(resFile);
-			os = new FileOutputStream(file);
-			byte[] buffer = new byte[1024 * 16];
-			try {
-				while ((fis.read(buffer)) != -1) {
-					try {
-						os.write(buffer);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			// 上传成功后，更新资源存放地址
-			String localAllAddr = outPath.toString().replace(File.separator, "/");
-			String tmpAllAddr = "";
-			do {
-				tmpAllAddr = localAllAddr;
-				localAllAddr = localAllAddr.replaceAll("//", "/");
-			} while(tmpAllAddr.length() != localAllAddr.length());
+		res.setAllAddr(baseURL.toString() + "downloadFile" + suffixURL);
+		res.setUpdateTime(new Date());
+		res.setIsUpload((byte)1);
+		res.setName(resFileFileName);
+		iBookService.saveBookRes(res);
 			
-			if (!localAllAddr.startsWith("/")) {
-				localAllAddr = "/" + localAllAddr;
-			}
-			
-			String protocol = phoenixProp.getProperty("protocol_file_transfer");
-			String port = phoenixProp.getProperty("hfs_port");
-			res.setAllAddr(protocol + "://" + res.getIpAddr() + ":" + port + localAllAddr);
-			res.setUpdateTime(new Date());
-			res.setIsUpload((byte)1);
-			res.setName(resFileFileName);
-			iBookService.saveBookRes(res);
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				fis.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				os.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
 		return "success";
 	}
 
+	private JSONObject upoadResToResServer(String url) throws Exception {
+			
+			Client client = new Client();
+			WebResource webRes = client.resource(url);
+			webRes.accept(MediaType.APPLICATION_JSON);
+			client.setChunkedEncodingSize(1024 * 16);
+			String contentDisposition = "attachment; filename=\"" + resFileFileName + "\"";
+			String responseObj = webRes.type(MediaType.APPLICATION_OCTET_STREAM)
+				.header("Content-Disposition", contentDisposition)
+				.post(String.class, new FileInputStream(resFile));
+			
+			return JSONObject.fromObject(responseObj);
+	}
+	
 	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		// TODO Auto-generated method stub

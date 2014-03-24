@@ -181,7 +181,7 @@ RBookDao bookDao = (RBookDao)SpringUtils.getBean("RBookDao");
 								<td><%=res.getNotes() %></td>
 								<td>
 									<%if (res.getIsUpload() == (byte)1) {%>
-									<a class="tip-top" data-original-title="下载" href="<%=ctx%>/book/bookRes_download.do?bookRes.resId=<%=res.getId()%>"><i class="icon-download-alt"></i></a>
+									<a class="tip-top" data-original-title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
 									<%} %>
 								</td>
 							</tr>

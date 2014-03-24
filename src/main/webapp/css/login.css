@@ -1,0 +1,17 @@
+body {background:url(../image/body_pix.jpg) left top;}
+.login_main{ width:998px; height:768px; background:url(../image/login_bg.jpg) center center no-repeat; margin:0 auto;}
+.login{ width:480px; margin:0px auto;}
+.login .logo{ width:410px; float:left; margin-top:160px; height:77px; text-align:center; margin-bottom:50px;}
+.login .line{ width:440px; float:left; height:55px; line-height:55px;cursor:pointer; text-align:center; }
+.login a{width:307px; height:47px; float:left; background:url(../image/txt_bg.jpg) no-repeat; line-height:47px; margin-left:65px; display:inline; }
+.login a:hover{background:url(../image/txt_bg1.jpg) no-repeat; }
+.login .line_txt{ border:0px; height:30px; width:260px; margin-left:5px; margin-top:5px; line-height:33px; padding-left:5px; float:left; font-size:14px; color:#999;}
+.login span{ width:55px; float:left; height:40px;}
+.login span a{ background:none; color:#fff; width:52px; font-size:13px; line-height:50px; float:left; margin-left:2px;}
+.login span a:hover{ background:none; text-decoration:underline;}
+.login .icon{ width:13px; height:17px; float:left; margin-top:13px; margin-left:10px;}
+.login .line_tips{ width:420px; float:left;  line-height:20px; text-align:center; color:#7bb7ea; margin-top:140px;}
+
+
+.top{ width:100%; height:55px; background:url(../image/top_menu_pix.jpg) repeat-x left top;}
+.content{ width:100%; float:left; background:url(../image/head_pix.jpg) repeat-x #e2ecf4 left top;}
