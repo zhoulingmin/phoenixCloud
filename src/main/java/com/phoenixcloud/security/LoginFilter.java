@@ -23,22 +23,10 @@ public class LoginFilter implements Filter {
 		"/system/login.do",
 		"/logout.jsp",
 
-		"/user/activeUser.do",
-		"/loginfailed.jsp",
-		"/user/register.do",
-		"/register_success.jsp",
-		"/register_failed.jsp",
-		"/activeuser_success.jsp",
-		"/activeuser_failed.jsp",
-		"/user/findPassword.do",
-		
-		"/index.html",
-		"/ws/",
-		"/importz",
-		
 		"/css/",
 		"/js/",
 		"/img/",
+		"/image/",
 	};
 	
 	public void init(FilterConfig filterConfig) throws ServletException {

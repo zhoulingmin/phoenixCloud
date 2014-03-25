@@ -34,7 +34,7 @@ public class PubOrgDao extends AbstractCtrlDao<PubOrg>{
 	public void remove(PubOrg org) {
 		org.setDeleteState((byte)1);
 		org.setUpdateTime(new Date());
-		entityManager.merge(org);
+		merge(org);
 	}
 	
 	public void removeByOrgCataId(String orgCataId) {

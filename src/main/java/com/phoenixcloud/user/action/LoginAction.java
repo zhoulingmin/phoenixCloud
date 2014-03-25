@@ -76,7 +76,16 @@ public class LoginAction extends ActionSupport implements RequestAware,
 	}
 
 	public String execute() {
+		
+		if (staff == null) {
+			return "login";
+		}
+		
 		String ret = "NotFound";
+		if (session.get("user") != null) {
+			return "success";
+		}
+		
 		SysStaff user = staffDao.findByCode(staff.getCode());
 		if (user != null) {
 			if (!user.getPassword().equals(staff.getPassword())) {
@@ -85,21 +94,21 @@ public class LoginAction extends ActionSupport implements RequestAware,
 				ret = "Expired";
 			} else {
 				session.put("user", user);
-				PubDdv ddv = ddvDao.find(user.getStaffTypeId().toString());
+//				PubDdv ddv = ddvDao.find(user.getStaffTypeId().toString());
 				ret = "success";
-				if (ddv != null) {
-					String role = ddv.getValue();
-					if ("超级管理员".equals(role)) {
-						session.put("role", "admin");
-						ret += "_admin";
-					} else if ("管理员".equals(role)) {
-						session.put("role", "manager");
-						ret += "_manager";
-					} else if  ("普通用户".equals(role)) {
-						session.put("role", "user");
-						ret += "_user";
-					}					
-				}
+//				if (ddv != null) {
+//					String role = ddv.getValue();
+//					if ("超级管理员".equals(role)) {
+//						session.put("role", "admin");
+//						ret += "_admin";
+//					} else if ("管理员".equals(role)) {
+//						session.put("role", "manager");
+//						ret += "_manager";
+//					} else if  ("普通用户".equals(role)) {
+//						session.put("role", "user");
+//						ret += "_user";
+//					}					
+//				}
 			}
 		}
 		return ret;

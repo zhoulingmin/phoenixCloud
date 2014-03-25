@@ -220,6 +220,7 @@ CREATE TABLE `sys_staff` (
   `NAME` varchar(20) NOT NULL,
   `CODE` varchar(20) NOT NULL,
   `PASSWORD` varchar(20) NOT NULL,
+  `EMAIL` varchar(30),
   `VALID_DATE` date NOT NULL,
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,

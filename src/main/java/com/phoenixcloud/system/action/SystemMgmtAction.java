@@ -25,11 +25,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.PubHw;
+import com.phoenixcloud.bean.PubHwNum;
 import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
 import com.phoenixcloud.bean.SysStaffRegCode;
+import com.phoenixcloud.dao.ctrl.PubHwDao;
+import com.phoenixcloud.dao.ctrl.PubHwNumDao;
 import com.phoenixcloud.dao.ctrl.SysPurviewDao;
+import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.dao.ctrl.SysStaffPurviewDao;
 import com.phoenixcloud.system.service.ISysService;
 import com.phoenixcloud.util.MiscUtils;
@@ -71,6 +75,15 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	
 	@Autowired
 	private SysStaffPurviewDao staffPurDao;
+	
+	@Autowired
+	private PubHwDao hwDao;
+	
+	@Autowired
+	private PubHwNumDao hwNumDao;
+	
+	@Autowired
+	private SysStaffDao staffDao;
 	
 	private String staffIdArr;
 	
@@ -179,9 +192,22 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	}
 
 	public String getAllUser(){
-		List<SysStaff> staffList = iSysService.getAllStaff();
-		request.put("staffList", staffList);
-		return "success";
+		List<SysStaff> staffList = staffDao.findByOrgId(selfId);
+		response.setContentType("text/html");
+		response.setCharacterEncoding("utf-8");
+		
+		try {
+			PrintWriter out = response.getWriter();
+			out.print(JSONArray.fromObject(staffList).toString());
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
+		
+		return null;
+		//request.put("staffList", staffList);
+		//return "success";
 	}
 	
 	public String getStaffIdArr() {
@@ -224,15 +250,37 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		return null;
 	}
 	
-	public String saveUser() {
-		staff.setUpdateTime(new Date());
-		iSysService.saveStaff(staff);
+	public String saveUser() throws Exception{
+		SysStaff oldStaff = iSysService.findStaffById(staff.getStaffId());
+		if (oldStaff == null) {
+			throw new Exception("系统中不存在此账户，保存失败！");
+		}
+		oldStaff.setUpdateTime(new Date());
+		oldStaff.setEmail(staff.getEmail());
+		oldStaff.setName(staff.getName());
+		oldStaff.setOrgId(staff.getOrgId());
+				
+		iSysService.saveStaff(oldStaff);
 		return null;
 	}
 		
+	public String savePass() throws Exception{
+		SysStaff oldStaff = iSysService.findStaffById(staff.getStaffId());
+		if (oldStaff == null) {
+			throw new Exception("系统中不存在此账户，保存失败！");
+		}
+		oldStaff.setUpdateTime(new Date());
+		oldStaff.setPassword(staff.getPassword());
+		iSysService.saveStaff(oldStaff);
+		return null;
+	}
+	
 	public String getAllHw() {
-		List<PubHw> hwList = iSysService.getAllHw();
+		List<PubHw> hwList = hwDao.getAllByStaffId(new BigInteger(staff.getStaffId()));
 		request.put("hwList", hwList);
+		List<PubHwNum> hwNumList = hwNumDao.findByStaffId(new BigInteger(staff.getStaffId()));
+		request.put("hwNumList", hwNumList);
+		
 		return "success";
 	}
 	
@@ -470,7 +518,7 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	public String removeStaffRegCode() {
 		return null;
 	}
-
+	
 	@Override
 	public void setSession(Map<String, Object> arg0) {
 		// TODO Auto-generated method stub

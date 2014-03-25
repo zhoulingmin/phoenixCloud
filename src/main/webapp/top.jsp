@@ -25,8 +25,16 @@ Date curDate = new Date();
 <body>
  <div class="top">
    <div class="left_logo"><img src="image/logo1.png"></div>
-   <div class="right_info"><%=curDate.getYear() + 1900 %>年<%=curDate.getMonth()+1 %>月<%=curDate.getDate() %>日 &nbsp;&nbsp;<%=staff.getName() %>&nbsp;&nbsp;<img src="image/exit_btn1.jpg" style="vertical-align:middle;"></div>
+   <div class="right_info"><%=curDate.getYear() + 1900 %>年<%=curDate.getMonth()+1 %>月<%=curDate.getDate() %>日 &nbsp;&nbsp;<%=staff.getName() %>&nbsp;&nbsp;
+   <img src="image/exit_btn1.jpg" style="vertical-align:middle;" onclick="logout();">
+   </div>
  </div>
 
 </body>
+
+<script type="text/javascript">
+function logout() {
+	window.parent.location.href="<%=request.getContextPath()%>/logout.jsp";
+}
+</script>
 </html>

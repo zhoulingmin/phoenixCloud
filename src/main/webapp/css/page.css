@@ -60,7 +60,7 @@ body{background:#e2ecf4; }
 
 .zhgl{width:98%; float:left; margin-left:15px;}
 .zhgl .left_dtree{ width:205px; float:left; background:url(../image/box_line.jpg) top right no-repeat; height:750px; margin-left:10px;}
-.left_dtree .tree_title{ width:146px; border-bottom:2px solid #e3e3d6; float:left; height:30px; color:#5585d7; font-size:14px; font-weight:bold; background:url(../image/icon_jg.jpg) 5px 5px no-repeat; padding-left:29px; line-height:30px;}
+.left_dtree .tree_title{ width:146px; border-bottom:2px solid #e3e3d6; height:30px; color:#5585d7; font-size:14px; font-weight:bold; background:url(../image/icon_jg.jpg) 5px 5px no-repeat; padding-left:29px; line-height:30px;}
 .tree{ width:175px; float:left;}
 .tree .first_menu{ width:161px; float:left; margin-left:10px; display:inline;}
 .first_menu span{ width:145px; float:left; background:url(../image/hide.jpg)0px 3px no-repeat; height:25px; padding-left:16px; color:#5585d7; font-size:14px;}

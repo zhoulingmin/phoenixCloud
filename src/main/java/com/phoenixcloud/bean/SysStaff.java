@@ -49,6 +49,9 @@ public class SysStaff extends AbstractModel<String> implements Serializable {
 
 	@Column(nullable=false, length=20)
 	private String password;
+	
+	@Column(length=30)
+	private String email;
 
 	@Column(name="STAFF_TYPE_ID")
 	private BigInteger staffTypeId;
@@ -163,6 +166,14 @@ public class SysStaff extends AbstractModel<String> implements Serializable {
 			return true;
 		}
 		return false;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 }

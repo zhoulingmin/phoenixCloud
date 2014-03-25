@@ -28,7 +28,7 @@ public class PubOrgCataDao extends AbstractCtrlDao<PubOrgCata>{
 	public void remove(PubOrgCata cata) {
 		cata.setDeleteState((byte)1);
 		cata.setUpdateTime(new Date());
-		entityManager.merge(cata);
+		merge(cata);
 	}
 	
 	@SuppressWarnings("unchecked")

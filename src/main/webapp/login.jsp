@@ -49,7 +49,7 @@ String ctx = request.getContextPath();
      <div class="logo">
        <img src="<%=ctx %>/image/logo.png">
      </div>
-     <form id="loginFrm" name="loginFrm" action="<%=ctx %>/system/login.do">
+     <form id="loginFrm" name="loginFrm" action="<%=ctx %>/system/login.do" method="POST">
      <div id="prompt" class="line" style="<%=promptDisplay%>"><font color="red"><%=prompt %></font></div>
      <div class="line">
       <a href="javascript:void(0)"><img src="<%=ctx %>/image/login_icon.jpg" class="icon"><input type="text" id="username" name="staff.code" class="line_txt" placeholder="账号/邮箱"></a>
