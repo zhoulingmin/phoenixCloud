@@ -40,7 +40,7 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 			<li><a href="<%=ctx %>/jggl.jsp" target="f_r">机构管理</a></li>
 			</sec:phoenixSec>
 			<sec:phoenixSec purviewCode="STAFF_MANAGE_MENU">
-			<li><a href="zhgl.html" target="f_r">账号管理</a></li>
+			<li><a href="<%=ctx %>/zhgl.jsp" target="f_r">账号管理</a></li>
 			</sec:phoenixSec>
 
 		</ul>

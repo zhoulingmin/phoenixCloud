@@ -3,6 +3,7 @@ package com.phoenixcloud.system.action;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +27,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.PubHw;
 import com.phoenixcloud.bean.PubHwNum;
+import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
 import com.phoenixcloud.bean.SysStaffRegCode;
 import com.phoenixcloud.dao.ctrl.PubHwDao;
 import com.phoenixcloud.dao.ctrl.PubHwNumDao;
+import com.phoenixcloud.dao.ctrl.PubOrgDao;
 import com.phoenixcloud.dao.ctrl.SysPurviewDao;
 import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.dao.ctrl.SysStaffPurviewDao;
@@ -84,6 +87,9 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	
 	@Autowired
 	private SysStaffDao staffDao;
+	
+	@Autowired
+	private PubOrgDao orgDao;
 	
 	private String staffIdArr;
 	
@@ -196,9 +202,29 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		response.setContentType("text/html");
 		response.setCharacterEncoding("utf-8");
 		
+		JSONArray jsonArr = new JSONArray();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		for (SysStaff staff : staffList) {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("name", staff.getName());
+			jsonObj.put("code", staff.getCode());
+			jsonObj.put("createTime", sdf.format(staff.getCreateTime()));
+			if (staff.isExpired()) {
+				jsonObj.put("isExpired", "否");
+			} else {
+				jsonObj.put("isExpired", "是");
+			}
+			PubOrg org = orgDao.find(staff.getOrgId().toString());
+			if (org == null) {
+				continue;
+			}
+			jsonObj.put("orgName", org.getOrgName());
+			jsonArr.add(jsonObj);
+		}
+		
 		try {
 			PrintWriter out = response.getWriter();
-			out.print(JSONArray.fromObject(staffList).toString());
+			out.print(jsonArr.toString());
 			out.flush();
 			out.close();
 		} catch (Exception e) {

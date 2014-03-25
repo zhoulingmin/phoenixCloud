@@ -118,9 +118,8 @@ function onSelOrg(event, treeId, treeNode, clickFlag) {
 			return;
 		}
 		isLoadingUser = true;
-		isLoadingUser = true;userTblBody
 		jQuery.ajax({
-			url: "<%=ctx%>/system/getAllUser.do";
+			url: "<%=ctx%>/system/getAllUser.do",
 			data: {selfId:treeNode.selfId},
 			dataType: "json",
 			timeout: 30000,
@@ -128,17 +127,28 @@ function onSelOrg(event, treeId, treeNode, clickFlag) {
 			success: function(userArr) {
 				if (userArr == null || userArr.length == 0) {
 					alert("加载用户数据失败！");
+					return;
 				}
-				alert("加载用户成功！");
-				jQuery("#userTblBody").children("tr").remove();
 				
+				jQuery("#userTblBody").children("tr").remove();
+				jQuery(userArr).each(function() {
+					var trElm = "<tr>";
+					trElm += "<td>" + this.name + "</td>";
+					trElm += "<td>" + this.code + "</td>";
+					trElm += "<td>" + this.createTime + "</td>";
+					trElm += "<td>" + this.orgName + "</td>";
+					trElm += "<td>" + this.isExpired + "</td>";
+					trElm += "</tr>";
+					jQuery("#userTblBody").append(trElm);
+				});
+				alert("加载用户成功！");
 				isLoadingUser = false;
-			}
+			},
 			error: function(req,txt) {
 				alert("加载用户失败！");
 				isLoadingUser = false;
 			}
-		})
+		});
 	}
 }
 
