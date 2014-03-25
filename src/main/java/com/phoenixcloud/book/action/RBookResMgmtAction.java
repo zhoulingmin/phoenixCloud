@@ -66,6 +66,7 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	private RBookRe bookRes;
 	private RBook bookInfo;
 	private String resIdArr;
+	private String pages;
 	
 	@Autowired
 	private RBookReDao resDao;
@@ -370,6 +371,14 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		// TODO Auto-generated method stub
 		this.session = (SessionMap) session;
 	}
+	public String getPages() {
+		return pages;
+	}
+
+	public void setPages(String pages) {
+		this.pages = pages;
+	}
+
 	public void addActionError(String anErrorMessage) {
         //validationAware.addActionError(anErrorMessage);
     }

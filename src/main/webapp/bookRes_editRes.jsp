@@ -15,7 +15,7 @@ String ctx = request.getContextPath();
 PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 
 ValueStack vs = (ValueStack)request.getAttribute("struts.valueStack");
-PubDdv ddv = ddvDao.findByDdvCode(new BigInteger(vs.findString("bookRes.format")));
+PubDdv ddv = ddvDao.find(vs.findString("bookRes.format"));
 String resFormatName = "";
 if (ddv != null) {
 	resFormatName = ddv.getValue();
@@ -90,10 +90,17 @@ String mode = request.getParameter("mode");
 					</div>
 				</div>
 				
-				<div class="control-group">
+				<div class="control-group" style="display:none">
 					<label class="control-label">资源目录地址</label>
 					<div class="controls">
 						<input type="text" name="bookRes.cataAddr" value="<s:property value="bookRes.cataAddr"/>" readonly="readonly"/>
+					</div>
+				</div>
+				
+				<div class="control-group">
+					<label class="control-label">引用资源页码(如:2,50,99 用逗号隔开)</label>
+					<div class="controls">
+						<input type="text" name="pages" value="" placeholder="2,50,99,..."/>
 					</div>
 				</div>
 				

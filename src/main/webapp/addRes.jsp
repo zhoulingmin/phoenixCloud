@@ -68,10 +68,17 @@ String mode = request.getParameter("mode");
 					</div>
 				</div>
 				
-				<div class="control-group">
+				<div class="control-group" style="display:none">
 					<label class="control-label">资源目录地址</label>
 					<div class="controls">
 						<input type="text" name="bookRes.cataAddr" value="" />
+					</div>
+				</div>
+				
+				<div class="control-group">
+					<label class="control-label">引用资源页码(如:2,50,99 用逗号隔开)</label>
+					<div class="controls">
+						<input type="text" name="pages" value="" placeholder="2,50,99,..."/>
 					</div>
 				</div>
 				
