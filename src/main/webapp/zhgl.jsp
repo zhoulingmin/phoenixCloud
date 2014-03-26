@@ -54,14 +54,16 @@ PubOrg org = orgDao.find(staff.getOrgId().toString());
 						<img src="image/user_photo.jpg">&nbsp;用户
 					</div>
 					<div class="line_btn margin_top_10">
-						<img src="image/btn1.jpg">&nbsp;&nbsp;<img
-							src="image/btn2.jpg">&nbsp;&nbsp;<img src="image/btn3.jpg">&nbsp;&nbsp;<img
-							src="image/btn4.jpg">
+						<img src="image/btn1.jpg" onclick="getAll();">&nbsp;&nbsp;
+						<img src="image/btn2.jpg" onclick="addUser();">&nbsp;&nbsp;
+						<img src="image/btn3.jpg" onclick="editUser();">&nbsp;&nbsp;
+						<img src="image/btn4.jpg" onclick="delUser();">
 					</div>
 				</div>
 				<table class="list_table1">
 					<thead>
 						<tr>
+							<th style='width:1%'><input type="checkbox" id="titleChk" onchange="checkAll(this)"></th>
 							<th>用户名</th>
 							<th>账号</th>
 							<th>创建时间</th>
@@ -71,18 +73,7 @@ PubOrg org = orgDao.find(staff.getOrgId().toString());
 					</thead>
 					<tbody id="userTblBody">
 						<tr>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
+							<td colspan="5">请点击某个机构，进行用户搜索！</td>
 						</tr>
 					</tbody>
 				</table>
@@ -93,6 +84,108 @@ PubOrg org = orgDao.find(staff.getOrgId().toString());
 </body>
 
 <script type="text/javascript">
+
+function getAll() {
+	if (isLoadingUser) {
+		alert("正在加载用户数据，请稍后！");
+		return;
+	}
+	
+	isLoadingUser = true;
+	jQuery.ajax({
+		url: "<%=ctx%>/system/getAllUser.do",
+		dataType: "json",
+		timeout: 30000,
+		async: false,
+		success: function(userArr) {
+			if (userArr == null || userArr.length == 0) {
+				alert("加载用户数据失败！");
+				return;
+			}
+			
+			jQuery("#userTblBody").children("tr").remove();
+			jQuery(userArr).each(function() {
+				var trElm = "<tr>" ;
+				trElm += "<td style='width:1%'><input type='checkbox' staffId='" + this.id + "'/></td>";
+				trElm += "<td>" + this.name + "</td>";
+				trElm += "<td>" + this.code + "</td>";
+				trElm += "<td>" + this.createTime + "</td>";
+				trElm += "<td>" + this.orgName + "</td>";
+				trElm += "<td>" + this.isExpired + "</td>";
+				trElm += "</tr>";
+				jQuery("#userTblBody").append(trElm);
+			});
+			isLoadingUser = false;
+		},
+		error: function(req,txt) {
+			alert("加载用户失败！");
+			isLoadingUser = false;
+		}
+	});
+}
+
+function addUser() {
+	location.href = "<%=ctx%>/zhgl_add.jsp";
+}
+
+function editUser() {
+	var chkNodes = jQuery("#userTblBody>tr>td>input:checked");
+	if (chkNodes.length == 0) {
+		alert("请选择要操作的用户！");
+		return;
+	}
+	
+	if (chkNodes.length > 1) {
+		alert("请只选择一个用户进行编辑！");
+		return;
+	}
+	
+	location.href = "<%=ctx%>/system/editAccount.do?staff.staffId=" + chkNodes[0].getAttribute("staffId");
+}
+
+var selNodes = null;
+function delUser() {
+	if (selNodes != null) {
+		alert("正在删除用户，请稍后！");
+		return;
+	}
+	selNodes = jQuery("#userTblBody>tr>td>input:checked");
+	if (selNodes.length == 0) {
+		alert("请选择要操作的用户！");
+		return;
+	}
+	var ids = "";
+	jQuery(selNodes).each(function(idx){
+		ids += this.getAttribute("staffId");
+		if (idx != (selNodes.length - 1)) {
+			ids += ",";
+		}
+	});
+	jQuery.ajax({
+		url: "<%=ctx%>/system/system_removeUser.do",
+		type: "POST",
+		async: "false",
+		timeout: 30000,
+		data: {userIdArr:ids},
+		success: function() {
+			alert("删除成功！");
+			jQuery(selNodes).parents("tr").remove();
+			selNodes = null;
+		},
+		error: function() {
+			alert("删除失败！");
+			selNodes = null;
+		}
+	});
+}
+
+function checkAll(which) {
+	if (which.checked) {
+		jQuery("#userTblBody>tr>td>input:checkbox").attr("checked","checked");
+	} else {
+		jQuery("#userTblBody>tr>td>input:checkbox").removeAttr("checked");
+	}
+}
 
 var zTreeObj,
 setting = {
@@ -132,7 +225,8 @@ function onSelOrg(event, treeId, treeNode, clickFlag) {
 				
 				jQuery("#userTblBody").children("tr").remove();
 				jQuery(userArr).each(function() {
-					var trElm = "<tr>";
+					var trElm = "<tr>" ;
+					trElm += "<td style='width:1%'><input type='checkbox' staffId='" + this.id + "'/></td>";
 					trElm += "<td>" + this.name + "</td>";
 					trElm += "<td>" + this.code + "</td>";
 					trElm += "<td>" + this.createTime + "</td>";
@@ -141,7 +235,6 @@ function onSelOrg(event, treeId, treeNode, clickFlag) {
 					trElm += "</tr>";
 					jQuery("#userTblBody").append(trElm);
 				});
-				alert("加载用户成功！");
 				isLoadingUser = false;
 			},
 			error: function(req,txt) {

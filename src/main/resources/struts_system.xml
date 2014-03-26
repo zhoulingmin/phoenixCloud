@@ -19,11 +19,15 @@
 		<action name="getAuthHw" class="systemMgmtAction" method="getAllHw">
 			<result name="success">/sq_info.jsp</result>
 		</action>
-		<action name="getAllUser" class="systemMgmtAction" method="getAllUser">
+		<action name="getAllUser" class="systemMgmtAction" method="getAllUserJson">
 		</action>
+		<action name="editAccount" class="systemMgmtAction" method="editUser">
+			<result name="success">/zhgl_edit.jsp</result>
+		</action>
+		<action name="saveHwNum" class="systemMgmtAction" method="saveHwNum"></action>
+		
 		<action name="*_*" class="{1}MgmtAction" method="{2}" >
 			<result name="success">/{1}_{2}.jsp</result>
 		</action>
-		
 	</package>
 </struts>

@@ -59,6 +59,7 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	
 	private PubHw hw;
 	private String hwIdArr;
+	private PubHwNum hwNum;
 	
 	private SysPurview purview;
 	private String purIdArr;
@@ -196,9 +197,21 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	public void setTabId(String tabId) {
 		this.tabId = tabId;
 	}
+	
+	public String getAllUser() {
+		List<SysStaff> staffList = iSysService.getAllStaff();
+		request.put("staffList", staffList);
+		return "success";
+	}
 
-	public String getAllUser(){
-		List<SysStaff> staffList = staffDao.findByOrgId(selfId);
+	public String getAllUserJson(){
+		List<SysStaff> staffList = null;
+		if (selfId == null) {
+			staffList = staffDao.getAll();
+		} else {
+			staffList = staffDao.findByOrgId(selfId);
+		}
+		
 		response.setContentType("text/html");
 		response.setCharacterEncoding("utf-8");
 		
@@ -206,6 +219,7 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		for (SysStaff staff : staffList) {
 			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("id", staff.getId());
 			jsonObj.put("name", staff.getName());
 			jsonObj.put("code", staff.getCode());
 			jsonObj.put("createTime", sdf.format(staff.getCreateTime()));
@@ -250,6 +264,14 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 
 	public void setSelfId(BigInteger selfId) {
 		this.selfId = selfId;
+	}
+
+	public PubHwNum getHwNum() {
+		return hwNum;
+	}
+
+	public void setHwNum(PubHwNum hwNum) {
+		this.hwNum = hwNum;
 	}
 
 	public String addUser() {
@@ -526,6 +548,28 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		for (String id : staffPurId) {
 			iSysService.removeStaffPur(id);
 		}
+		return null;
+	}
+	
+	public String saveHwNum() throws Exception{
+		PubHwNum hwNumTmp = hwNumDao.find(hwNum.getHwId());
+		if (hwNumTmp == null) {
+			throw new Exception("Not Found!");
+		}
+		hwNumTmp.setNum(hwNum.getNum());
+		hwNumDao.merge(hwNumTmp);
+		
+		JSONObject ret = new JSONObject();
+		ret.put("hwId", hwNumTmp.getId());
+		
+		response.setContentType("text/html");
+		response.setCharacterEncoding("utf-8");
+		
+		PrintWriter out = response.getWriter();
+		out.print(ret.toString());
+		out.flush();
+		out.close();
+		
 		return null;
 	}
 		
