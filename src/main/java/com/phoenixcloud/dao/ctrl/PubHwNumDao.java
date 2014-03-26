@@ -40,7 +40,7 @@ public class PubHwNumDao extends AbstractCtrlDao<PubHwNum>{
 				vecParams.add(new BigInteger(criteria.getStaffId()));
 				index++;
 			}
-			if (criteria.getHwType() != null) {
+			if (criteria.getHwType() != null && !"-1".equals("criteria.getHwType()")) {
 				sql += " and num.hwType = ?" + index;
 				index++;
 				vecParams.add(new BigInteger(criteria.getHwType()));

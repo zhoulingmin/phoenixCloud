@@ -65,7 +65,7 @@ public class PubHwDao extends AbstractCtrlDao<PubHw> {
 				vParams.add(new BigInteger(criteria.getStaffId()));
 				idx++;
 			}
-			if (criteria.getHwType() != null) {
+			if (criteria.getHwType() != null && !"-1".equals("criteria.getHwType()")) {
 				sql += " and hw.hwType = ?" + idx;
 				vParams.add(new BigInteger(criteria.getHwType()));
 			}
