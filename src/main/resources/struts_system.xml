@@ -24,7 +24,11 @@
 		<action name="editAccount" class="systemMgmtAction" method="editUser">
 			<result name="success">/zhgl_edit.jsp</result>
 		</action>
-		<action name="saveHwNum" class="systemMgmtAction" method="saveHwNum"></action>
+		<action name="saveHwNum" class="systemMgmtAction" method="saveHwNum">
+		</action>
+		<action name="searchHw" class="systemMgmtAction" method="searchHsw">
+			<result name="success">/sq_info.jsp</result>
+		</action>
 		
 		<action name="*_*" class="{1}MgmtAction" method="{2}" >
 			<result name="success">/{1}_{2}.jsp</result>

@@ -2,12 +2,14 @@ package com.phoenixcloud.dao.ctrl;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Vector;
 
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
 import com.phoenixcloud.bean.PubHw;
+import com.phoenixcloud.system.vo.Criteria;
 
 @Repository
 public class PubHwDao extends AbstractCtrlDao<PubHw> {
@@ -51,5 +53,27 @@ public class PubHwDao extends AbstractCtrlDao<PubHw> {
 			return (Long)result;
 		}
 		return 0L;
+	}
+	
+	public List<PubHw> search(Criteria criteria) {
+		String sql = "select hw from PubHw hw where hw.deleteState = 0";
+		Vector vParams = new Vector();
+		if (criteria != null) {
+			int idx = 1;
+			if (criteria.getStaffId() != null) {
+				sql += " and hw.staffId = ?" + idx;
+				vParams.add(new BigInteger(criteria.getStaffId()));
+				idx++;
+			}
+			if (criteria.getHwType() != null) {
+				sql += " and hw.hwType = ?" + idx;
+				vParams.add(new BigInteger(criteria.getHwType()));
+			}
+		}
+		Query query = entityManager.createQuery(sql);
+		for (int i = 0; i < vParams.size(); i++){
+			query.setParameter(i+1, vParams.get(i));
+		}
+		return query.getResultList();
 	}
 }

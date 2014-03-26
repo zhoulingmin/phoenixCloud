@@ -22,7 +22,6 @@ import org.apache.struts2.interceptor.SessionAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.PubHw;
@@ -39,6 +38,7 @@ import com.phoenixcloud.dao.ctrl.SysPurviewDao;
 import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.dao.ctrl.SysStaffPurviewDao;
 import com.phoenixcloud.system.service.ISysService;
+import com.phoenixcloud.system.vo.Criteria;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
@@ -73,6 +73,8 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	private String tabId;
 	
 	private BigInteger selfId;
+	
+	private Criteria criteria;
 	
 	@Autowired
 	private SysPurviewDao sysPurDao;
@@ -184,6 +186,14 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 
 	public String getStaffRegCodeIdArr() {
 		return staffRegCodeIdArr;
+	}
+
+	public Criteria getCriteria() {
+		return criteria;
+	}
+
+	public void setCriteria(Criteria criteria) {
+		this.criteria = criteria;
 	}
 
 	public void setStaffRegCodeIdArr(String staffRegCodeIdArr) {
@@ -595,6 +605,16 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		this.session = (SessionMap) arg0;
 	}
 
+	public String searchHw() {
+		List<PubHwNum> hwNumList = hwNumDao.search(criteria);
+		List<PubHw> hwList = hwDao.search(criteria);
+		
+		request.put("hwList", hwList);
+		request.put("hwNumList", hwNumList);
+				
+		return "success";
+	}
+	
 	public void addActionError(String anErrorMessage) {
     }
 
