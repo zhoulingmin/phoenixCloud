@@ -186,7 +186,7 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 				book.setKindId(bookInfo.getKindId());
 				book.setName(bookInfo.getName());
 				book.setNotes(bookInfo.getNotes());
-				book.setOrgId(bookInfo.getOrgId());
+				//book.setOrgId(bookInfo.getOrgId());
 				book.setPageNum(bookInfo.getPageNum());
 				book.setPressId(bookInfo.getPressId());
 				book.setStuSegId(bookInfo.getStuSegId());

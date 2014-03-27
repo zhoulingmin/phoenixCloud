@@ -124,7 +124,7 @@ String validate = new SimpleDateFormat("yyyy/MM/dd").format(date);
 				
 					<div class="form-actions">
 						<button class="btn btn-primary" type="button"  onclick="saveUser();">保存</button>
-						<button class="btn btn-primary" style="margin-left:50px;" onclick="back();">取消</button>
+						<button class="btn btn-primary" style="margin-left:50px;" onclick="history.back();return false;">取消</button>
 					</div>
 				</form>
 			</div>

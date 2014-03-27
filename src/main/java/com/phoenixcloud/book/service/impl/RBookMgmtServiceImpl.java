@@ -23,6 +23,7 @@ import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.dao.res.RBookDao;
 import com.phoenixcloud.dao.res.RBookDireDao;
 import com.phoenixcloud.dao.res.RBookLogDao;
+import com.phoenixcloud.dao.res.RBookPageResDao;
 import com.phoenixcloud.dao.res.RBookReDao;
 import com.phoenixcloud.dao.res.RRegCodeDao;
 
@@ -298,4 +299,5 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 		
 		return query.getResultList();
 	}
+
 }

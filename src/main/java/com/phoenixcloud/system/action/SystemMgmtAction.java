@@ -561,25 +561,40 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		return null;
 	}
 	
-	public String saveHwNum() throws Exception{
+	public String saveHwNum(){
 		PubHwNum hwNumTmp = hwNumDao.find(hwNum.getHwId());
+		JSONObject ret = new JSONObject();
+		response.setContentType("text/html");
+		response.setCharacterEncoding("utf-8");
+		PrintWriter out = null;
 		if (hwNumTmp == null) {
-			throw new Exception("Not Found!");
+			ret.put("ret", 1);
+			ret.put("error", "Not found！");
+			
+			try {
+				out = response.getWriter();
+				out.print(ret.toString());
+				out.flush();
+				out.close();
+			} catch (Exception e) {
+				MiscUtils.getLogger().info(e.toString());
+			}
+			return null;
 		}
 		hwNumTmp.setNum(hwNum.getNum());
 		hwNumDao.merge(hwNumTmp);
 		
-		JSONObject ret = new JSONObject();
+		ret.put("ret", 0);
 		ret.put("hwId", hwNumTmp.getId());
 		
-		response.setContentType("text/html");
-		response.setCharacterEncoding("utf-8");
-		
-		PrintWriter out = response.getWriter();
-		out.print(ret.toString());
-		out.flush();
-		out.close();
-		
+		try {
+			out = response.getWriter();
+			out.print(ret.toString());
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
 		return null;
 	}
 		

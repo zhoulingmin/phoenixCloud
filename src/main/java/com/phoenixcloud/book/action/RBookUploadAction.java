@@ -113,10 +113,10 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 			throw new Exception("没有合适用户！");
 		}
 		
-		PubServerAddr addr = serAddrDao.find(staff.getOrgId().toString());
+		PubServerAddr addr = serAddrDao.findByOrgId(staff.getOrgId());
 		
 		if (addr == null) {
-			throw new Exception(new String("没有找到对应的资源服务器！".getBytes(), "ISO-8859-1"));
+			throw new Exception("没有找到对应的资源服务器！");
 		}
 		
 		RBook book = iBookService.findBook(bookId);

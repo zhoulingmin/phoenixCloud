@@ -164,7 +164,7 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 			throw new Exception("没有找到相应的书籍！");
 		}
 		
-		PubServerAddr addr = serAddrDao.find(staff.getOrgId().toString());
+		PubServerAddr addr = serAddrDao.findByOrgId(staff.getOrgId());
 		
 		StringBuffer baseURL = new StringBuffer();
 		baseURL.append("http://");

@@ -1,15 +1,18 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib prefix="s" uri="/struts-tags" %>
-<%@page import="com.phoenixcloud.bean.*" %>
-<%@page import="com.phoenixcloud.dao.res.*" %>
-<%@page import="com.phoenixcloud.dao.ctrl.*" %>
-<%@page import="com.phoenixcloud.util.SpringUtils" %>
-<%@page import="java.util.List" %>
+<%@page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@page import="com.phoenixcloud.bean.*"%>
+<%@page import="com.phoenixcloud.dao.ctrl.*"%>
+<%@page import="com.phoenixcloud.util.SpringUtils"%>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@page import="java.util.*" %>
+<%@page import="java.text.*" %>
 <%@page import="com.opensymphony.xwork2.util.*"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<%@taglib uri="/struts-tags" prefix="s" %>
 <%
-String ctx = (String) request.getContextPath();
+SysStaff staff = (SysStaff)session.getAttribute("user");
+PubOrgDao orgDao = (PubOrgDao)SpringUtils.getBean(PubOrgDao.class);
+PubOrg org = orgDao.find(staff.getStaffId().toString());
+String ctx = request.getContextPath();
+
 PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 List<PubDdv> subjectList = ddvDao.findByTblAndField("r_book", "SUBJECT_ID");
 List<PubDdv> stuSegList = ddvDao.findByTblAndField("r_book", "STU_SEG_ID");
@@ -23,55 +26,47 @@ List<PubPress> pressList = pressDao.getAll();
 ValueStack vs = (ValueStack)request.getAttribute("struts.valueStack");
 String orgId = vs.findString("bookInfo.orgId");
 String orgName = "";
-PubOrgDao orgDao = (PubOrgDao)SpringUtils.getBean(PubOrgDao.class);
-PubOrg orgBean = orgDao.find(orgId);
-if (orgBean != null) {
-	orgName = orgBean.getOrgName();
-}
 
 String accntName = "";
 SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
-SysStaff staff = staffDao.find(vs.findString("bookInfo.staffId"));
-if (staff != null) {
-	accntName = staff.getName();
+SysStaff staffTmp = staffDao.find(vs.findString("bookInfo.staffId"));
+if (staffTmp != null) {
+	accntName = staffTmp.getName();
 }
-
-String mode = vs.findString("bookInfo.isAudit");
 
 %>
 
+<!doctype html>
+<html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="stylesheet" href="<%=ctx%>/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="<%=ctx%>/css/bootstrap-responsive.min.css" />
-	<link rel="stylesheet" href="<%=ctx%>/css/bootstrap-fileinput.css" />
-	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
-	<link rel="stylesheet" href="<%=ctx%>/css/unicorn.grey.css" class="skin-color" />
-	<link rel="stylesheet" href="<%=ctx%>/css/zTreeStyle/zTreeStyle.css" type="text/css">
-	
-	<script src="<%=ctx%>/js/jquery-1.7.2.js"></script>
-	<script src="<%=ctx%>/js/jquery.ui.custom.js"></script>
-	<script src="<%=ctx%>/js/bootstrap.min.js"></script>
-	<script src="<%=ctx%>/js/unicorn.js"></script>
-	<script src="<%=ctx%>/js/bootstrap-fileinput.js"></script>
-	<script type="text/javascript" src="<%=ctx%>/js/ztree/jquery.ztree.core-3.5.js"></script>
-	
-	<title>书籍管理界面</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<meta name="keywords" content="江苏凤凰数字出版传媒有限公司">
+<meta name="description" content="江苏凤凰数字出版传媒有限公司">
+<title></title>
+<link rel="stylesheet" href="<%=ctx%>/css/common.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/page.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/bootstrap.min.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/bootstrap-fileinput.css" />
+
+<script src="<%=ctx%>/js/jquery-2.0.3.js"></script>
+<script type="text/javascript" src="<%=ctx%>/js/public.js"></script>
+<script src="<%=ctx%>/js/bootstrap-fileinput.js"></script>
+
 </head>
+
 <body>
-	<jsp:include page="header.jsp" flush="true"></jsp:include>
-	<jsp:include page="admin_sidebar.jsp" flush="true"></jsp:include>
-	
-	<div id="content">
-		<div id="content-header">
-			<h1>凤凰云端</h1>
+	<div class="local">当前机构：<%=org.getOrgName() %></div>
+	<div class="right_main">
+		<div class="head">
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍制作&gt;修改书籍
 		</div>
 		
 		<div class="widget-box">
 			<div class="widget-content">
 				<div class="fileinput fileinput-new" data-provides="fileinput">
-					<form id="uploadBookFrm" action="<%=ctx%>/book/uploadBook.do" onsubmit="checkfile()" method="POST" enctype="multipart/form-data">
+					<form id="uploadBookFrm" action="<%=ctx%>/book/uploadBookNew.do" onsubmit="checkfile()" method="POST" enctype="multipart/form-data">
 						<span class="btn btn-default btn-file">
 							<span class="fileinput-new">选择书籍文件</span>
 							<span class="fileinput-exists">重新选择书籍文件</span>
@@ -86,7 +81,7 @@ String mode = vs.findString("bookInfo.isAudit");
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="widget-box">
 			<div class="widget-title">
 				<span class="icon"><i class="icon-align-justify"></i></span>
@@ -109,7 +104,7 @@ String mode = vs.findString("bookInfo.isAudit");
 						</div>
 					</div>
 					
-					<div class="control-group">
+					<div class="control-group" style="display:none">
 						<label class="control-label">机构</label>
 						<div class="controls">
 							<input type="text" name="orgNameTmp" onfocus="onfocusOrg()" value="<%=orgName %>">
@@ -216,14 +211,26 @@ String mode = vs.findString("bookInfo.isAudit");
 					</div>
 				</form>
 			</div>
-			
 		</div>
 	</div>
-	
-	<jsp:include page="footer.jsp" flush="true" />
-</body>
 
+</body>
 <script type="text/javascript">
+
+function back() {
+	jQuery.ajax({
+		url: "",
+		type:"GET",
+		async:"false",
+		timeout:10,
+		success:function(){
+			location.href = "<%=ctx%>/book_zhizuo.jsp";
+		},
+		error: function() {
+			location.href = "<%=ctx%>/book_zhizuo.jsp";
+		}
+	});
+}
 
 function checkfile() {
 	if(jQuery("#bookFile").val().length == 0) {
@@ -235,8 +242,8 @@ function checkfile() {
 
 function checkBookNoExist(){
 	var bookNo = jQuery("input[name='bookInfo.bookNo']")[0];
-	if (bookNo == null || bookNo.value.length == 0) {
-		alert("书籍编码不能为空！");
+	if (bookNo == null || bookNo.value.trim().length == 0 || !jQuery.isNumberic(bookNo.value.trim())) {
+		alert("书籍编码不能为空，且必须为数字！");
 		return;
 	}
 	
@@ -266,37 +273,15 @@ function checkBookNoExist(){
 	});
 }
 
-function onfocusOrg() {
-	jQuery("#agencyTree").css("display", "block");
-}
-
-var zTreeObj,
-setting = {
-	view: {
-		selectedMulti: false
-	},
-	async: {
-		enable: true,
-		url: "<%=ctx%>/agency/agencyMgmt!getAgency.do",
-		autoParam: ["type", "selfId"]
-	},
-	callback: {
-		onClick: onSelOrg
-	}
-},
-zTreeNodes = [];
-
-function onSelOrg(event, treeId, treeNode, clickFlag) {
-	if (treeNode != null && !treeNode.isParent) {
-		// 1. set org field value
-		jQuery(jQuery("input[name='bookInfo.orgId']")[0]).val(treeNode.selfId);
-		jQuery(jQuery("input[name='orgNameTmp']")[0]).val(treeNode.name);
-		// 2. hide
-		jQuery("#agencyTree").css("display", "none");
-	}
-}
-
 function saveBook() {
+	
+	var pageNum = jQuery("input[name='bookInfo.pageNum']")[0];
+	if (pageNum == null || pageNum.value.trim().length == 0 || !jQuery.isNumeric(pageNum.value.trim())) {
+		alert("页数不能为空，且必须为数字！");
+		jQuery("input[name='bookInfo.pageNum']:eq(0)").focus();
+		return;
+	}
+	
 	jQuery.ajax({
 		url: "<%=ctx%>/book/book_editBook.do",
 		type: "POST",
@@ -305,7 +290,7 @@ function saveBook() {
 		data: jQuery("#bookForm").serialize(),
 		success: function() {
 			alert("修改书籍成功！");
-			location.href = "<%=ctx%>/book/book_getAll.do?bookInfo.isAudit=<%=mode%>";
+			location.href = "<%=ctx%>/book_zhizuo.jsp";
 		},
 		error: function() {
 			alert("修改书籍失败！");
@@ -321,13 +306,7 @@ jQuery(function() {
 	if (isUpload != null && isUpload == 1) {
 		jQuery("#uploadBtn").val("更新");
 	}
-	
-	zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, zTreeNodes);
-	jQuery("#agencyTree").on("blur", function(event) {
-		jQuery(this).css("display", "none");
-	});
 });
 
 </script>
-
 </html>

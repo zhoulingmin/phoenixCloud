@@ -125,7 +125,7 @@ function getAll() {
 }
 
 function addUser() {
-	location.href = "<%=ctx%>/zhgl_add.jsp";
+	window.location.href = "<%=ctx%>/zhgl_add.jsp";
 }
 
 function editUser() {
@@ -140,7 +140,7 @@ function editUser() {
 		return;
 	}
 	
-	location.href = "<%=ctx%>/system/editAccount.do?staff.staffId=" + chkNodes[0].getAttribute("staffId");
+	window.location.href = "<%=ctx%>/system/editAccount.do?staff.staffId=" + chkNodes[0].getAttribute("staffId");
 }
 
 var selNodes = null;

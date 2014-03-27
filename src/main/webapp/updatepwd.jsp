@@ -63,12 +63,14 @@ function savePass() {
 	if (jQuery("#pass1").val().trim().length == 0) {
 		alert("密码不能为空！");
 		jQuery("#pass1").focus();
+		saving = false;
 		return;
 	}
 	
 	if (jQuery("#pass1").val() != jQuery("#pass2").val()) {
 		alert("两次输入的新密码要一致！");
 		jQuery("#pass1").focus();
+		saving = false;
 		return;
 	}
 	
@@ -80,6 +82,7 @@ function savePass() {
 		success: function() {
 			alert("修改密码成功！");
 			location.href.reload(true);
+			saving = false;
 		},
 		error: function(req, txt) {
 			alert("修改密码失败！")

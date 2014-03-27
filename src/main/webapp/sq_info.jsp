@@ -85,8 +85,8 @@ SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
             		<th>机构</th>
             		<th>用户名</th>
             		<th>硬件类型</th>
-            		<th>授权总数</th>
             		<th>已授权数量</th>
+            		<th>授权总数</th>
             		<th>操作</th>
             		</tr>
             	</thead>
@@ -100,8 +100,8 @@ SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
             		<td><%=orgTmp.getOrgName() %></td>
             		<td><%=staffTmp.getName() %></td>
             		<td><%=ddv.getValue() %></td>
-            		<td><input type="text" readonly="readonly" value="<%=num.getNum() %>"/></td>
             		<td><%=hwDao.getCountOfHw(new BigInteger(staff.getStaffId()), num.getHwType()) %></td>
+            		<td><input type="text" readonly="readonly" value="<%=num.getNum() %>"/></td>
             		<td><a href="#">设置</a>&nbsp;&nbsp;<a href="#" hwId="<%=num.getHwId() %>" style="display:none">保存</a></td>
             		</tr>
             		<%} %>
@@ -203,7 +203,7 @@ $(function() {
 			data: {"hwNum.hwId":this.getAttribute("hwId"), "hwNum.num":num},
 			timeout:30000,
 			async: "false",
-			dataType: "JSON",
+			dataType: "json",
 			success: function(ret) {
 				if (ret == null) {
 					alert("设置失败！");

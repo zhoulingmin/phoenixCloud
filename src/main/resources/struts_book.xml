@@ -16,9 +16,43 @@
 			<result name="editSearch">/book_getAll.jsp</result>
 			<result name="querySearch">/book_searchBook.jsp</result>
 		</action>
+		
+		<action name="searchBookNew" class="bookMgmtAction" method="searchBook">
+			<result name="editSearch">/book_zhizuo.jsp</result>
+			<result name="querySearch">/book_searchBook.jsp</result>
+		</action>
+		
 		<action name="searchRes" class="bookResMgmtAction" method="searchRes">
 			<result name="editSearch">/bookRes_getAll.jsp</result>
 			<result name="querySearch">/bookRes_queryAll.jsp</result>
+		</action>
+		
+		<action name="modifyBook" class="bookMgmtAction" method="editBook">
+			<result name="success">/book_modify.jsp</result>		
+		</action>
+		
+		<action name="uploadBookNew" class="bookUploadAction" method="uploadBook">
+			<result name="success" type="redirect">/book/modifyBook.do?bookInfo.bookId=${bookId}</result>
+		</action>
+		
+		<action name="viewBook" class="bookMgmtAction" method="viewBook">
+			<result name="success">/book_info.jsp</result>
+		</action>
+		
+		<action name="bookDire" class="bookDireMgmtAction" method="getAll">
+			<result name="success">/book_dire.jsp</result>
+		</action>
+		
+		<action name="searchResNew" class="bookResMgmtAction" method="searchRes">
+			<result name="success">/book_res_zhizuo.jsp</result>
+		</action>
+		
+		<action name="modifyBookRes" class="bookResMgmtAction" method="">
+			<result name="success">/book_res_modify.jsp</result>
+		</action>
+		
+		<action name="bookRes" class="bookResMgmtAction" method="getAll">
+			<result name="success">/book_res_zhizuo.jsp</result>
 		</action>
 		
 		<action name="*_*" class="{1}MgmtAction" method="{2}" >

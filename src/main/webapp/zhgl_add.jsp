@@ -117,7 +117,7 @@ List<PubDdv> staffTypeList = ddvDao.findByTblAndField("sys_staff", "STAFF_TYPE_I
 					
 					<div class="form-actions">
 						<button class="btn btn-primary" type="button"  onclick="addUser();">创建</button>
-						<button class="btn btn-primary" style="margin-left:50px" onclick="cancel();"></button>
+						<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();return false;">取消</button>
 					</div>
 				</form>
 			</div>

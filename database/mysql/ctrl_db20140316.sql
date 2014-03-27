@@ -160,7 +160,7 @@ CREATE TABLE `pub_server_addr` (
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`SADDR_ID`),
-  KEY `IND_PSA_ORG_ID` (`ORG_ID`,`DELETE_STATE`)
+  UNIQUE KEY `IND_PSA_ORG_ID` (`ORG_ID`,`DELETE_STATE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=gbk;
 
 /*Data for the table `pub_server_addr` */

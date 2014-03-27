@@ -60,12 +60,12 @@ public class PubHwDao extends AbstractCtrlDao<PubHw> {
 		Vector vParams = new Vector();
 		if (criteria != null) {
 			int idx = 1;
-			if (criteria.getStaffId() != null) {
+			if (criteria.getStaffId() != null && criteria.getStaffId().trim().length() > 0) {
 				sql += " and hw.staffId = ?" + idx;
 				vParams.add(new BigInteger(criteria.getStaffId()));
 				idx++;
 			}
-			if (criteria.getHwType() != null && !"-1".equals("criteria.getHwType()")) {
+			if (criteria.getHwType() != null && !"-1".equals(criteria.getHwType())) {
 				sql += " and hw.hwType = ?" + idx;
 				vParams.add(new BigInteger(criteria.getHwType()));
 			}
