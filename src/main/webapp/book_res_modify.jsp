@@ -34,11 +34,12 @@ String pages = pgRsDao.getResRelatedPages(new java.math.BigInteger(vs.findString
 <meta name="keywords" content="江苏凤凰数字出版传媒有限公司">
 <meta name="description" content="江苏凤凰数字出版传媒有限公司">
 <title></title>
-<link rel="stylesheet" href="<%=ctx%>/css/common.css" />
-<link rel="stylesheet" href="<%=ctx%>/css/page.css" />
+
 <link rel="stylesheet" href="<%=ctx%>/css/bootstrap.min.css" />
 <link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 <link rel="stylesheet" href="<%=ctx%>/css/bootstrap-fileinput.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/common.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/page.css" />
 
 <script src="<%=ctx%>/js/jquery-2.0.3.js"></script>
 <script type="text/javascript" src="<%=ctx%>/js/public.js"></script>

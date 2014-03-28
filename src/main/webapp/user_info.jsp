@@ -126,7 +126,7 @@ function saveUser() {
 		timeout: 30000,
 		success: function() {
 			alert("修改账号成功！");
-			window.parent.location.reload(true);
+			window.location.reload(true);
 		},
 		error: function() {
 			alert("修改账号失败！");
