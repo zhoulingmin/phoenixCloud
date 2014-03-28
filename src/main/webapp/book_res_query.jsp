@@ -80,6 +80,7 @@ white-space:nowrap;
 			<table class="list_table" style="margin-top:0px">
 				<thead>
 					<tr>
+						<th style="width:1%">&nbsp;</th>
 						<th>书名</th>
 						<th>资源名称</th>
 						<th>格式</th>
@@ -101,6 +102,7 @@ white-space:nowrap;
 							
 					%>
 					<tr>
+						<td style="width:1%"><input type="checkbox" value="<%=res.getId()%>"/></td>
 						<td><%=book.getName() %></td>
 						<td><%=res.getName() %></td>
 						<td><%=fmDdv.getValue() %></td>
