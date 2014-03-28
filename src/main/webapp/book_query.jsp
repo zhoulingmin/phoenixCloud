@@ -169,8 +169,8 @@ white-space:nowrap;
 						<td><%=book.getNotes() %></td>
 						<td>
 							<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
-							<a class="tip-top" data-original-title="目录" href="<%=ctx%>/book/bookDire.do?mode=-1&bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
-							<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookRes.do?bookRes.bookId=<%=book.getId()%>&bookInfo.isAudit=-1"><i class="icon-file"></i></a>
+							<a class="tip-top" data-original-title="目录" href="<%=ctx%>/book/bookDireQuery.do?mode=-2&bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
+							<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookResQuery.do?bookRes.bookId=<%=book.getId()%>&bookInfo.isAudit=-2"><i class="icon-file"></i></a>
 							<%if (book.getIsUpload() == (byte)1) {%>
 							<a class="tip-top" data-original-title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
 							<%} %>

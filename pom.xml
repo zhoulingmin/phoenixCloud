@@ -10,7 +10,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-		<java.home>D:\Program Files\Java\jdk1.6.0_37</java.home>
+		<java.home>c:\Program Files\Java\jdk1.6.0_38</java.home>
 		<!-- <java.home>/usr/lib/jvm/java-6-sun-1.6.0.2</java.home> -->
 		<cxf.version>2.7.6</cxf.version>
 		<openjpa.version>2.2.1</openjpa.version>
