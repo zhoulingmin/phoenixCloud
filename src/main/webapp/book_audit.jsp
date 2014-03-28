@@ -41,6 +41,7 @@ List<PubPress> pressList = pressDao.getAll();
 <script src="<%=ctx%>/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="<%=ctx%>/js/public.js"></script>
 
+
 <style>
 tr td,th{
 white-space:nowrap;
@@ -212,7 +213,7 @@ function changeBookAuditStatus(flag) {
 	}
 	
 	var ids = "";
-	chkItems = jQuery("#bookContent tbody").find("input:checked");
+	chkItems = jQuery("#bookTblBody").find("input:checked");
 	if (chkItems == null || chkItems.length == 0) {
 		alert("请选择要操作的书籍！");
 		return;
@@ -230,10 +231,13 @@ function changeBookAuditStatus(flag) {
 		async: "false",
 		timeout: 30000,
 		data: {bookIdArr:ids},
-		success: function() {
-			if (flag == 1) {
+		success: function(ret) {
+			if (ret == null) {
+				alert("操作失败！");
+			}
+			if (ret.flag == 1) {
 				alert("提交上架成功！");
-			} else if (flag == -1) {
+			} else if (ret.flag == -1) {
 				alert("打回重新制作成功！");
 			}
 			
@@ -241,11 +245,7 @@ function changeBookAuditStatus(flag) {
 			chkItems = null;
 		},
 		error: function() {
-			if (flag == 1) {
-				alert("提交上架失败！");
-			} else if (flag == -1) {
-				alert("打回继续制作失败！");
-			}
+			alert("操作失败！");
 			chkItems = null;
 		}
 	});
@@ -266,12 +266,12 @@ jQuery(function(){
 			timeout: 30000,
 			data:{bookIdArr: id},
 			success: function() {
-				alert("提交发布成功！");
+				alert("提交上架成功！");
 				jQuery(chkItems).parents("tr").remove();
 				chkItems = null;
 			},
 			error: function() {
-				alert("提交发布失败！");
+				alert("提交上架失败！");
 				chkItems = null;
 			}
 		});

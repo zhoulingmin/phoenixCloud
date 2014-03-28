@@ -2,6 +2,7 @@ package com.phoenixcloud.dao.res;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Vector;
 
 import javax.persistence.Query;
 
@@ -53,10 +54,24 @@ public class RBookPageResDao extends AbstractResDao<RBookPageRes>{
 	}
 	
 	public List<BigInteger> getResIdsByBookIdPageRange(BigInteger bookId, int start, int end){
-		Query query = entityManager.createQuery("select pgRs.resId from RBookPageRes pgRs where pgRs.deleteState = 0 and pgRs.bookId = ?1 and pgRs.pageNum >= ?2 and pgRs.pageNum <= ?3");
+		String sql = "select pgRs.resId from RBookPageRes pgRs where pgRs.deleteState = 0 and pgRs.bookId = ?1";
+		Vector params = new Vector();
+		int index = 2;
+		if (start >= 0) {
+			sql += " and pgRs.pageNum >= ?" + index;
+			index++;
+			params.add(start);
+		}
+		if (end >= 0) {
+			sql += "  and pgRs.pageNum <= ?" + index;
+			params.add(end);
+		}
+		Query query = entityManager.createQuery(sql);
 		query.setParameter(1, bookId);
-		query.setParameter(2, start);
-		query.setParameter(3, end);
+		for (int i = 0; i < params.size(); i++) {
+			query.setParameter(i+2, params.get(i));
+		}
+		
 		return query.getResultList();
 	}
 }

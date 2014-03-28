@@ -51,12 +51,22 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 				<a href="#">书籍管理</a>
 			</h3>
 			<ul>
+				<sec:phoenixSec purviewCode="BOOK_MENU">
 				<li><a href="<%=ctx %>/book_zhizuo.jsp" target="f_r">书籍制作</a></li>
+				</sec:phoenixSec>
+				<sec:phoenixSec purviewCode="BOOK_ADUIT_MENU">
 				<li><a href="<%=ctx %>/book_audit.jsp" target="f_r">书籍审核</a></li>
+				</sec:phoenixSec>
+				<sec:phoenixSec purviewCode="BOOK_RELEASE_MENU">
 				<li><a href="<%=ctx %>/book_release.jsp" target="f_r" >书籍发布</a></li>
+				</sec:phoenixSec>
+				<sec:phoenixSec purviewCode="REG_CODE_MANAGE">
 				<li><a href="<%=ctx %>/sjzcmgl.jsp" target="f_r">注册码</a></li>
+				</sec:phoenixSec>
 				<li style="display:none"><a href="book_jggj.html" target="_blank">书籍打包</a></li>
+				<sec:phoenixSec purviewCode="BOOK_QUERY_MENU">
 				<li><a href="<%=ctx %>/book_query.jsp" target="f_r">书籍查询</a></li>
+				</sec:phoenixSec>
 			</ul>
 		</sec:phoenixSec>
 		<span style="display:none" class="arr"></span>
@@ -64,9 +74,15 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 			<a href="#">资源管理</a>
 		</h3>
 		<ul>
-			<li><a href="<%=ctx %>/resour_search.html" target="f_r">资源查询</a></li>
-			<li><a href="<%=ctx %>/resour_search.html" target="f_r">资源审核</a></li>
-			<li><a href="<%=ctx %>/resour_search.html" target="f_r">资源发布</a></li>
+			<sec:phoenixSec purviewCode="BOOK_QUERY_MENU">
+			<li><a href="<%=ctx %>/resour_search.jsp" target="f_r">资源查询</a></li>
+			</sec:phoenixSec>
+			<sec:phoenixSec purviewCode="BOOK_ADUIT_MENU">
+			<li><a href="<%=ctx %>/resour_audit.jsp" target="f_r">资源审核</a></li>
+			</sec:phoenixSec>
+			<sec:phoenixSec purviewCode="BOOK_RELESE_MENU">
+			<li><a href="<%=ctx %>/resour_release.jsp" target="f_r">资源发布</a></li>
+			</sec:phoenixSec>
 		</ul>
 	</div>
 </body>

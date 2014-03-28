@@ -59,10 +59,6 @@ SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 				<form id="searchHw" action="" method="POST">
 					&nbsp;&nbsp;&nbsp;&nbsp;账号&nbsp;
 					<input type="text" id="staffName" onfocus="onFocusStaffName();"/>
-					<input type="hidden" id="staffId" name="criteria.staffId" type="text" style="width:50px;"/>
-					<div id="agencyTree" class="widget-box ztree" style="display:none; width:80%">
-					</div>
-					
 					&nbsp;&nbsp;&nbsp;&nbsp;硬件类型&nbsp;
 					<select id="hwType" name="criteria.hwType">
 						<option value="-1" selected="selected">全部</option>
@@ -72,6 +68,9 @@ SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 					</select>
 					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="button" onclick="searchHw();" style="margin-bottom:10px;width:50px;"/>
 					&nbsp;&nbsp;&nbsp;&nbsp;<input id="reset-Btn" class="btn" value="重置" type="reset" style="margin-bottom:10px;width:50px;"/>
+					<input type="hidden" id="staffId" name="criteria.staffId" type="text" style="width:50px;"/>
+					<div id="agencyTree" class="widget-box ztree" style="display:none; width:80%">
+					</div>
 				</form>
 			</div>
 		</div>

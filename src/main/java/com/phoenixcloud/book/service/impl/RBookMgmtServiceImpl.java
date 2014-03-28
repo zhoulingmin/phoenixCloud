@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookDire;
+import com.phoenixcloud.bean.RBookPageRes;
 import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.bean.RRegCode;
 import com.phoenixcloud.book.service.IRBookMgmtService;

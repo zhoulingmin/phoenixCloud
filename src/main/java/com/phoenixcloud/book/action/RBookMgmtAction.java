@@ -382,6 +382,17 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 			book.setUpdateTime(new Date());
 			bookDao.merge(book);
 		}
+		response.setContentType("text/html");
+		response.setCharacterEncoding("utf-8");
+		
+		try {
+			PrintWriter out = response.getWriter();
+			out.print("flag:" + flag);
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
 		
 		return null;
 	}

@@ -33,5 +33,4 @@ public interface IRBookMgmtService {
 	List<RRegCode> getAllRegCodes();
 	void saveRegCode(RRegCode code);
 	void removeRegCode(String id);
-	
 }

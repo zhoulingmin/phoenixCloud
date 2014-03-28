@@ -41,6 +41,7 @@ List<PubPress> pressList = pressDao.getAll();
 <script src="<%=ctx%>/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="<%=ctx%>/js/public.js"></script>
 
+
 <style>
 tr td,th{
 white-space:nowrap;
@@ -365,6 +366,7 @@ function removeBooks() {
 }
 
 jQuery(document).ready(function() {
+	<security:phoenixSec purviewCode="BOOK_DETELE">
 	jQuery("a[name='removeBook']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");
@@ -389,7 +391,8 @@ jQuery(document).ready(function() {
 		});
 		return false;
 	});
-	
+	</security:phoenixSec>
+	<security:phoenixSec purviewCode="BOOK_ADUIT_UP">
 	jQuery("a[name='commitBook']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");
@@ -414,6 +417,7 @@ jQuery(document).ready(function() {
 			}
 		});
 	});
+	</security:phoenixSec>
 });
 
 </script>

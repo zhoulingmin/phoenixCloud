@@ -77,6 +77,12 @@
 			<result name="success">/book_res_info.jsp</result>
 		</action>
 		
+		<action name="searchResNew" class="bookResMgmtAction" method="searchResNew">
+			<result name="search">/resour_search.jsp</result>
+			<result name="audit">/resour_audit.jsp</result>
+			<result name="release">/resour_audit.jsp</result>
+		</action>
+		
 		<action name="*_*" class="{1}MgmtAction" method="{2}" >
 			<result name="success">/{1}_{2}.jsp</result>
 		</action>

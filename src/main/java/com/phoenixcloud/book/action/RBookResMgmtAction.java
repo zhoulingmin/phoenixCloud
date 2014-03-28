@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.Stack;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
@@ -69,8 +71,8 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	private RBook bookInfo;
 	private String resIdArr;
 	private String pages;
-	private int start;
-	private int end;
+	private String start;
+	private String end;
 	
 	@Autowired
 	private RBookReDao resDao;
@@ -201,19 +203,19 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		return resNode;
 	}
 
-	public int getStart() {
+	public String getStart() {
 		return start;
 	}
 
-	public void setStart(int start) {
+	public void setStart(String start) {
 		this.start = start;
 	}
 
-	public int getEnd() {
+	public String getEnd() {
 		return end;
 	}
 
-	public void setEnd(int end) {
+	public void setEnd(String end) {
 		this.end = end;
 	}
 
@@ -494,6 +496,18 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 			resDao.merge(res);
 		}
 		
+		response.setContentType("text/html");
+		response.setCharacterEncoding("utf-8");
+		
+		try {
+			PrintWriter out = response.getWriter();
+			out.print("flag:" + flag);
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
+		
 		return null;
     }
     
@@ -506,8 +520,39 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		return "editSearch";
     }
     
+    public String searchResNew() {
+    	List<RBookRe> resList = iBookService.searchRes(bookInfo, bookRes);    	
+		this.request.put("resList", resList);
+		byte isAudit = bookRes.getIsAudit();
+		if (isAudit == (byte)-2) {
+			return "search";
+		} else if (isAudit == (byte)0) {
+			return "audit";
+		} else if (isAudit == (byte)1) {
+			return "release";
+		}
+		return "search";
+    }
+    
     public String searchResByPage() {
-    	List<BigInteger> resIds = pgRsDao.getResIdsByBookIdPageRange(bookRes.getBookId(), start, end);
+    	int startPage = -1;
+    	int endPage = -1;
+    	if (StringUtils.isNumeric(start)) {
+	    	try {
+	    		startPage = Integer.parseInt(start);
+	    	} catch (Exception e) {
+	    		MiscUtils.getLogger().info(e.toString());
+	    	}
+    	}
+    	if (StringUtils.isNumeric(end)) {
+    		try {
+        		endPage = Integer.parseInt(end);
+        	} catch (Exception e) {
+        		MiscUtils.getLogger().info(e.toString());
+        	}
+    	}
+    	
+    	List<BigInteger> resIds = pgRsDao.getResIdsByBookIdPageRange(bookRes.getBookId(), startPage, endPage);
     	List<RBookRe> resList = new ArrayList<RBookRe>();
     	for (BigInteger resId: resIds) {
     		RBookRe tmp = iBookService.findBookRes(resId.toString());

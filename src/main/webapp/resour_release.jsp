@@ -2,6 +2,7 @@
 <%@taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%@page import="com.phoenixcloud.bean.*"%>
 <%@page import="com.phoenixcloud.dao.ctrl.*"%>
+<%@page import="com.phoenixcloud.dao.res.*"%>
 <%@page import="com.phoenixcloud.util.SpringUtils"%>
 <%@page import="java.util.*" %>
 
@@ -12,9 +13,9 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 PubOrgDao orgDao = (PubOrgDao)SpringUtils.getBean(PubOrgDao.class);
 PubOrg org = orgDao.find(staff.getStaffId().toString());
 
-List<RBook> bookList = (List<RBook>)request.getAttribute("bookList");
-if (bookList == null) {
-	bookList = new ArrayList<RBook>();
+List<RBookRe> resList = (List<RBookRe>)request.getAttribute("resList");
+if (resList == null) {
+	resList = new ArrayList<RBookRe>();
 }
 
 PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
@@ -23,6 +24,9 @@ List<PubDdv> stuSegList = ddvDao.findByTblAndField("r_book", "STU_SEG_ID");
 List<PubDdv> classList = ddvDao.findByTblAndField("r_book", "CLASS_ID");
 PubPressDao pressDao = (PubPressDao)SpringUtils.getBean(PubPressDao.class);
 List<PubPress> pressList = pressDao.getAll();
+
+
+RBookDao bookDao = (RBookDao)SpringUtils.getBean("RBookDao");
 
 %>
 <!doctype html>
@@ -41,9 +45,13 @@ List<PubPress> pressList = pressDao.getAll();
 <script src="<%=ctx%>/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="<%=ctx%>/js/public.js"></script>
 
+
 <style>
 tr td,th{
 white-space:nowrap;
+}
+select{
+	width:100px;
 }
 
 </style>
@@ -54,15 +62,18 @@ white-space:nowrap;
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍查询&gt;首页
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;资源管理&gt;资源查询
 		</div>
 	
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-				<form id="searchBook" action="<%=ctx %>/book/searchBookNew.do" method="post">
-					<input type="hidden" name="bookInfo.isAudit" value="1" >
+				<form id="searchBook" action="<%=ctx %>/book/searchResNew.do" method="post">
+					<input type="hidden" name="bookRes.isAudit" value="1">
+					<input type="hidden" name="bookInfo.isAudit" value="-2">
 					书名:
 					<input type="text" name="bookInfo.name" />
+					资源名:
+					<input type="text" name="bookRes.name" />
 					学段:
 					<select name="bookInfo.stuSegId">
 						<option value="0" selected="selected">全部</option>
@@ -99,13 +110,14 @@ white-space:nowrap;
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-				<security:phoenixSec purviewCode="BOOK_RELEASE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="releaseBook" onclick="changeBookAuditStatus(2);" value="上架"/>
+				<security:phoenixSec purviewCode="BOOK_RES_RELEASE">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="releaseRes" onclick="changeBookAuditStatus(2);" value="上架"/>
 				</security:phoenixSec>
-				<security:phoenixSec purviewCode="BOOK_OFF_SHELF">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="offShelfBook" onclick="changeBookAuditStatus(3);" value="下架"/>
+				<security:phoenixSec purviewCode="BOOK_RES_OFF_SHELF">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="offShelfRes" onclick="changeBookAuditStatus(3);" value="下架"/>
 				</security:phoenixSec>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewBook();" value="详情"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewRes" onclick="viewRes();" value="详情"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="back" onclick="history.back();;" value="返回"/>
 			</div>
 		</div>
 
@@ -113,76 +125,63 @@ white-space:nowrap;
 			<table class="list_table" style="margin-top:0px">
 				<thead>
 					<tr>
-						<th style="width:1%;display:none"><input type="checkbox" onchange="checkAll(this);"></th>
+						<th style="width:1%"><input type="checkbox" onchange="checkAll(this)"></th>
 						<th>书名</th>
-						<th>书籍编码</th>
-						<th>隶属机构</th>
-						<th>上传状态</th>
+						<th>资源名称</th>
+						<th>格式</th>
+						<th>是否上传</th>
 						<th>审核状态</th>
-						<th>学科</th>
-						<th>学段</th>
-						<th>年级</th>
-						<th>出版社</th>
-		                <th>册别</th>
-						<th>创建人</th>
+						<th>关联页码</th>
 						<th>备注</th>
 						<th>操作</th>
 					</tr>
 				</thead>
-				<tbody id="bookTblBody">
-					<%if (bookList.size() == 0) { %>
-					<tr><td colspan="13">请选择条件搜索图书！</td></tr>
+				<tbody id="bookResTblBody">
+					<%if (resList.size() == 0) { %>
+					<tr><td colspan="8">请搜索图书资源！</td></tr>
 					<%} else { 
 						SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
-						for (RBook book : bookList) {
-							PubOrg orgTmp = orgDao.find(book.getOrgId().toString());
-							PubDdv subTmp = ddvDao.find(book.getSubjectId().toString());
-							PubDdv stuTmp = ddvDao.find(book.getStuSegId().toString());
-							PubDdv clsTmp = ddvDao.find(book.getClassId().toString());
-							PubDdv kindTmp = ddvDao.find(book.getKindId().toString());
-							PubPress psTmp = pressDao.find(book.getPressId().toString());
-							SysStaff staffTmp = staffDao.find(book.getStaffId().toString());
+						RBookPageResDao pgRsdao = (RBookPageResDao)SpringUtils.getBean("RBookPageResDao");
+						for (RBookRe res : resList) {
+							PubDdv fmDdv = ddvDao.find(res.getFormat().toString());
+							String relatedPages = pgRsdao.getResRelatedPages(new java.math.BigInteger(res.getId()));
+							RBook book = bookDao.find(res.getBookId().toString());
 							
-							String isAudit = "";
-							byte audit = book.getIsAudit();
-							if (audit == (byte)-1) {
-								isAudit = "制作中";
-							} else if (audit == (byte)0) {
-								isAudit = "待审核";
-							} else if (audit == (byte)1) {
-								isAudit = "待上架";
-							} else if (audit == (byte)2) {
-								isAudit = "已上架";
-							} else if (audit == (byte)3) {
-								isAudit = "已下架";
+							String auditStatus = "";
+							byte isAudit = res.getIsAudit();
+							if (isAudit == (byte)-1) {
+								auditStatus = "未审核";
+							} else if (isAudit == (byte)0) {
+								auditStatus = "待审核";
+							} else if (isAudit == (byte)1) {
+								auditStatus = "待上架";
+							} else if (isAudit == (byte)2) {
+								auditStatus = "已上架";
+							} else if (isAudit == (byte)3) {
+								auditStatus = "已下架";
 							}
 					%>
 					<tr>
-						<td style="width:1%;display:none"><input type="checkbox" value="<%=book.getBookId()%>" audit="<%=book.getIsAudit()%>"/></td>
+						<td style="width:1%"><input type="checkbox" value="<%=res.getId()%>" audit="<%=res.getIsAudit()%>"/></td>
 						<td><%=book.getName() %></td>
-						<td><%=book.getBookNo() %></td>
-						<td><%=orgTmp.getOrgName() %></td>
-						<td><%if (book.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
-						<td><%=isAudit %></td>
-						<td><%=subTmp.getValue() %></td>
-						<td><%=stuTmp.getValue() %></td>
-						<td><%=clsTmp.getValue() %></td>
-						<td><%=psTmp.getName() %></td>
-		                <td><%=kindTmp.getValue() %></td>
-						<td><%=staffTmp.getName() %></td>
-						<td><%=book.getNotes() %></td>
+						<td><%=res.getName() %></td>
+						<td><%=fmDdv.getValue() %></td>
+						<td><%if (res.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
+						<td><%=auditStatus %></td>
+						<td><%=relatedPages %></td>
+						<td><%=res.getNotes() %></td>
 						<td>
-							<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
-							<%if (book.getIsUpload() == (byte)1) {%>
-							<a class="tip-top" data-original-title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							<a cla1ss="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
+							<%if (res.getIsUpload() == (byte)1) {%>
+							<a class="tip-top" data-original-title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
 							<%} %>
-							<%if (book.getIsAudit() == (byte)1 || book.getIsAudit() == (byte)3) { %>
-							<security:phoenixSec purviewCode="BOOK_RELEASE">
-							<a name="releaseBook" class="tip-top" data-original-title="上架" href="#"><i class=" icon-share-alt"></i></a>
+							<%if (res.getIsAudit() == (byte)1 || res.getIsAudit() == (byte)3) { %>
+							<security:phoenixSec purviewCode="BOOK_RES_RELEASE">
+							<a name="releaseRes" class="tip-top" data-original-title="上架" href="#"><i class="icon-ok-circle"></i></a>
 							</security:phoenixSec>
-							<%} else if (book.getIsAudit() == (byte)2) { %>
-							<security:phoenixSec purviewCode="BOOK_OFF_SHELF">
-							<a name="offShelfBook" class="tip-top" data-original-title="下架" href="#"><i class=" icon-download"></i></a>
+							<%}else if (res.getIsAudit() == (byte)2) {%>
+							<security:phoenixSec purviewCode="BOOK_RES_OFF_SHELF">
+							<a name="offShelfRes" class="tip-top" data-original-title="下架" href="#"><i class="icon-ok-circle"></i></a>
 							</security:phoenixSec>
 							<%} %>
 						</td>
@@ -206,25 +205,33 @@ white-space:nowrap;
 	</div>
 </body>
 <script type="text/javascript">
+
+function checkNum(which) {
+	if (!jQuery.isNumberic(which.value)) {
+		alert("页码必须为数字！");
+		jQuery(this).focus();
+	}
+}
+
 function checkAll(which) {
 	if (which.checked) {
-		jQuery("#bookTblBody tr td input").attr("checked", "checked");
+		jQuery("#bookResTblBody tr td input").attr("checked", "checked");
 	} else {
-		jQuery("#bookTblBody tr td input").removeAttr("checked", "checked");
+		jQuery("#bookResTblBody tr td input").removeAttr("checked", "checked");
 	}
 }
 
-function viewBook() {
-	var checkedItems = jQuery("#bookTblBody").find("input:checked");
+function viewRes() {
+	var checkedItems = jQuery("#bookResTblBody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
+		alert("请选择一个资源后重试！");
 		return;
 	}
-	window.location.href = "<%=ctx%>/book/viewBook.do?bookInfo.bookId=" + checkedItems[0].value;
+	window.location.href = "<%=ctx%>/book/viewRes.do?bookRes.resId=" + checkedItems[0].value;
 }
 
-var chkItems = null;
 
+var chkItems = null;
 function changeBookAuditStatus(flag) {
 	
 	if (chkItems != null) {
@@ -233,9 +240,10 @@ function changeBookAuditStatus(flag) {
 	}
 	
 	var ids = "";
-	chkItems = jQuery("#bookTblBody").find("input:checked");
+	chkItems = jQuery("#bookResTblBody").find("input:checked");
 	if (chkItems == null || chkItems.length == 0) {
-		alert("请选择要操作的书籍！");
+		alert("请选择要操作的资源！");
+		chkItems = null;
 		return;
 	}
 	for (var i = 0; i < chkItems.length; i++) {
@@ -249,19 +257,19 @@ function changeBookAuditStatus(flag) {
 	}
 	
 	jQuery.ajax({
-		url: "<%=ctx%>/book/book_changeAuditStatus.do?flag=" + flag,
+		url: "<%=ctx%>/book/bookRes_changeAuditStatus.do?flag=" + flag,
 		type: "POST",
 		async: "false",
 		timeout: 30000,
-		data: {bookIdArr:ids},
+		data: {resIdArr:ids},
 		success: function(ret) {
 			if (ret == null) {
 				alert("操作失败！");
 			}
 			if (ret.flag == 2) {
-				alert("书籍上架成功！");
+				alert("资源上架成功！");
 			} else if (ret.flag == 3) {
-				alert("书籍下架成功！");
+				alert("资源下架成功！");
 			}
 			jQuery(chkItems).each(function(){
 				if ((ret.flag == 3 && chkItems[i].getAttribute("audit") == "1") || (ret.flag == 2 && chkItems[i].getAttribute("audit") == "2")) {
@@ -280,7 +288,8 @@ function changeBookAuditStatus(flag) {
 }
 
 jQuery(document).ready(function() {
-	jQuery("a[name='releaseBook']").on("click", function(e) {
+	<security:phoenixSec purviewCode="BOOK_RES_RELEASE">
+	jQuery("a[name='releaseRes']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");
 			return;
@@ -288,24 +297,26 @@ jQuery(document).ready(function() {
 		chkItems = jQuery(this.parentNode.parentNode).find("input:first-child");
 		var id = chkItems.val().toString();
 		jQuery.ajax({
-			url: "<%=ctx%>/book/book_changeAuditStatus.do?flag=2",
+			url: "<%=ctx%>/book/bookRes_changeAuditStatus.do?flag=2",
 			type: "POST",
 			async: "false",
 			timeout: 30000,
-			data:{bookIdArr: id},
+			data: {resIdArr: id},
 			success: function() {
-				alert("书籍上架成功！");
+				alert("资源上架成功！");
 				jQuery(chkItems).parents("tr").remove();
 				chkItems = null;
 			},
 			error: function() {
-				alert("书籍上架失败！");
+				alert("资源上架失败！");
 				chkItems = null;
 			}
 		});
+		return false;
 	});
-	
-	jQuery("a[name='offShelfBook']").on("click", function(e) {
+	</security:phoenixSec>
+	<security:phoenixSec purviewCode="BOOK_RES_OFF_SHELF">
+	jQuery("a[name='offShelfRes']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");
 			return;
@@ -313,22 +324,24 @@ jQuery(document).ready(function() {
 		chkItems = jQuery(this.parentNode.parentNode).find("input:first-child");
 		var id = chkItems.val().toString();
 		jQuery.ajax({
-			url: "<%=ctx%>/book/book_changeAuditStatus.do?flag=3",
+			url: "<%=ctx%>/book/bookRes_changeAuditStatus.do?flag=3",
 			type: "POST",
 			async: "false",
 			timeout: 30000,
-			data:{bookIdArr: id},
+			data: {resIdArr: id},
 			success: function() {
-				alert("书籍下架成功！");
+				alert("资源下架成功！");
 				jQuery(chkItems).parents("tr").remove();
 				chkItems = null;
 			},
 			error: function() {
-				alert("书籍下架失败！");
+				alert("资源下架失败！");
 				chkItems = null;
 			}
 		});
+		return false;
 	});
+	</security:phoenixSec>
 });
 
 </script>

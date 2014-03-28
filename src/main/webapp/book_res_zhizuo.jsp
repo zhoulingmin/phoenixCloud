@@ -38,6 +38,7 @@ PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 <script src="<%=ctx%>/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="<%=ctx%>/js/public.js"></script>
 
+
 <style>
 tr td,th{
 white-space:nowrap;
@@ -82,6 +83,9 @@ white-space:nowrap;
 				</security:phoenixSec>
 				<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadRes" onclick="uploadRes();" value="上传资源附件"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="BOOK_RES_ADUIT_UP">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="commitRes" onclick="commitRes();" value="提交审核"/>
 				</security:phoenixSec>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewRes" onclick="viewRes();" value="详情"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="back" onclick="history.back();;" value="返回"/>
@@ -137,6 +141,10 @@ white-space:nowrap;
 							<%if (res.getIsUpload() == (byte)1) {%>
 							<a class="tip-top" data-original-title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
 							<%} %>
+							
+							<security:phoenixSec purviewCode="BOOK_RES_ADUIT_UP">
+							<a name="commitRes" class="tip-top" data-original-title="提交审核" href="#"><i class="icon-ok-circle"></i></a>
+							</security:phoenixSec>
 							
 							<security:phoenixSec purviewCode="BOOK_RES_DELETE">
 							<a name="removeRes" class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
@@ -275,6 +283,46 @@ function removeRes() {
 }
 </security:phoenixSec>
 
+<security:phoenixSec purviewCode="BOOK_RES_ADUIT_UP">
+function commitRes() {
+	
+	if (chkItems != null) {
+		alert("网络繁忙，请稍后重试！");
+		return;
+	}
+	
+	var ids = "";
+	chkItems = jQuery("#bookResTblBody").find("input:checked");
+	if (chkItems == null || chkItems.length == 0) {
+		alert("请选择要操作的资源！");
+		chkItems = null;
+		return;
+	}
+	for (var i = 0; i < chkItems.length; i++) {
+		ids += chkItems[i].value;
+		if (i != (chkItems.length - 1)) {
+			ids += ",";
+		}
+	}
+	
+	jQuery.ajax({
+		url: "<%=ctx%>/book/bookRes_changeAuditStatus.do?flag=0",
+		type: "POST",
+		async: "false",
+		timeout: 30000,
+		data: {resIdArr:ids},
+		success: function() {
+			alert("提交审核成功！");
+			jQuery(chkItems).parents("tr").remove();
+			chkItems = null;
+		},
+		error: function() {
+			alert("提交审核失败！");
+			chkItems = null;
+		}
+	});
+}
+</security:phoenixSec>
 
 jQuery(document).ready(function() {
 	<security:phoenixSec purviewCode="BOOK_RES_DELETE">
@@ -298,6 +346,33 @@ jQuery(document).ready(function() {
 			},
 			error: function() {
 				alert("删除失败！");
+				chkItems = null;
+			}
+		});
+		return false;
+	});
+	</security:phoenixSec>
+	<security:phoenixSec purviewCode="BOOK_RES_ADUIT_UP">
+	jQuery("a[name='commitRes']").on("click", function(e) {
+		if (chkItems != null) {
+			alert("网络繁忙，请稍后重试！");
+			return;
+		}
+		chkItems = jQuery(this.parentNode.parentNode).find("input:first-child");
+		var id = chkItems.val().toString();
+		jQuery.ajax({
+			url: "<%=ctx%>/book/bookRes_changeAuditStatus.do?flag=0",
+			type: "POST",
+			async: "false",
+			timeout: 30000,
+			data: {resIdArr: id},
+			success: function() {
+				alert("提交审核成功！");
+				jQuery(chkItems).parents("tr").remove();
+				chkItems = null;
+			},
+			error: function() {
+				alert("提交审核失败！");
 				chkItems = null;
 			}
 		});
