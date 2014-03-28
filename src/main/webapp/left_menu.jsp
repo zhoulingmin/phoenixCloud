@@ -80,7 +80,7 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 			<sec:phoenixSec purviewCode="BOOK_ADUIT_MENU">
 			<li><a href="<%=ctx %>/resour_audit.jsp" target="f_r">资源审核</a></li>
 			</sec:phoenixSec>
-			<sec:phoenixSec purviewCode="BOOK_RELESE_MENU">
+			<sec:phoenixSec purviewCode="BOOK_RELEASE_MENU">
 			<li><a href="<%=ctx %>/resour_release.jsp" target="f_r">资源发布</a></li>
 			</sec:phoenixSec>
 		</ul>
