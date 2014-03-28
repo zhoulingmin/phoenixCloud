@@ -42,7 +42,9 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 			<sec:phoenixSec purviewCode="STAFF_MANAGE_MENU">
 			<li><a href="<%=ctx %>/zhgl.jsp" target="f_r">账号管理</a></li>
 			</sec:phoenixSec>
-
+			<sec:phoenixSec purviewCode="PURVIEW_MANAGE_MENU">
+			<li><a href="<%=ctx %>/qxgl.jsp" target="f_r">权限管理</a></li>
+			</sec:phoenixSec>
 		</ul>
 		<sec:phoenixSec purviewCode="BOOK_MANAGE">
 			<h3>
@@ -50,14 +52,14 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 			</h3>
 			<ul>
 				<li><a href="<%=ctx %>/book_zhizuo.jsp" target="f_r">书籍制作</a></li>
-				<li><a href="<%=ctx %>/book_search.html" target="f_r">书籍审核</a></li>
-				<li><a href="<%=ctx %>/book_search.html" target="f_r" >书籍发布</a></li>
-				<li><a href="<%=ctx %>/sjzcmgl.html" target="f_r">注册码</a></li>
+				<li><a href="<%=ctx %>/book_audit.jsp" target="f_r">书籍审核</a></li>
+				<li><a href="<%=ctx %>/book_release.jsp" target="f_r" >书籍发布</a></li>
+				<li><a href="<%=ctx %>/sjzcmgl.jsp" target="f_r">注册码</a></li>
 				<li style="display:none"><a href="book_jggj.html" target="_blank">书籍打包</a></li>
-				<li><a href="<%=ctx %>/book_search.html" target="f_r">书籍查询</a></li>
+				<li><a href="<%=ctx %>/book_query.jsp" target="f_r">书籍查询</a></li>
 			</ul>
 		</sec:phoenixSec>
-		<span class="arr"></span>
+		<span style="display:none" class="arr"></span>
 		<h3>
 			<a href="#">资源管理</a>
 		</h3>

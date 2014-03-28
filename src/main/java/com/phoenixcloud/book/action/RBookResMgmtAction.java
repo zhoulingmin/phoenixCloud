@@ -34,11 +34,13 @@ import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.PubOrgCata;
 import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.RBook;
+import com.phoenixcloud.bean.RBookPageRes;
 import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.book.vo.BookResNode;
 import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
+import com.phoenixcloud.dao.res.RBookPageResDao;
 import com.phoenixcloud.dao.res.RBookReDao;
 import com.phoenixcloud.util.MiscUtils;
 
@@ -67,9 +69,14 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	private RBook bookInfo;
 	private String resIdArr;
 	private String pages;
+	private int start;
+	private int end;
 	
 	@Autowired
 	private RBookReDao resDao;
+	
+	@Autowired
+	private RBookPageResDao pgRsDao;
 	
 	
 	public String getResIdArr() {
@@ -194,6 +201,22 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		return resNode;
 	}
 
+	public int getStart() {
+		return start;
+	}
+
+	public void setStart(int start) {
+		this.start = start;
+	}
+
+	public int getEnd() {
+		return end;
+	}
+
+	public void setEnd(int end) {
+		this.end = end;
+	}
+
 	public String getAll() {
 		BigInteger bookId = bookRes.getBookId();
 		RBook book = iBookService.findBook(bookId.toString());
@@ -266,16 +289,48 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		if (res == null) {
 			return null;
 		}
-		
+		Date date = new Date();
 		res.setCataAddr(bookRes.getCataAddr());
 		res.setFormat(bookRes.getFormat());
 		res.setName(bookRes.getName());
 		res.setNotes(bookRes.getNotes());
-		res.setUpdateTime(new Date());
+		res.setUpdateTime(date);
 		
 		iBookService.saveBookRes(res);
-	
+		
+		SysStaff curStaff = (SysStaff)session.get("user");
+		removeRelatedPages(new BigInteger(res.getResId()));
+		String[] pageNumArr = pages.split(",");
+		for (String pageNum : pageNumArr) {
+			int num = 0;
+			try {
+				num = Integer.parseInt(pageNum);
+			} catch (Exception e) {
+				continue;
+			}
+			RBookPageRes pgRs = pgRsDao.findByResIdPageNum(new BigInteger(res.getId()), num);
+			if (pgRs == null) {
+				pgRs = new RBookPageRes();
+				pgRs.setPageNum(num);
+				pgRs.setBookId(res.getBookId());
+				pgRs.setResId(new BigInteger(res.getResId()));
+				pgRs.setStaffId(new BigInteger(curStaff.getId()));
+				pgRs.setCreateTime(date);
+				pgRs.setUpdateTime(date);
+				pgRsDao.persist(pgRs);
+			} else {
+				pgRs.setDeleteState((byte)0);
+				pgRs.setUpdateTime(date);
+				pgRs.setStaffId(new BigInteger(curStaff.getId()));
+				pgRsDao.merge(pgRs);
+			}
+		}
+		
 		return null;
+	}
+	
+	private void removeRelatedPages(BigInteger resId) {
+		pgRsDao.removeByResId(resId);
 	}
 	
 	public String addRes() {
@@ -290,6 +345,9 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		if (addr != null) {
 			ipAddr = addr.getBookSerIp();
 		}
+		
+		String[] pageNumArr = pages.split(",");
+		
 		for (int i = 0; i < num; i++) {
 			RBookRe res = new RBookRe();
 			res.setBookId(bookRes.getBookId());
@@ -301,7 +359,27 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 			res.setParentResId(bookRes.getParentResId());
 			res.setStaffId(new BigInteger(curStaff.getStaffId()));
 			res.setIpAddr(ipAddr);
-			iBookService.saveBookRes(res);
+			//iBookService.saveBookRes(res);
+			resDao.persist(res);
+			
+			// save related pages
+			for (String pageNum : pageNumArr) {
+				int num = 0;
+				try {
+					num = Integer.parseInt(pageNum);
+				} catch (Exception e) {
+					continue;
+				}
+				
+				RBookPageRes pgRs = new RBookPageRes();
+				pgRs.setPageNum(num);
+				pgRs.setBookId(res.getBookId());
+				pgRs.setResId(new BigInteger(res.getResId()));
+				pgRs.setStaffId(new BigInteger(curStaff.getId()));
+				pgRs.setCreateTime(date);
+				pgRs.setUpdateTime(date);
+				pgRsDao.persist(pgRs);
+			}
 		}
 		
 		return null;
@@ -403,9 +481,11 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 				continue;
 			} else if (flag == (byte)0 && res.getIsAudit() != (byte)-1) { // 提交审核
 				continue;
-			} else if (flag == (byte)1 && res.getIsAudit() != (byte)0) { // 提交发布
+			} else if (flag == (byte)1 && res.getIsAudit() != (byte)0) { // 提交上架
 				continue;
-			} else if (flag == (byte)2 && res.getIsAudit() != (byte)1) { // 发布
+			} else if (flag == (byte)2 && res.getIsAudit() != (byte)1 && res.getIsAudit() != (byte)3) { // 上架
+				continue;
+			} else if (flag == (byte)3 && res.getIsAudit() != (byte)2) { // 已下架
 				continue;
 			}
 			
@@ -424,5 +504,22 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 			return "querySearch";
 		}
 		return "editSearch";
+    }
+    
+    public String searchResByPage() {
+    	List<BigInteger> resIds = pgRsDao.getResIdsByBookIdPageRange(bookRes.getBookId(), start, end);
+    	List<RBookRe> resList = new ArrayList<RBookRe>();
+    	for (BigInteger resId: resIds) {
+    		RBookRe tmp = iBookService.findBookRes(resId.toString());
+    		if (tmp == null){
+    			continue;
+    		}
+    		resList.add(tmp);
+    	}
+		this.request.put("resList", resList);
+		RBook book = iBookService.findBook(bookRes.getBookId().toString());
+		this.request.put("book", book);
+		
+		return "success";
     }
 }

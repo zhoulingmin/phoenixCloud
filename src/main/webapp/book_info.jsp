@@ -73,9 +73,11 @@ if (audit == (byte)-1) {
 } else if (audit == (byte)0) {
 	isAudit = "待审核";
 } else if (audit == (byte)1) {
-	isAudit = "待发布";
+	isAudit = "待上架";
 } else if (audit == (byte)2) {
-	isAudit = "已发布";
+	isAudit = "已上架";
+} else if (audit == (byte)3) {
+	isAudit = "已下架";
 }
 
 %>
@@ -90,6 +92,8 @@ if (audit == (byte)-1) {
 <title></title>
 <link rel="stylesheet" href="<%=ctx %>/css/common.css" />
 <link rel="stylesheet" href="<%=ctx %>/css/page.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/bootstrap.min.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 
 <script src="<%=ctx %>/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="<%=ctx %>/js/public.js"></script>
@@ -109,74 +113,74 @@ if (audit == (byte)-1) {
 				<span class="icon"><i class="icon-book"></i></span>
 				<h5>书籍信息</h5>
 			</div>
-			<div class="widget-content">
-				<div class="line_info line_info margin_top_5">
+			<div class="widget-content" style="margin-left:20px">
+				<div class="line_info margin_top_5">
 					<font class="blue">书籍名称: </font>
-					<font class="grey"><s:property value="bookInfo.name"/></font>
+					<font color="black"><s:property value="bookInfo.name"/></font>
 				</div>
-				<div class="line_info line_info margin_top_5">
+				<div class="line_info margin_top_5">
 					<font class="blue">书籍编码: </font>
-					<font class="grey"><s:property value="bookInfo.bookNo"/></font>
+					<font color="black"><s:property value="bookInfo.bookNo"/></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">机构: </font>
-					<font class="grey"><%=orgName %></font>
+					<font color="black"><%=orgName %></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">出版社名称: </font>
-					<font class="grey"><%=pressName %></font>
+					<font color="black"><%=pressName %></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">学科: </font>
-					<font class="grey"><%=subName %></font>
+					<font color="black"><%=subName %></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">学段: </font>
-					<font class="grey"><%=stuName %></font>
+					<font color="black"><%=stuName %></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">年级: </font>
-					<font class="grey"><%=clsName %></font>
+					<font color="black"><%=clsName %></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">册别: </font>
-					<font class="grey"><%=kindName %></font>
+					<font color="black"><%=kindName %></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">页数: </font>
-					<font class="grey"><s:property value="bookInfo.pageNum"/></font>
+					<font color="black"><s:property value="bookInfo.pageNum"/></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">服务器IP: </font>
-					<font class="grey"><s:property value="bookInfo.ipAddr"/></font>
+					<font color="black"><s:property value="bookInfo.ipAddr"/></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">书全地址: </font>
-					<font class="grey"><s:property value="bookInfo.allAddr"/></font>
+					<font color="black"><s:property value="bookInfo.allAddr"/></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">是否上传: </font>
-					<font class="grey"><%=isUpload %></font>
+					<font color="black"><%=isUpload %></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">审核状态: </font>
-					<font class="grey"><%=isAudit%></font>
+					<font color="black"><%=isAudit%></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">创建时间: </font>
-					<font class="grey"><s:date name="bookInfo.createTime" format="yyyy/MM/dd HH:mm:ss" /></font>
+					<font color="black"><s:date name="bookInfo.createTime" format="yyyy/MM/dd HH:mm:ss" /></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">更新时间: </font>
-					<font class="grey"><s:date name="bookInfo.updateTime" format="yyyy/MM/dd HH:mm:ss" /></font>
+					<font color="black"><s:date name="bookInfo.updateTime" format="yyyy/MM/dd HH:mm:ss" /></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">账号: </font>
-					<font class="grey"><%=staffName %></font>
+					<font color="black"><%=staffName %></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">备注: </font>
-					<font class="grey"><s:property value="bookInfo.notes"/></font>
+					<font color="black"><s:property value="bookInfo.notes"/></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();return false;">返回</button>

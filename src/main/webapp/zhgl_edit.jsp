@@ -135,21 +135,6 @@ String validate = new SimpleDateFormat("yyyy/MM/dd").format(date);
 </body>
 <script type="text/javascript">
 
-function back() {
-	jQuery.ajax({
-		url: "",
-		type:"GET",
-		async:"false",
-		timeout:10,
-		success:function(){
-			location.href = "<%=ctx%>/zhgl.jsp";
-		},
-		error: function() {
-			location.href = "<%=ctx%>/zhgl.jsp";
-		}
-	});
-}
-
 function saveUser() {
 	jQuery.ajax({
 		url: "<%=ctx%>/system/system_saveUser.do",

@@ -60,7 +60,7 @@ white-space:nowrap;
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
 				<form id="searchBook" action="<%=ctx %>/book/searchBookNew.do" method="post">
-					<input type="hidden" name="bookInfo.isAudit" value="-1" >
+					<input type="hidden" name="bookInfo.isAudit" value="-2" >
 					书名:
 					<input type="text" name="bookInfo.name" />
 					学段:
@@ -99,34 +99,8 @@ white-space:nowrap;
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-				<security:phoenixSec purviewCode="BOOK_ADD">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addBook();" value="新建"/>
-				</security:phoenixSec>
-				
-				<security:phoenixSec purviewCode="BOOK_UPDATE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="editBook();" value="修改"/>
-				</security:phoenixSec>
-				
-				<security:phoenixSec purviewCode="BOOK_DELETE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeBooks();" value="删除"/>
-				</security:phoenixSec>
-				
-				<security:phoenixSec purviewCode="BOOK_UPLOAD_AFFIX">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadBook" onclick="uploadBook();" value="上传附件"/>
-				</security:phoenixSec>
-				
-				<security:phoenixSec purviewCode="BOOK_DIR_UPDATE">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookDire" onclick="editBookDire();" value="目录"/>
-				</security:phoenixSec>
-				
-				<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookRes" onclick="editBookRes();" value="资源"/>
-				</security:phoenixSec>
-				
-				<security:phoenixSec purviewCode="BOOK_ADUIT_UP">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="commitBook" onclick="commitBook();" value="资源"/>
-				</security:phoenixSec>
-				
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewBook();" value="详情"/>
 			</div>
 		</div>
@@ -140,6 +114,7 @@ white-space:nowrap;
 						<th>书籍编码</th>
 						<th>隶属机构</th>
 						<th>上传状态</th>
+						<th>审核状态</th>
 						<th>学科</th>
 						<th>学段</th>
 						<th>年级</th>
@@ -163,6 +138,20 @@ white-space:nowrap;
 							PubDdv kindTmp = ddvDao.find(book.getKindId().toString());
 							PubPress psTmp = pressDao.find(book.getPressId().toString());
 							SysStaff staffTmp = staffDao.find(book.getStaffId().toString());
+							
+							String isAudit = "";
+							byte audit = book.getIsAudit();
+							if (audit == (byte)-1) {
+								isAudit = "制作中";
+							} else if (audit == (byte)0) {
+								isAudit = "待审核";
+							} else if (audit == (byte)1) {
+								isAudit = "待上架";
+							} else if (audit == (byte)2) {
+								isAudit = "已上架";
+							} else if (audit == (byte)3) {
+								isAudit = "已下架";
+							}
 					%>
 					<tr>
 						<td style="width:1%"><input type="checkbox" value="<%=book.getBookId()%>"/></td>
@@ -170,6 +159,7 @@ white-space:nowrap;
 						<td><%=book.getBookNo() %></td>
 						<td><%=orgTmp.getOrgName() %></td>
 						<td><%if (book.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
+						<td><%=isAudit %></td>
 						<td><%=subTmp.getValue() %></td>
 						<td><%=stuTmp.getValue() %></td>
 						<td><%=clsTmp.getValue() %></td>
@@ -178,37 +168,12 @@ white-space:nowrap;
 						<td><%=staffTmp.getName() %></td>
 						<td><%=book.getNotes() %></td>
 						<td>
-							<security:phoenixSec purviewCode="BOOK_UPLOAD_AFFIX">
-							<%if (book.getIsUpload() == (byte)0) {%>
-							<a class="tip-top" data-original-title="上传" href="<%=ctx%>/book/modifyBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-upload"></i></a>
-							<%} %>
-							</security:phoenixSec>
-							
 							<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
-							
-							<security:phoenixSec purviewCode="BOOK_UPDATE">
-							<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/modifyBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-edit"></i></a>
-							</security:phoenixSec>
-							
-							<security:phoenixSec purviewCode="BOOK_DIR_UPDATE">
 							<a class="tip-top" data-original-title="目录" href="<%=ctx%>/book/bookDire.do?mode=-1&bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
-							</security:phoenixSec>
-							
-							<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
 							<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookRes.do?bookRes.bookId=<%=book.getId()%>&bookInfo.isAudit=-1"><i class="icon-file"></i></a>
-							</security:phoenixSec>
-							
 							<%if (book.getIsUpload() == (byte)1) {%>
 							<a class="tip-top" data-original-title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
 							<%} %>
-							
-							<security:phoenixSec purviewCode="BOOK_ADUIT_UP">
-							<a name="commitBook" class="tip-top" data-original-title="提交审核" href="#"><i class="icon-arrow-up"></i></a>
-							</security:phoenixSec>
-							
-							<security:phoenixSec purviewCode="BOOK_DELETE">
-							<a name="removeBook" class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
-							</security:phoenixSec>
 						</td>
 					</tr>
 					<%}
@@ -238,35 +203,13 @@ function checkAll(which) {
 	}
 }
 
-function addBook() {
-	window.location.href = "<%=ctx%>/book_add.jsp";
-}
-
-function editBook() {
-	var checkedItems = jQuery("#bookTblBody").find("input:checked");
-	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
-		return;
-	}
-	window.location.href = "<%=ctx%>/book/modifyBook.do?bookInfo.bookId=" + checkedItems[0].value;
-}
-
-function uploadBook() {
-	var checkedItems = jQuery("#bookTblBody").find("input:checked");
-	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
-		return;
-	}
-	window.location.href = "<%=ctx%>/book/modifyBook.do?bookInfo.bookId=" + checkedItems[0].value;
-}
-
 function editBookDire() {
 	var checkedItems = jQuery("#bookTblBody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
 		alert("请选择一本书籍后重试！");
 		return;
 	}
-	window.location.href = "<%=ctx%>/book/bookDire.do?mode=-1&bookId=" + checkedItems[0].value;
+	window.location.href = "<%=ctx%>/book/bookDireQuery.do?mode=-2&bookId=" + checkedItems[0].value;
 }
 
 function editBookRes() {
@@ -275,7 +218,7 @@ function editBookRes() {
 		alert("请选择一本书籍后重试！");
 		return;
 	}
-	window.location.href = "<%=ctx%>/book/bookRes.do?bookInfo.isAudit=-1&bookRes.bookId=" + checkedItems[0].value;
+	window.location.href = "<%=ctx%>/book/bookResQuery.do?bookInfo.isAudit=-2&bookRes.bookId=" + checkedItems[0].value;
 }
 
 function viewBook() {
@@ -286,135 +229,6 @@ function viewBook() {
 	}
 	window.location.href = "<%=ctx%>/book/viewBook.do?bookInfo.bookId=" + checkedItems[0].value;
 }
-
-var chkItems = null;
-
-function commitBook() {
-	
-	if (chkItems != null) {
-		alert("网络繁忙，请稍后重试！");
-		return;
-	}
-	
-	var ids = "";
-	chkItems = jQuery("#bookTblBody").find("input:checked");
-	if (chkItems == null || chkItems.length == 0) {
-		alert("请选择要操作的书籍！");
-		return;
-	}
-	for (var i = 0; i < chkItems.length; i++) {
-		ids += chkItems[i].value;
-		if (i != (chkItems.length - 1)) {
-			ids += ",";
-		}
-	}
-	
-	jQuery.ajax({
-		url: "<%=ctx%>/book/book_changeAuditStatus.do?flag=0",
-		type: "POST",
-		async: "false",
-		timeout: 30000,
-		data: {bookIdArr:ids},
-		success: function() {
-			alert("提交审核成功！");
-			jQuery(chkItems).parents("tr").remove();
-			chkItems = null;
-		},
-		error: function() {
-			alert("提交审核失败！");
-			chkItems = null;
-		}
-	});
-}
-
-function removeBooks() {
-
-	if (chkItems != null) {
-		alert("网络繁忙，请稍后重试！");
-		return;
-	}
-	
-	var ids = "";
-	chkItems = jQuery("#bookTblBody").find("input:checked");
-	if (chkItems == null || chkItems.length == 0) {
-		alert("请选择要删除的书籍！");
-		return;
-	}
-	for (var i = 0; i < chkItems.length; i++) {
-		ids += chkItems[i].value;
-		if (i != (chkItems.length - 1)) {
-			ids += ",";
-		}
-	}
-	
-	jQuery.ajax({
-		url: "<%=ctx%>/book/book_removeBook.do",
-		type: "POST",
-		async: "false",
-		timeout: 30000,
-		data: {bookIdArr:ids},
-		success: function() {
-			alert("删除成功！");
-			jQuery(chkItems).parents("tr").remove();
-			chkItems = null;
-		},
-		error: function() {
-			alert("删除失败！");
-		}
-	});
-}
-
-jQuery(document).ready(function() {
-	jQuery("a[name='removeBook']").on("click", function(e) {
-		if (chkItems != null) {
-			alert("网络繁忙，请稍后重试！");
-			return;
-		}
-		chkItems = jQuery(this.parentNode.parentNode).find("input:first-child");
-		var id = chkItems.val().toString();
-		jQuery.ajax({
-			url: "<%=ctx%>/book/book_removeBook.do",
-			type: "POST",
-			async: "false",
-			timeout: 30000,
-			data: {bookIdArr: id},
-			success: function() {
-				alert("删除成功！");
-				jQuery(chkItems).parents("tr").remove();
-				chkItems = null;
-			},
-			error: function() {
-				alert("删除失败！");
-			}
-		});
-		return false;
-	});
-	
-	jQuery("a[name='commitBook']").on("click", function(e) {
-		if (chkItems != null) {
-			alert("网络繁忙，请稍后重试！");
-			return;
-		}
-		chkItems = jQuery(this.parentNode.parentNode).find("input:first-child");
-		var id = chkItems.val().toString();
-		jQuery.ajax({
-			url: "<%=ctx%>/book/book_changeAuditStatus.do?flag=0",
-			type: "POST",
-			async: "false",
-			timeout: 30000,
-			data:{bookIdArr: id},
-			success: function() {
-				alert("提交审核成功！");
-				jQuery(chkItems).parents("tr").remove();
-				chkItems = null;
-			},
-			error: function() {
-				alert("提交审核失败！");
-				chkItems = null;
-			}
-		});
-	});
-});
 
 </script>
 

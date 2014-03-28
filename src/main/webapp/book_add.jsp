@@ -241,7 +241,6 @@ function addBook() {
 		async: "false",
 		timeout: 30000,
 		data: jQuery("#bookForm").serialize(),
-		dataType: "json",
 		success: function() {
 			alert("创建书籍成功！");
 			location.href = "<%=ctx%>/book_zhizuo.jsp";

@@ -221,6 +221,20 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 		return "success";
 	}
 	
+	public String searchBookNew() {
+		List<RBook> bookList = iBookService.searchBook(bookInfo);
+		this.request.put("bookList", bookList);
+		if (bookInfo.getIsAudit() == (byte) -1) {
+			return "zhizuo";
+		} else if (bookInfo.getIsAudit() == (byte) 0) {
+			return "audit";
+		} else if (bookInfo.getIsAudit() >= (byte) 1 ) {
+			return "release";
+		}
+		
+		return "querySearch";
+	}
+	
 	public String searchBook() {
 		List<RBook> bookList = iBookService.searchBook(bookInfo);
 		if (dataType == null) {
@@ -356,9 +370,11 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 				continue;
 			} else if (flag == (byte)0 && book.getIsAudit() != (byte)-1) { // 提交审核
 				continue;
-			} else if (flag == (byte)1 && book.getIsAudit() != (byte)0) { // 提交发布
+			} else if (flag == (byte)1 && book.getIsAudit() != (byte)0) { // 提交上架
 				continue;
-			} else if (flag == (byte)2 && book.getIsAudit() != (byte)1) { // 发布
+			} else if (flag == (byte)2 && book.getIsAudit() != (byte)1 && book.getIsAudit() != (byte)3) { // 上架
+				continue;
+			} else if (flag == (byte)3 && book.getIsAudit() != (byte)2) { // 下架
 				continue;
 			}
 			

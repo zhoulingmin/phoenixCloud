@@ -353,6 +353,7 @@ function removeBooks() {
 		},
 		error: function() {
 			alert("删除失败！");
+			chkItems = null;
 		}
 	});
 }
@@ -432,6 +433,7 @@ jQuery(document).ready(function() {
 			},
 			error: function() {
 				alert("删除失败！");
+				chkItems = null;
 			}
 		});
 		return false;
@@ -457,6 +459,7 @@ jQuery(document).ready(function() {
 			},
 			error: function() {
 				alert("提交审核失败！");
+				chkItems = null;
 			}
 		});
 	});
@@ -481,6 +484,7 @@ jQuery(document).ready(function() {
 			},
 			error: function() {
 				alert("提交发布失败！");
+				chkItems = null;
 			}
 		});
 	});
@@ -505,6 +509,7 @@ jQuery(document).ready(function() {
 			},
 			error: function() {
 				alert("打回继续制作失败！");
+				chkItems = null;
 			}
 		});
 	});
@@ -529,6 +534,7 @@ jQuery(document).ready(function() {
 			},
 			error: function() {
 				alert("书籍发布失败！");
+				chkItems = null;
 			}
 		});
 	});

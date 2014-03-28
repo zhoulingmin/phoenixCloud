@@ -57,16 +57,6 @@ td input{width:106px;}
 
 <body>
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
-	<div id="contextMenu" class="dropdown clearfix">
-	    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:absolute;margin-bottom:5px;">
-	    	<security:phoenixSec purviewCode="BOOK_DIR_ADD">
-	        <li><a tabindex="1" href="#">新建</a></li>
-	        </security:phoenixSec>
-	        <security:phoenixSec purviewCode="BOOK_DIR_DELETE">
-	        <li><a tabindex="2" href="#">删除</a></li>
-	        </security:phoenixSec>
-	    </ul>
-	</div>
 	<div class="right_main">
 		<div class="head">
 			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍管理&gt;编辑目录
@@ -131,9 +121,6 @@ td input{width:106px;}
 			<br />
 			<br />
 			<input style="float:right; margin-right:30px;" type="button" name="cancel" class="btn btn-primary" onclick="history.back();return false;" value="返回" />
-			<security:phoenixSec purviewCode="BOOK_DIR_UPDATE">
-			<input style="float:right; margin-right:30px;" class="btn btn-primary" type="button" name="update" onclick="updateDire();return false;" value="保存" />
-			</security:phoenixSec>
 		</div>
 
 	</div>
@@ -141,83 +128,9 @@ td input{width:106px;}
 
 <script type="text/javascript">
 
-var count = 0;
-var updatedCount = 0;
-var isAjax = false;
-var timerCheck;
-
-function updateDire() {
-	if (isAjax) {
-		alert("正在保存，请稍后重试！");
-		return;
-	}
-	if (jQuery("tbody tr[direId!='0']").length > 0) {
-		isAjax = true;
-	}
-	updatedCount = 0;
-	count = jQuery("tbody tr[direId!='0']").length;
-	jQuery("tbody tr[direId!='0']").each(function() {
-		if (!isAjax) {
-			isAjax = true;
-			timerCheck = setTimeout(function() {
-				if (updatedCount != count) {
-					alert("保存书籍目录失败！");
-				} else {
-					alert("保存书籍成功！");
-				}
-				isAjax = false;
-			}, count * 30 * 1000);
-		}
-		var direId = this.getAttribute("direId");
-		var name = jQuery(this).find("input[name='name']")[0].value;
-		var notes = jQuery(this).find("input[name='notes']")[0].value;
-		var bPageNum = jQuery(this).find("input[name='bPageNum']")[0].value;
-		var ePageNum = jQuery(this).find("input[name='ePageNum']")[0].value;
-		jQuery.ajax({
-			url: "<%=ctx%>/book/bookDire_saveDire.do",
-			type: "POST",
-			async: "true",
-			data:  {
-				"bookDire.direId": direId,
-				"bookDire.name": name,
-				"bookDire.notes": notes,
-				"bookDire.bPageNum": bPageNum,
-				"bookDire.ePageNum": ePageNum
-			},
-			timeout: 30000,
-			success: function() {
-				updatedCount++;
-				if (updatedCount == count) {
-					alert("保存书籍成功！");
-					clearTimeout(timerCheck);
-					isAjax = false;
-				}
-			},
-			error: function() {
-				isAjax = false;
-				alert("保存书籍目录失败！");
-			}
-		});
-	});
-}
-
-var $contextMenu = $("#contextMenu");
-var $curDire;
-
 // 初始化，手动初始化
 // 初始化之后，开启异步加载
 $(document).ready(function(){
-	<security:phoenixSec purviewCode="BOOK_DIR_UPDATE">
-	$("tbody tr").on("contextmenu", function(event) {
-		$contextMenu.css({
-			  display: "block",
-			  left: event.clientX,
-			  top: event.clientY
-		});
-		$curDire = this;
-		return false;
-	});
-	</security:phoenixSec>
 	
 	$("tbody tr").on("mouseover", function(event) {
 		$(this).attr("bgcolor", "#E6E6FA");
@@ -239,40 +152,6 @@ $(document).ready(function(){
 	    $contextMenu.hide();
 	});
 	
-	
-	$("#contextMenu").on("click", "a", function(e) {
-		var tabIndex = e.target.getAttribute("tabindex");
-		switch (parseInt(tabIndex)) {
-		case 1: // 新建
-			window.location.href = "<%=ctx%>/book_dire_add.jsp?bookId=<%=book.getId()%>&parentId=" 
-					+ $curDire.getAttribute("direId") + "&level=" + $curDire.getAttribute("level");
-			//var title = "创建书籍目录";
-			//var params = "height=245,width=635,top=" 
-				//+ (window.screen.availHeight - 30 - 245) / 2 
-				//+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
-				//+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
-			//window.open(url, title, params);
-			break;
-		case 2: // 删除
-			jQuery.ajax({
-				url: "<%=ctx%>/book/bookDire_removeDire.do",
-				type: "post",
-				async: "false",
-				data: {bookId:"<%=book.getId()%>", direId:$curDire.getAttribute("direId")},
-				timeout: 30000,
-				success: function() {
-					alert("删除书籍目录成功！");
-					window.location.href = "<%=ctx%>/book/bookDire.do?bookId=<%=book.getId()%>&mode=-1"; 
-				},
-				error: function() {
-					alert("删除书籍目录失败！");
-				}
-			});
-			break;
-		}
-		$contextMenu.hide();
-		return false;
-	});
 	
 });
 

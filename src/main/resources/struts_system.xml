@@ -10,7 +10,7 @@
 			<result name="success">/updatepwd.jsp</result>
 		</action>
 		<action name="login" class="com.phoenixcloud.user.action.LoginAction" >
-			<result name="success">/index.jsp</result>
+			<result name="success">/index_new.jsp</result>
 			<result name="NotFound">/login.jsp?reason=NotFound</result>
 			<result name="ErrorPass">/login.jsp?reason=ErrorPass</result>
 			<result name="Expired">/login.jsp?reason=Expired</result>

@@ -71,18 +71,6 @@ white-space:nowrap;
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-				<security:phoenixSec purviewCode="BOOK_RES_ADD">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addRes" onclick="addRes();" value="新建"/>
-				</security:phoenixSec>
-				<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editRes" onclick="editRes();" value="修改"/>
-				</security:phoenixSec>
-				<security:phoenixSec purviewCode="BOOK_RES_DELETE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeRes" onclick="removeRes();" value="删除"/>
-				</security:phoenixSec>
-				<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadRes" onclick="uploadRes();" value="上传资源附件"/>
-				</security:phoenixSec>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewRes" onclick="viewRes();" value="详情"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="back" onclick="history.back();;" value="返回"/>
 			</div>
@@ -92,7 +80,6 @@ white-space:nowrap;
 			<table class="list_table" style="margin-top:0px">
 				<thead>
 					<tr>
-						<th style="width:1%"><input type="checkbox" onchange="checkAll(this);"></th>
 						<th>书名</th>
 						<th>资源名称</th>
 						<th>格式</th>
@@ -114,7 +101,6 @@ white-space:nowrap;
 							
 					%>
 					<tr>
-						<td style="width:1%"><input type="checkbox" value="<%=res.getId()%>"/></td>
 						<td><%=book.getName() %></td>
 						<td><%=res.getName() %></td>
 						<td><%=fmDdv.getValue() %></td>
@@ -122,25 +108,10 @@ white-space:nowrap;
 						<td><%=relatedPages %></td>
 						<td><%=res.getNotes() %></td>
 						<td>
-							<%if (res.getIsUpload() == (byte)0) {%>
-							<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
-							<a class="tip-top" data-original-title="上传" href="<%=ctx%>/book/modifyBookRes.do?mode=-1&bookRes.resId=<%=res.getId()%>"><i class="icon-upload"></i></a>
-							</security:phoenixSec>
-							<%} %>
-							
 							<a cla1ss="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
-							
-							<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
-							<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/modifyBookRes.do?mode=-1&bookRes.resId=<%=res.getId()%>" ><i class="icon-edit"></i></a>
-							</security:phoenixSec>
-
 							<%if (res.getIsUpload() == (byte)1) {%>
 							<a class="tip-top" data-original-title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
 							<%} %>
-							
-							<security:phoenixSec purviewCode="BOOK_RES_DELETE">
-							<a name="removeRes" class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
-							</security:phoenixSec>
 						</td>
 					</tr>
 					<%}
@@ -170,60 +141,6 @@ function checkNum(which) {
 	}
 }
 
-function checkAll(which) {
-	if (which.checked) {
-		jQuery("#bookResTblBody tr td input").attr("checked", "checked");
-	} else {
-		jQuery("#bookResTblBody tr td input").removeAttr("checked", "checked");
-	}
-}
-
-function batchUploadRes() {
-	var checkedItems = jQuery("#bookResTblBody").find("input:checked");
-	if (checkedItems != null && checkedItems.length > 1) {
-		alert("请只选择一个资源后，再批量上传子资源！");
-		return;
-	}
-	var parentId = 0;
-	if (checkedItems != null && checkedItems.length == 1) {
-		parentId = checkedItems[0].value;
-	}
-	window.location.href = "<%=ctx%>/book_res_batchUpload.jsp?mode=<%=book.getIsAudit()%>&bookId=<%=book.getBookId()%>&parentId=" + parentId;
-}
-
-function addRes() {
-	var checkedItems = jQuery("#bookResTblBody").find("input:checked");
-	if (checkedItems != null && checkedItems.length > 1) {
-		alert("请只选择一个资源后，创建子资源！");
-		return;
-	}
-	var parentId = 0;
-	if (checkedItems != null && checkedItems.length == 1) {
-		parentId = checkedItems[0].value;
-	}
-	window.location.href = "<%=ctx%>/book_res_add.jsp?mode=-1&bookId=<%=book.getBookId()%>&parentId=" + parentId;
-}
-
-function editRes() {
-	var checkedItems = jQuery("#bookResTblBody").find("input:checked");
-	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一个资源后重试！");
-		return;
-	}
-	
-	window.location.href = "<%=ctx%>/book/modifyBookRes.do?mode=-1&bookRes.resId=" + checkedItems[0].value;
-}
-
-function uploadRes() {
-	var checkedItems = jQuery("#bookResTblBody").find("input:checked");
-	if (checkedItems == null || checkedItems.length != 1) {
-		batchUploadRes();
-		return;
-	}
-	
-	window.location.href = "<%=ctx%>/book/modifyBookRes.do?mode=-1&bookRes.resId=" + checkedItems[0].value;
-}
-
 function viewRes() {
 	var checkedItems = jQuery("#bookResTblBody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
@@ -232,79 +149,6 @@ function viewRes() {
 	}
 	window.location.href = "<%=ctx%>/book/viewRes.do?bookRes.resId=" + checkedItems[0].value;
 }
-
-var chkItems = null;
-<security:phoenixSec purviewCode="BOOK_RES_DELETE">
-function removeRes() {
-	
-	if (chkItems != null) {
-		alert("网络繁忙，请稍后重试！");
-		return;
-	}
-	
-	var ids = "";
-	var chkItems = jQuery("#bookResTblBody").find("input:checked");
-	if (chkItems == null || chkItems.length == 0) {
-		alert("请选择要删除的资源！");
-		chkItems = null;
-		return;
-	}
-	for (var i = 0; i < chkItems.length; i++) {
-		ids += chkItems[i].value;
-		if (i != (chkItems.length - 1)) {
-			ids += ",";
-		}
-	}
-	
-	jQuery.ajax({
-		url: "<%=ctx%>/book/bookRes_removeRes.do",
-		type: "POST",
-		async: "false",
-		timeout: 30000,
-		data: {resIdArr:ids},
-		success: function() {
-			alert("删除成功！");
-			jQuery(chkItems).parents("tr").remove();
-			chkItems = null;
-		},
-		error: function() {
-			alert("删除失败！");
-			chkItems = null;
-		}
-	});
-}
-</security:phoenixSec>
-
-
-jQuery(document).ready(function() {
-	<security:phoenixSec purviewCode="BOOK_RES_DELETE">
-	jQuery("a[name='removeRes']").on("click", function(e) {
-		if (chkItems != null) {
-			alert("网络繁忙，请稍后重试！");
-			return;
-		}
-		chkItems = jQuery(this.parentNode.parentNode).find("input:first-child");
-		var id = chkItems.val().toString();
-		jQuery.ajax({
-			url: "<%=ctx%>/book/bookRes_removeRes.do",
-			type: "POST",
-			async: "false",
-			timeout: 30000,
-			data: {resIdArr: id},
-			success: function() {
-				alert("删除成功！");
-				jQuery(chkItems).parents("tr").remove();
-				chkItems = null;
-			},
-			error: function() {
-				alert("删除失败！");
-				chkItems = null;
-			}
-		});
-		return false;
-	});
-	</security:phoenixSec>
-});
 
 </script>
 

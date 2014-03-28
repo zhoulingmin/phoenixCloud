@@ -82,7 +82,7 @@ public class RBook extends AbstractModel<String> implements Serializable {
 	private String bookNo;
 	
 	@Column(name="PAGE_NUM")
-	private BigInteger pageNum;
+	private int pageNum;
 
 	public RBook() {
 	}
@@ -237,11 +237,11 @@ public class RBook extends AbstractModel<String> implements Serializable {
 		return bookId;
 	}
 
-	public BigInteger getPageNum() {
+	public int getPageNum() {
 		return pageNum;
 	}
 
-	public void setPageNum(BigInteger pageNum) {
+	public void setPageNum(int pageNum) {
 		this.pageNum = pageNum;
 	}
 	

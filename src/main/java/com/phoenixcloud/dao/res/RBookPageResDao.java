@@ -32,9 +32,31 @@ public class RBookPageResDao extends AbstractResDao<RBookPageRes>{
 			pagesBuf.append(pgRs.getPageNum() + ",");
 		}
 		String pages = pagesBuf.toString();
-		if (pages.length() > 0) {
-			pages = pages.substring(0, pages.length());
+		if (pages.length() > 1) {
+			pages = pages.substring(0, pages.length()-1);
 		}
 		return pages;
+	}
+	
+	public void removeByResId(BigInteger resId) {
+		Query query = entityManager.createQuery("update RBookPageRes set deleteState = 1, updateTime = ?1 where resId = ?2 and deleteState = 0");
+		query.setParameter(1, new java.util.Date());
+		query.setParameter(2, resId);
+		query.executeUpdate();
+	}
+	
+	public RBookPageRes findByResIdPageNum(BigInteger resId, int pageNum) {
+		Query query = entityManager.createQuery("select pgRs from RBookPageRes pgRs where pgRs.resId = ?1 and pgRs.pageNum = ?2");
+		query.setParameter(1, resId);
+		query.setParameter(2, pageNum);
+		return getSingleResultOrNull(query);
+	}
+	
+	public List<BigInteger> getResIdsByBookIdPageRange(BigInteger bookId, int start, int end){
+		Query query = entityManager.createQuery("select pgRs.resId from RBookPageRes pgRs where pgRs.deleteState = 0 and pgRs.bookId = ?1 and pgRs.pageNum >= ?2 and pgRs.pageNum <= ?3");
+		query.setParameter(1, bookId);
+		query.setParameter(2, start);
+		query.setParameter(3, end);
+		return query.getResultList();
 	}
 }

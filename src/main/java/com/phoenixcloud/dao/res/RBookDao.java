@@ -68,7 +68,11 @@ public class RBookDao extends AbstractResDao<RBook>{
 		}
 		
 		if (book.getIsAudit() != (byte)-2) { // -2: indicates all book
-			sql += " and rb.isAudit = " + book.getIsAudit();
+			if (book.getIsAudit() == (byte)1) {
+				sql += " and rb.isAudit in (1,2,3)";
+			} else {
+				sql += " and rb.isAudit = " + book.getIsAudit();
+			}
 		}
 		
 		Query query = entityManager.createQuery(sql);

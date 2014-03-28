@@ -40,7 +40,7 @@ String ctx = request.getContextPath();
 		</div>
 
 		<div class="widget-box">
-			<div class="widget-content">
+			<div class="widget-content" style="white-space:nowrap;">
 				<form id="searchAgency" action="" method="POST">
 					&nbsp;&nbsp;&nbsp;&nbsp;机构目录名称&nbsp;<input id="cataName" name="criteria.cataName" type="text" style="width:50px;"/>
 					&nbsp;&nbsp;&nbsp;&nbsp;机构名称&nbsp;<input id="orgName" name="criteria.orgName" type="text" style="width:50px;"/>
@@ -52,7 +52,7 @@ String ctx = request.getContextPath();
 		</div>
 		
 		<div class="widget-box">
-			<div class="widget-content">
+			<div class="widget-content" style="white-space:nowrap;">
 				<security:phoenixSec purviewCode="ORG_ADD">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addAgency" onclick="popUpAddAgency();" value="新建"/>
 				</security:phoenixSec>
