@@ -114,7 +114,7 @@ white-space:nowrap;
 			<table class="list_table" style="margin-top:0px">
 				<thead>
 					<tr>
-						<th style="width:1%;display:none"><input type="checkbox" onchange="checkAll(this);"></th>
+						<th style="width:1%;"><input type="checkbox" onchange="checkAll(this);"></th>
 						<th>书名</th>
 						<th>书籍编码</th>
 						<th>隶属机构</th>
@@ -159,7 +159,7 @@ white-space:nowrap;
 							}
 					%>
 					<tr>
-						<td style="width:1%;display:none"><input type="checkbox" value="<%=book.getBookId()%>" audit="<%=book.getIsAudit()%>"/></td>
+						<td style="width:1%;"><input type="checkbox" value="<%=book.getBookId()%>" audit="<%=book.getIsAudit()%>"/></td>
 						<td><%=book.getName() %></td>
 						<td><%=book.getBookNo() %></td>
 						<td><%=orgTmp.getOrgName() %></td>
@@ -181,7 +181,13 @@ white-space:nowrap;
 							<security:phoenixSec purviewCode="BOOK_RELEASE">
 							<a name="releaseBook" class="tip-top" data-original-title="上架" href="#"><i class=" icon-share-alt"></i></a>
 							</security:phoenixSec>
+							<security:phoenixSec purviewCode="BOOK_OFF_SHELF">
+							<a name="offShelfBook" class="tip-top" style="display:none" data-original-title="下架" href="#"><i class=" icon-download"></i></a>
+							</security:phoenixSec>
 							<%} else if (book.getIsAudit() == (byte)2) { %>
+							<security:phoenixSec purviewCode="BOOK_RELEASE">
+							<a name="releaseBook" class="tip-top" style="display:none"  data-original-title="上架" href="#"><i class=" icon-share-alt"></i></a>
+							</security:phoenixSec>
 							<security:phoenixSec purviewCode="BOOK_OFF_SHELF">
 							<a name="offShelfBook" class="tip-top" data-original-title="下架" href="#"><i class=" icon-download"></i></a>
 							</security:phoenixSec>
@@ -258,19 +264,28 @@ function changeBookAuditStatus(flag) {
 		success: function(ret) {
 			if (ret == null) {
 				alert("操作失败！");
+				return;
 			}
 			if (ret.flag == 2) {
 				alert("书籍上架成功！");
 			} else if (ret.flag == 3) {
 				alert("书籍下架成功！");
 			}
-			jQuery(chkItems).each(function(){
+			for(var i=0;i<chkItems.length;i++){
 				if ((ret.flag == 3 && chkItems[i].getAttribute("audit") == "1") || (ret.flag == 2 && chkItems[i].getAttribute("audit") == "2")) {
 					jQuery(this).removeAttr("checked");
-					return;
+					continue;
 				}
-				jQuery(this).parents("tr").remove();
-			});
+				if (ret.flag == 2) {
+					jQuery(this).parents("tr").find("a[name='releaseBook'").css("display","none");
+					jQuery(this).parents("tr").find("a[name='offShelfBook'").css("display","inline");
+				} else if (ret.flag == 3) {
+					jQuery(this).parents("tr").find("a[name='releaseBook'").css("display","inline");
+					jQuery(this).parents("tr").find("a[name='offShelfBook'").css("display","none");
+				}
+					
+			}
+
 			chkItems = null;
 		},
 		error: function() {
@@ -294,9 +309,22 @@ jQuery(document).ready(function() {
 			async: "false",
 			timeout: 30000,
 			data:{bookIdArr: id},
-			success: function() {
+			success: function(ret) {
+				if (ret == null) {
+					alert("操作失败！");
+					return;
+				}
 				alert("书籍上架成功！");
-				jQuery(chkItems).parents("tr").remove();
+				for(var i=0; i<chkItems.length; i++){
+					if (ret.flag == 2 && chkItems[i].getAttribute("audit") == "2") {
+						jQuery(this).removeAttr("checked");
+						continue;
+					}
+					
+					jQuery(this).parents("tr").find("a[name='releaseBook'").css("display","none");
+					jQuery(this).parents("tr").find("a[name='offSheltBook'").css("display","inline");
+					
+				}
 				chkItems = null;
 			},
 			error: function() {
@@ -319,9 +347,22 @@ jQuery(document).ready(function() {
 			async: "false",
 			timeout: 30000,
 			data:{bookIdArr: id},
-			success: function() {
+			success: function(ret) {
+				if (ret == null) {
+					alert("操作失败！");
+					return;
+				}
 				alert("书籍下架成功！");
-				jQuery(chkItems).parents("tr").remove();
+				for(var i=0; i<chkItems.length; i++){
+					if (ret.flag == 2 && chkItems[i].getAttribute("audit") == "2") {
+						jQuery(this).removeAttr("checked");
+						continue;
+					}
+					
+					jQuery(this).parents("tr").find("a[name='releaseBook'").css("display","inline");
+					jQuery(this).parents("tr").find("a[name='offSheltBook'").css("display","none");
+					
+				}
 				chkItems = null;
 			},
 			error: function() {

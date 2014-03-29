@@ -317,6 +317,7 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		oldStaff.setEmail(staff.getEmail());
 		oldStaff.setName(staff.getName());
 		oldStaff.setOrgId(staff.getOrgId());
+		oldStaff.setValidDate(staff.getValidDate());
 				
 		iSysService.saveStaff(oldStaff);
 		return null;

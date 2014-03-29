@@ -94,7 +94,7 @@ String fileSizeMarker = "${fileSize_}";
 					</div>
 				</div>
 				
-				<div class="control-group" >
+				<div class="control-group" style="display:none">
 					<label class="control-label">资源目录地址</label>
 					<div class="controls">
 						<input type="text" name="bookRes.cataAddr" />

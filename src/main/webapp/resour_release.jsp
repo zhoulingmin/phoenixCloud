@@ -272,13 +272,19 @@ function changeBookAuditStatus(flag) {
 			} else if (ret.flag == 3) {
 				alert("资源下架成功！");
 			}
-			jQuery(chkItems).each(function(){
+			for(var i=0; i<chkItems.length; i++){
 				if ((ret.flag == 3 && chkItems[i].getAttribute("audit") == "1") || (ret.flag == 2 && chkItems[i].getAttribute("audit") == "2")) {
 					jQuery(this).removeAttr("checked");
-					return;
+					continue;
 				}
-				jQuery(this).parents("tr").remove();
-			});
+				if (ret.flag == 2) {
+					jQuery(this).parents("tr").find("a[name='releaseRes'").css("display","none");
+					jQuery(this).parents("tr").find("a[name='offShelfRes'").css("display","inline");
+				} else if (ret.flag == 3) {
+					jQuery(this).parents("tr").find("a[name='releaseRes'").css("display","inline");
+					jQuery(this).parents("tr").find("a[name='offShelfRes'").css("display","none");
+				}
+			}
 			chkItems = null;
 		},
 		error: function() {
@@ -304,8 +310,21 @@ jQuery(document).ready(function() {
 			timeout: 30000,
 			data: {resIdArr: id},
 			success: function() {
+				if (ret == null) {
+					alert("操作失败！");
+					return;
+				}
 				alert("资源上架成功！");
-				jQuery(chkItems).parents("tr").remove();
+				for(var i=0; i<chkItems.length; i++){
+					if (ret.flag == 2 && chkItems[i].getAttribute("audit") == "2") {
+						jQuery(this).removeAttr("checked");
+						continue;
+					}
+					
+					jQuery(this).parents("tr").find("a[name='releaseBook'").css("display","none");
+					jQuery(this).parents("tr").find("a[name='offSheltBook'").css("display","inline");
+					
+				}
 				chkItems = null;
 			},
 			error: function() {
@@ -330,9 +349,20 @@ jQuery(document).ready(function() {
 			async: "false",
 			timeout: 30000,
 			data: {resIdArr: id},
-			success: function() {
+			success: function(ret) {
+				if (ret == null) {
+					alert("操作失败！");
+					return;
+				}
 				alert("资源下架成功！");
-				jQuery(chkItems).parents("tr").remove();
+				for (var i = 0; i<chkItems.length; i++) {
+					if (ret.flag == 3 && chkItems[i].getAttribute("audit") == "1") {
+						jQuery(this).removeAttr("checked");
+						continue;
+					}
+					jQuery(this).parents("tr").find("a[name='releaseBook'").css("display","inline");
+					jQuery(this).parents("tr").find("a[name='offSheltBook'").css("display","none");
+				}
 				chkItems = null;
 			},
 			error: function() {

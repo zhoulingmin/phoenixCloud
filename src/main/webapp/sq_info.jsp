@@ -55,12 +55,12 @@ SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
          </div>
          
          <div class="widget-box">
-			<div class="widget-content">
+			<div class="widget-content" style="white-space:nowrap">
 				<form id="searchHw" action="" method="POST">
 					&nbsp;&nbsp;&nbsp;&nbsp;账号&nbsp;
 					<input type="text" id="staffName" onfocus="onFocusStaffName();"/>
 					&nbsp;&nbsp;&nbsp;&nbsp;硬件类型&nbsp;
-					<select id="hwType" name="criteria.hwType">
+					<select id="hwType" name="criteria.hwType" style="width:100px">
 						<option value="-1" selected="selected">全部</option>
 						<%for (PubDdv ddv : ddvList) {%>
 						<option value="<%=ddv.getDdvId()%>"><%=ddv.getValue() %></option>

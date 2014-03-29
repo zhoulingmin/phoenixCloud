@@ -126,7 +126,7 @@ white-space:nowrap;
 				</security:phoenixSec>
 				
 				<security:phoenixSec purviewCode="BOOK_ADUIT_UP">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="commitBook" onclick="commitBook();" value="资源"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="commitBook" onclick="commitBook();" value="提交审核"/>
 				</security:phoenixSec>
 				
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewBook();" value="详情"/>

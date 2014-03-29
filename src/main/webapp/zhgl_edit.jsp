@@ -44,6 +44,13 @@ String validate = new SimpleDateFormat("yyyy/MM/dd").format(date);
 <script type="text/javascript" src="<%=ctx%>/js/ztree/jquery.ztree.excheck-3.5.js"></script>
 <script src="<%=ctx%>/js/bootstrap-datetimepicker.min.js"></script>
 
+<style>
+body{
+background: none repeat scroll 0 0 #E2ECF4;
+font: 13px '宋体',Arial,sans-serif;
+}
+</style>
+
 </head>
 
 <body>
@@ -73,7 +80,7 @@ String validate = new SimpleDateFormat("yyyy/MM/dd").format(date);
 					<div class="control-group">
 						<label class="control-label">账号名称 (昵称)</label>
 						<div class="controls">
-							<input type="text" name="staff.name" readonly="readonly" value="<s:property value="staff.name"/>">
+							<input type="text" name="staff.name" value="<s:property value="staff.name"/>">
 						</div>
 					</div>
 					
@@ -105,7 +112,7 @@ String validate = new SimpleDateFormat("yyyy/MM/dd").format(date);
 						</div>
 					</div>
 					
-					<div id="datetimepicker1" class="control-group input-append date">
+					<div id="datetimepicker1" class="control-group">
 						<label class="control-label">有效期</label>
 						<div class="controls">
 							<input data-format="yyyy/MM/dd" type="text" name="staff.validDate" value="<%=validate%>">

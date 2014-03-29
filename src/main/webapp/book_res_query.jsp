@@ -137,7 +137,7 @@ white-space:nowrap;
 <script type="text/javascript">
 
 function checkNum(which) {
-	if (!jQuery.isNumberic(which.value)) {
+	if (!jQuery.isNumeric(which.value)) {
 		alert("页码必须为数字！");
 		jQuery(this).focus();
 	}

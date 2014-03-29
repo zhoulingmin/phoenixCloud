@@ -144,7 +144,7 @@ white-space:nowrap;
 							<%} %>
 							
 							<security:phoenixSec purviewCode="BOOK_RES_ADUIT_UP">
-							<a name="commitRes" class="tip-top" data-original-title="提交审核" href="#"><i class="icon-ok-circle"></i></a>
+							<a name="commitRes" class="tip-top" data-original-title="提交审核" href="#"><i class="icon-arrow-up"></i></a>
 							</security:phoenixSec>
 							
 							<security:phoenixSec purviewCode="BOOK_RES_DELETE">
@@ -173,7 +173,7 @@ white-space:nowrap;
 <script type="text/javascript">
 
 function checkNum(which) {
-	if (!jQuery.isNumberic(which.value)) {
+	if (!jQuery.isNumeric(which.value)) {
 		alert("页码必须为数字！");
 		jQuery(this).focus();
 	}
@@ -272,6 +272,11 @@ function removeRes() {
 		timeout: 30000,
 		data: {resIdArr:ids},
 		success: function() {
+			alert("删除成功！");
+			if (ret == null) {
+				alert("操作失败！");
+				return;
+			}
 			alert("删除成功！");
 			jQuery(chkItems).parents("tr").remove();
 			chkItems = null;

@@ -26,18 +26,25 @@ List<PubDdv> staffTypeList = ddvDao.findByTblAndField("sys_staff", "STAFF_TYPE_I
 <meta name="description" content="江苏凤凰数字出版传媒有限公司">
 <title></title>
 
+<link rel="stylesheet" href="<%=ctx%>/css/common.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/page.css" />
 <link rel="stylesheet" href="<%=ctx%>/css/bootstrap.min.css" />
 <link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 <link rel="stylesheet" href="<%=ctx%>/css/zTreeStyle/zTreeStyle.css" type="text/css">
 <link rel="stylesheet" href="<%=ctx%>/css/bootstrap-datetimepicker.min.css"/>
-<link rel="stylesheet" href="<%=ctx%>/css/common.css" />
-<link rel="stylesheet" href="<%=ctx%>/css/page.css" />
 
 <script src="<%=ctx%>/js/jquery-2.0.3.js"></script>
 <script type="text/javascript" src="<%=ctx%>/js/public.js"></script>
 <script type="text/javascript" src="<%=ctx%>/js/ztree/jquery.ztree.core-3.5.js"></script>
 <script type="text/javascript" src="<%=ctx%>/js/ztree/jquery.ztree.excheck-3.5.js"></script>
 <script src="<%=ctx%>/js/bootstrap-datetimepicker.min.js"></script>
+
+<style>
+body{
+background: none repeat scroll 0 0 #E2ECF4;
+font: 13px '宋体',Arial,sans-serif;
+}
+</style>
 
 </head>
 
@@ -98,7 +105,7 @@ List<PubDdv> staffTypeList = ddvDao.findByTblAndField("sys_staff", "STAFF_TYPE_I
 						</div>
 					</div>
 					
-					<div id="datetimepicker1" class="control-group input-append date">
+					<div id="datetimepicker1" class="control-group">
 						<label class="control-label">有效期</label>
 						<div class="controls">
 							<input data-format="yyyy/MM/dd" type="text" name="staff.validDate">
