@@ -290,7 +290,11 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 		}
 		
 		if (res.getIsAudit() != (byte)-2) { // -2: indicates all book
-			sql += " and rr.isAudit = " + res.getIsAudit();
+			if (res.getIsAudit() == (byte)1) {
+				sql += " and rr.isAudit in (1,2,3)";
+			} else {
+				sql += " and rr.isAudit = " + book.getIsAudit();
+			}
 		}
 				
 		Query query = resEm.createQuery(sql);

@@ -110,7 +110,7 @@ String fileSizeMarker = "${fileSize_}";
 				
 				<div class="form-actions">
 					<button class="btn btn-primary" type="button"  onclick="saveRes();">批量上传资源</button>
-					<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();">取消</button>
+					<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();return false;">取消</button>
 				</div>
 				
 			</form>

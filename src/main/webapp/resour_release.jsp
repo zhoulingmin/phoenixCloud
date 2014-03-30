@@ -274,15 +274,15 @@ function changeBookAuditStatus(flag) {
 			}
 			for(var i=0; i<chkItems.length; i++){
 				if ((ret.flag == 3 && chkItems[i].getAttribute("audit") == "1") || (ret.flag == 2 && chkItems[i].getAttribute("audit") == "2")) {
-					jQuery(this).removeAttr("checked");
+					jQuery(chkItems[i]).removeAttr("checked");
 					continue;
 				}
 				if (ret.flag == 2) {
-					jQuery(this).parents("tr").find("a[name='releaseRes'").css("display","none");
-					jQuery(this).parents("tr").find("a[name='offShelfRes'").css("display","inline");
+					jQuery(chkItems[i]).parents("tr").find("a[name='releaseRes']").css("display","none");
+					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfRes']").css("display","inline");
 				} else if (ret.flag == 3) {
-					jQuery(this).parents("tr").find("a[name='releaseRes'").css("display","inline");
-					jQuery(this).parents("tr").find("a[name='offShelfRes'").css("display","none");
+					jQuery(chkItems[i]).parents("tr").find("a[name='releaseRes']").css("display","inline");
+					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfRes']").css("display","none");
 				}
 			}
 			chkItems = null;
@@ -317,12 +317,12 @@ jQuery(document).ready(function() {
 				alert("资源上架成功！");
 				for(var i=0; i<chkItems.length; i++){
 					if (ret.flag == 2 && chkItems[i].getAttribute("audit") == "2") {
-						jQuery(this).removeAttr("checked");
+						jQuery(chkItems[i]).removeAttr("checked");
 						continue;
 					}
 					
-					jQuery(this).parents("tr").find("a[name='releaseBook'").css("display","none");
-					jQuery(this).parents("tr").find("a[name='offSheltBook'").css("display","inline");
+					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","none");
+					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook]'").css("display","inline");
 					
 				}
 				chkItems = null;
@@ -357,11 +357,11 @@ jQuery(document).ready(function() {
 				alert("资源下架成功！");
 				for (var i = 0; i<chkItems.length; i++) {
 					if (ret.flag == 3 && chkItems[i].getAttribute("audit") == "1") {
-						jQuery(this).removeAttr("checked");
+						jQuery(chkItems[i]).removeAttr("checked");
 						continue;
 					}
-					jQuery(this).parents("tr").find("a[name='releaseBook'").css("display","inline");
-					jQuery(this).parents("tr").find("a[name='offSheltBook'").css("display","none");
+					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","inline");
+					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook']").css("display","none");
 				}
 				chkItems = null;
 			},
