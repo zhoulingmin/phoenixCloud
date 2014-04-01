@@ -318,6 +318,23 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		oldStaff.setName(staff.getName());
 		oldStaff.setOrgId(staff.getOrgId());
 		oldStaff.setValidDate(staff.getValidDate());
+		oldStaff.setNotes(staff.getNotes());
+		oldStaff.setPassword(staff.getPassword());
+		oldStaff.setStaffTypeId(staff.getStaffTypeId());
+				
+		iSysService.saveStaff(oldStaff);
+		return null;
+	}
+	
+	public String saveSelf() throws Exception{
+		SysStaff oldStaff = iSysService.findStaffById(staff.getStaffId());
+		if (oldStaff == null) {
+			throw new Exception("系统中不存在此账户，保存失败！");
+		}
+		oldStaff.setUpdateTime(new Date());
+		oldStaff.setEmail(staff.getEmail());
+		oldStaff.setOrgId(staff.getOrgId());
+		oldStaff.setName(staff.getName());
 				
 		iSysService.saveStaff(oldStaff);
 		return null;

@@ -25,7 +25,7 @@ if (staff != null) {
 	staffName = staff.getName();
 }
 
-String auditStatus = "未审核";
+String auditStatus = "制作中";
 String auditStaffName = "无";
 if ((Byte)vs.findValue("bookRes.isAudit") != (byte)-1) {
 	staff = staffDao.find(vs.findString("bookRes.auditStaffId"));
@@ -33,7 +33,7 @@ if ((Byte)vs.findValue("bookRes.isAudit") != (byte)-1) {
 		auditStaffName = staff.getName();
 	}
 	if ((Byte)vs.findValue("bookRes.isAudit") == 0) {
-		auditStatus = "待审核";
+		auditStatus = "审核中";
 	} else if ((Byte)vs.findValue("bookRes.isAudit") == 1){
 		auditStatus = "待上架";
 	} else if ((Byte)vs.findValue("bookRes.isAudit") == 2){

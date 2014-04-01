@@ -27,63 +27,71 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 		<img src="<%=ctx %>/image/free_down.png">
 	</div>
 	<div class="left_main">
+		<sec:phoenixSec purviewCode="PERSONAL_INFO_MGT_MENU">
 		<h3 class="margin_top_20">
 			<a href="#">个人信息管理</a>
 		</h3>
 		<ul>
+			<sec:phoenixSec purviewCode="PERSONAL_INFO_MENU">
 			<li><a href="<%=ctx %>/system/editUser.do?staff.staffId=<%=staff.getStaffId() %>" target="f_r">个人资料</a></li>
+			</sec:phoenixSec>
+			<sec:phoenixSec purviewCode="PERSONAL_INFO_UPDATE_PWD">
 			<li><a href="<%=ctx %>/system/modifyPass.do?staff.staffId=<%=staff.getStaffId() %>" target="f_r">修改密码</a></li>
-			<sec:phoenixSec purviewCode="HARDWARE_MANAGE_MENU">
+			</sec:phoenixSec>
+			<sec:phoenixSec purviewCode="AUTH_INFO_MENU">
 			<li><a href="<%=ctx %>/sq_info.jsp" target="f_r">授权信息</a></li>
 			</sec:phoenixSec>
-			<sec:phoenixSec purviewCode="ORG_MANAGE">
-			<li><a href="<%=ctx %>/jggl.jsp" target="f_r">机构管理</a></li>
-			</sec:phoenixSec>
-			<sec:phoenixSec purviewCode="STAFF_MANAGE_MENU">
+			<sec:phoenixSec purviewCode="ACNT_MGMT_MENU">
 			<li><a href="<%=ctx %>/zhgl.jsp" target="f_r">账号管理</a></li>
 			</sec:phoenixSec>
-			<sec:phoenixSec purviewCode="PURVIEW_MANAGE_MENU">
+			<sec:phoenixSec purviewCode="ORG_MGMT_MENU">
+			<li><a href="<%=ctx %>/jggl.jsp" target="f_r">机构管理</a></li>
+			</sec:phoenixSec>
+			<sec:phoenixSec purviewCode="PRIVILEGE_MGMT_MENU">
 			<li><a href="<%=ctx %>/qxgl.jsp" target="f_r">权限管理</a></li>
 			</sec:phoenixSec>
 		</ul>
-		<sec:phoenixSec purviewCode="BOOK_MANAGE">
+		</sec:phoenixSec>
+		<sec:phoenixSec purviewCode="BOOK_MGMT_MENU">
 			<h3>
 				<a href="#">书籍管理</a>
 			</h3>
 			<ul>
-				<sec:phoenixSec purviewCode="BOOK_MENU">
+				<sec:phoenixSec purviewCode="BOOK_MAKE_MENU">
 				<li><a href="<%=ctx %>/book_zhizuo.jsp" target="f_r">书籍制作</a></li>
 				</sec:phoenixSec>
-				<sec:phoenixSec purviewCode="BOOK_ADUIT_MENU">
+				<sec:phoenixSec purviewCode="BOOK_AUDIT_MENU">
 				<li><a href="<%=ctx %>/book_audit.jsp" target="f_r">书籍审核</a></li>
 				</sec:phoenixSec>
 				<sec:phoenixSec purviewCode="BOOK_RELEASE_MENU">
 				<li><a href="<%=ctx %>/book_release.jsp" target="f_r" >书籍发布</a></li>
 				</sec:phoenixSec>
-				<sec:phoenixSec purviewCode="REG_CODE_MANAGE">
+				<sec:phoenixSec purviewCode="BOOK_REG_CODE_MGMT_MENU">
 				<li><a href="<%=ctx %>/sjzcmgl.jsp" target="f_r">注册码</a></li>
 				</sec:phoenixSec>
 				<li style="display:none"><a href="book_jggj.html" target="_blank">书籍打包</a></li>
-				<sec:phoenixSec purviewCode="BOOK_QUERY_MENU">
+				<sec:phoenixSec purviewCode="BOOK_SEARCH_MENU">
 				<li><a href="<%=ctx %>/book_query.jsp" target="f_r">书籍查询</a></li>
 				</sec:phoenixSec>
 			</ul>
 		</sec:phoenixSec>
 		<span style="display:none" class="arr"></span>
+		<sec:phoenixSec purviewCode="RES_MGMT_MENU">
 		<h3>
 			<a href="#">资源管理</a>
 		</h3>
 		<ul>
-			<sec:phoenixSec purviewCode="BOOK_QUERY_MENU">
+			<sec:phoenixSec purviewCode="RES_SEARCH_MENU">
 			<li><a href="<%=ctx %>/resour_search.jsp" target="f_r">资源查询</a></li>
 			</sec:phoenixSec>
-			<sec:phoenixSec purviewCode="BOOK_ADUIT_MENU">
+			<sec:phoenixSec purviewCode="RES_AUDIT_MENU">
 			<li><a href="<%=ctx %>/resour_audit.jsp" target="f_r">资源审核</a></li>
 			</sec:phoenixSec>
-			<sec:phoenixSec purviewCode="BOOK_RELEASE_MENU">
+			<sec:phoenixSec purviewCode="RES_RELEASE_MENU">
 			<li><a href="<%=ctx %>/resour_release.jsp" target="f_r">资源发布</a></li>
 			</sec:phoenixSec>
 		</ul>
+		</sec:phoenixSec>
 	</div>
 </body>
 </html>

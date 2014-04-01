@@ -53,26 +53,32 @@ white-space:nowrap;
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍查询&gt;首页
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍发布&gt;书籍资源
 		</div>
 	
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
 				<form id="searchBook" action="<%=ctx %>/book/searchResByPages.do" method="post">
 					<input type="hidden" name="bookRes.bookId" value="<%=book.getId()%>">
+					<input type="hidden" name="bookInfo.isAudit" value="1">
 					起始页码:
 					<input type="text" name="start" value="0" onchange="checkNum(this)"/>
 					结束页码:
 					<input type="text" name="end" value="<%=book.getPageNum()%>" onchange="checkNum(this)"/>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					<security:phoenixSec purviewCode="BOOK_QUERY">
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn btn-primary" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					</security:phoenixSec>
+					&nbsp;&nbsp;&nbsp;&nbsp;<input name="clear" class="btn btn-primary" value="重置" type="button" style="margin-bottom:10px;width:50px;"/>
 				</form>
 			</div>
 		</div>
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewRes" onclick="viewRes();" value="详情"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="back" onclick="history.back();;" value="返回"/>
+				<security:phoenixSec purviewCode="BOOK_DETAIL">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="viewRes" onclick="viewRes();" value="详情"/>
+				</security:phoenixSec>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="back" onclick="history.back();return false;" value="返回"/>
 			</div>
 		</div>
 
@@ -110,9 +116,14 @@ white-space:nowrap;
 						<td><%=relatedPages %></td>
 						<td><%=res.getNotes() %></td>
 						<td>
-							<a cla1ss="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
+							<security:phoenixSec purviewCode="BOOK_DETAIL">
+							<a cla1ss="tip-top" title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
+							</security:phoenixSec>
+							
 							<%if (res.getIsUpload() == (byte)1) {%>
-							<a class="tip-top" data-original-title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							<security:phoenixSec purviewCode="BOOK_DWONLOAD">
+							<a class="tip-top" title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							</security:phoenixSec>
 							<%} %>
 						</td>
 					</tr>
@@ -137,7 +148,7 @@ white-space:nowrap;
 <script type="text/javascript">
 
 function checkNum(which) {
-	if (!jQuery.isNumeric(which.value)) {
+	if (which.value.length > 0 && !jQuery.isNumeric(which.value)) {
 		alert("页码必须为数字！");
 		jQuery(this).focus();
 	}
@@ -151,6 +162,13 @@ function viewRes() {
 	}
 	window.location.href = "<%=ctx%>/book/viewRes.do?bookRes.resId=" + checkedItems[0].value;
 }
+
+jQuery(document).ready(function(){
+	jQuery("input[name='clear']").on("click", function() {
+		jQuery("input[name='start']").val("");
+		jQuery("input[name='end']").val("");
+	});
+});
 
 </script>
 

@@ -19,6 +19,8 @@ PubOrg org = orgDao.find(staff.getOrgId().toString());
 <meta name="keywords" content="江苏凤凰数字出版传媒有限公司">
 <meta name="description" content="江苏凤凰数字出版传媒有限公司">
 <title></title>
+<link rel="stylesheet" href="<%=ctx%>/css/bootstrap.min.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 <link rel="stylesheet" href="css/common.css" />
 <link rel="stylesheet" href="css/page.css" />
 <link rel="stylesheet" href="<%=ctx%>/css/zTreeStyle/zTreeStyle.css"
@@ -37,7 +39,7 @@ PubOrg org = orgDao.find(staff.getOrgId().toString());
 		当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="image/home_icon.jpg">&nbsp;账号管理&gt;首页
+			<img src="image/home_icon.jpg">&nbsp;个人信息管理&gt;账号管理&gt;首页
 		</div>
 		<div class="zhgl">
 			<!--左侧菜单-->
@@ -54,10 +56,10 @@ PubOrg org = orgDao.find(staff.getOrgId().toString());
 						<img src="image/user_photo.jpg">&nbsp;用户
 					</div>
 					<div class="line_btn margin_top_10">
-						<img src="image/btn1.jpg" onclick="getAll();">&nbsp;&nbsp;
-						<img src="image/btn2.jpg" onclick="addUser();">&nbsp;&nbsp;
-						<img src="image/btn3.jpg" onclick="editUser();">&nbsp;&nbsp;
-						<img src="image/btn4.jpg" onclick="delUser();">
+						<input type="button" value="显示全部" class="btn btn-primary" onclick="getAll();">&nbsp;&nbsp;
+						<input type="button" value="增加" class="btn btn-primary" onclick="addUser();">&nbsp;&nbsp;
+						<input type="button" value="编辑" class="btn btn-primary" onclick="editUser();">&nbsp;&nbsp;
+						<input type="button" value="删除" class="btn btn-primary" onclick="delUser();">
 					</div>
 				</div>
 				<table class="list_table1">

@@ -53,7 +53,7 @@ white-space:nowrap;
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍查询&gt;首页
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍制作&gt;书籍资源&gt;首页
 		</div>
 	
 		<div class="widget-box">
@@ -66,30 +66,35 @@ white-space:nowrap;
 					<input type="text" name="start" value="0" onchange="checkNum(this)"/>
 					结束页码:
 					<input type="text" name="end" value="<%=book.getPageNum()%>" onchange="checkNum(this)"/>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					<security:phoenixSec purviewCode="RES_QUERY">
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn btn-primary" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					</security:phoenixSec>
+					&nbsp;&nbsp;&nbsp;&nbsp;<input name="clear" class="btn btn-primary" value="重置" type="button" style="margin-bottom:10px;width:50px;"/>
 				</form>
 			</div>
 		</div>
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
+				<security:phoenixSec purviewCode="RES_DETAIL">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="viewRes" onclick="viewRes();" value="详情"/>
+				</security:phoenixSec>
 				<security:phoenixSec purviewCode="BOOK_RES_ADD">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addRes" onclick="addRes();" value="新建"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="viewRes" onclick="addRes();" value="新建"/>
 				</security:phoenixSec>
 				<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editRes" onclick="editRes();" value="修改"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="editRes" onclick="editRes();" value="修改"/>
 				</security:phoenixSec>
-				<security:phoenixSec purviewCode="BOOK_RES_DELETE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeRes" onclick="removeRes();" value="删除"/>
+				<security:phoenixSec purviewCode="BOOK_RES_REMOVE">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="removeRes" onclick="removeRes();" value="删除"/>
 				</security:phoenixSec>
 				<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadRes" onclick="uploadRes();" value="上传资源附件"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="uploadRes" onclick="uploadRes();" value="上传资源附件"/>
 				</security:phoenixSec>
-				<security:phoenixSec purviewCode="BOOK_RES_ADUIT_UP">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="commitRes" onclick="commitRes();" value="提交审核"/>
+				<security:phoenixSec purviewCode="BOOK_RES_COMMIT_AUDIT">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="commitRes" onclick="commitRes();" value="提交审核"/>
 				</security:phoenixSec>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewRes" onclick="viewRes();" value="详情"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="back" onclick="history.back();;" value="返回"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="back" onclick="history.back();return false;" value="返回"/>
 			</div>
 		</div>
 
@@ -102,6 +107,7 @@ white-space:nowrap;
 						<th>资源名称</th>
 						<th>格式</th>
 						<th>是否上传</th>
+						<th>审核状态</th>
 						<th>关联页码</th>
 						<th>备注</th>
 						<th>操作</th>
@@ -117,6 +123,19 @@ white-space:nowrap;
 							PubDdv fmDdv = ddvDao.find(res.getFormat().toString());
 							String relatedPages = pgRsdao.getResRelatedPages(new java.math.BigInteger(res.getId()));
 							
+							String auditStatus = "";
+							byte isAudit = res.getIsAudit();
+							if (isAudit == (byte)-1) {
+								auditStatus = "制作中";
+							} else if (isAudit == (byte)0) {
+								auditStatus = "审核中";
+							} else if (isAudit == (byte)1) {
+								auditStatus = "待上架";
+							} else if (isAudit == (byte)2) {
+								auditStatus = "已上架";
+							} else if (isAudit == (byte)3) {
+								auditStatus = "已下架";
+							}
 					%>
 					<tr>
 						<td style="width:1%"><input type="checkbox" value="<%=res.getId()%>"/></td>
@@ -124,32 +143,45 @@ white-space:nowrap;
 						<td><%=res.getName() %></td>
 						<td><%=fmDdv.getValue() %></td>
 						<td><%if (res.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
+						<td><%=auditStatus %></td>
 						<td><%=relatedPages %></td>
 						<td><%=res.getNotes() %></td>
 						<td>
-							<%if (res.getIsUpload() == (byte)0) {%>
-							<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
-							<a class="tip-top" data-original-title="上传" href="<%=ctx%>/book/modifyBookRes.do?mode=-1&bookRes.resId=<%=res.getId()%>"><i class="icon-upload"></i></a>
+							<security:phoenixSec purviewCode="RES_DETAIL">
+							<a cla1ss="tip-top" title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
 							</security:phoenixSec>
+							<%if (res.getIsAudit() == (byte)-1) { %>
+								<%if (res.getIsUpload() == (byte)0) {%>
+								<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
+								<a class="tip-top" title="上传" href="<%=ctx%>/book/modifyBookRes.do?mode=-1&bookRes.resId=<%=res.getId()%>"><i class="icon-upload"></i></a>
+								</security:phoenixSec>
+								<%} %>
+								
+								<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
+								<a class="tip-top" title="修改" href="<%=ctx%>/book/modifyBookRes.do?mode=-1&bookRes.resId=<%=res.getId()%>" ><i class="icon-edit"></i></a>
+								</security:phoenixSec>
+	
+								<%if (res.getIsUpload() == (byte)1) {%>
+								<security:phoenixSec purviewCode="RES_DOWNLOAD">
+								<a class="tip-top" title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+								</security:phoenixSec>
+								<%} %>
+								
+								<security:phoenixSec purviewCode="BOOK_RES_COMMIT_AUDIT">
+								<a name="commitRes" class="tip-top" title="提交审核" href="#"><i class="icon-arrow-up"></i></a>
+								</security:phoenixSec>
+								
+								<security:phoenixSec purviewCode="BOOK_RES_REMOVE">
+								<a name="removeRes" class="tip-top" title="删除" href="#"><i class="icon-remove"></i></a>
+								</security:phoenixSec>
+							<% }else { %>
+								<%if (res.getIsUpload() == (byte)1) {%>
+								<security:phoenixSec purviewCode="RES_DOWNLOAD">
+								<a class="tip-top" title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+								</security:phoenixSec>
+								<%} %>
 							<%} %>
 							
-							<a cla1ss="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
-							
-							<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
-							<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/modifyBookRes.do?mode=-1&bookRes.resId=<%=res.getId()%>" ><i class="icon-edit"></i></a>
-							</security:phoenixSec>
-
-							<%if (res.getIsUpload() == (byte)1) {%>
-							<a class="tip-top" data-original-title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
-							<%} %>
-							
-							<security:phoenixSec purviewCode="BOOK_RES_ADUIT_UP">
-							<a name="commitRes" class="tip-top" data-original-title="提交审核" href="#"><i class="icon-arrow-up"></i></a>
-							</security:phoenixSec>
-							
-							<security:phoenixSec purviewCode="BOOK_RES_DELETE">
-							<a name="removeRes" class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
-							</security:phoenixSec>
 						</td>
 					</tr>
 					<%}
@@ -173,7 +205,7 @@ white-space:nowrap;
 <script type="text/javascript">
 
 function checkNum(which) {
-	if (!jQuery.isNumeric(which.value)) {
+	if (which.value.length > 0 && !jQuery.isNumeric(which.value)) {
 		alert("页码必须为数字！");
 		jQuery(this).focus();
 	}
@@ -243,7 +275,7 @@ function viewRes() {
 }
 
 var chkItems = null;
-<security:phoenixSec purviewCode="BOOK_RES_DELETE">
+<security:phoenixSec purviewCode="BOOK_RES_REMOVE">
 function removeRes() {
 	
 	if (chkItems != null) {
@@ -271,14 +303,10 @@ function removeRes() {
 		async: "false",
 		timeout: 30000,
 		data: {resIdArr:ids},
-		success: function() {
-			alert("删除成功！");
-			if (ret == null) {
-				alert("操作失败！");
-				return;
-			}
+		success: function(ret) {
 			alert("删除成功！");
 			jQuery(chkItems).parents("tr").remove();
+			jQuery("thead tr th input:checkbox").removeAttr("checked");
 			chkItems = null;
 		},
 		error: function() {
@@ -289,7 +317,7 @@ function removeRes() {
 }
 </security:phoenixSec>
 
-<security:phoenixSec purviewCode="BOOK_RES_ADUIT_UP">
+<security:phoenixSec purviewCode="BOOK_RES_COMMIT_AUDIT">
 function commitRes() {
 	
 	if (chkItems != null) {
@@ -331,7 +359,7 @@ function commitRes() {
 </security:phoenixSec>
 
 jQuery(document).ready(function() {
-	<security:phoenixSec purviewCode="BOOK_RES_DELETE">
+	<security:phoenixSec purviewCode="BOOK_RES_REMOVE">
 	jQuery("a[name='removeRes']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");
@@ -358,7 +386,7 @@ jQuery(document).ready(function() {
 		return false;
 	});
 	</security:phoenixSec>
-	<security:phoenixSec purviewCode="BOOK_RES_ADUIT_UP">
+	<security:phoenixSec purviewCode="BOOK_RES_COMMIT_AUDIT">
 	jQuery("a[name='commitRes']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");
@@ -385,7 +413,12 @@ jQuery(document).ready(function() {
 		return false;
 	});
 	</security:phoenixSec>
+	jQuery("input[name='clear']").on("click", function() {
+		jQuery("input[name='start']").val("");
+		jQuery("input[name='end']").val("");
+	});
 });
+
 
 </script>
 

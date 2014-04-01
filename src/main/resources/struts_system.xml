@@ -19,13 +19,17 @@
 		<action name="getAuthHw" class="systemMgmtAction" method="getAllHw">
 			<result name="success">/sq_info.jsp</result>
 		</action>
-		<action name="getAllUser" class="systemMgmtAction" method="getAllUserJson">
-		</action>
+		
+		<action name="getAllUser" class="systemMgmtAction" method="getAllUserJson"></action>
+		
+		<action name="saveSelf" class="systemMgmtAction" method="saveSelf"></action>
+		
 		<action name="editAccount" class="systemMgmtAction" method="editUser">
 			<result name="success">/zhgl_edit.jsp</result>
 		</action>
-		<action name="saveHwNum" class="systemMgmtAction" method="saveHwNum">
-		</action>
+		
+		<action name="saveHwNum" class="systemMgmtAction" method="saveHwNum"></action>
+		
 		<action name="searchHw" class="systemMgmtAction" method="searchHw">
 			<result name="success">/sq_info.jsp</result>
 		</action>

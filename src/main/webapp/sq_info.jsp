@@ -1,10 +1,11 @@
-<%@page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@page import="com.phoenixcloud.bean.*" %>
-<%@page import="com.phoenixcloud.dao.ctrl.*" %>
-<%@page import="com.phoenixcloud.util.SpringUtils" %>
-<%@page import="java.util.*" %>
-<%@page import="java.math.BigInteger" %>
-<%@page import="java.text.*" %>
+<%@page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@page import="com.phoenixcloud.bean.*"%>
+<%@page import="com.phoenixcloud.dao.ctrl.*"%>
+<%@page import="com.phoenixcloud.util.SpringUtils"%>
+<%@page import="java.util.*"%>
+<%@page import="java.math.BigInteger"%>
+<%@page import="java.text.*"%>
 <%
 String ctx = request.getContextPath();
 PubOrgDao orgDao = (PubOrgDao)SpringUtils.getBean(PubOrgDao.class);
@@ -37,89 +38,97 @@ SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 <title></title>
 <link rel="stylesheet" href="<%=ctx%>/css/bootstrap.min.css" />
 <link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
-<link rel="stylesheet" href="<%=ctx%>/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<link rel="stylesheet" href="<%=ctx%>/css/zTreeStyle/zTreeStyle.css"
+	type="text/css">
 <link rel="stylesheet" href="<%=ctx %>/css/common.css" />
 <link rel="stylesheet" href="<%=ctx %>/css/page.css" />
 
 <script src="<%=ctx %>/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="<%=ctx %>/js/public.js"></script>
-<script type="text/javascript" src="<%=ctx%>/js/ztree/jquery.ztree.core-3.5.js"></script>
+<script type="text/javascript"
+	src="<%=ctx%>/js/ztree/jquery.ztree.core-3.5.js"></script>
 
 </head>
 
 <body>
-     <div class="local">当前机构：<%=org.getOrgName() %></div>
-      <div class="right_main">
-         <div class="head">
-           <img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;授权信息
-         </div>
-         
-         <div class="widget-box">
-			<div class="widget-content" style="white-space:nowrap">
+	<div class="local">
+		当前机构：<%=org.getOrgName() %></div>
+	<div class="right_main">
+		<div class="head">
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;授权信息&gt;首页
+		</div>
+
+		<div class="widget-box">
+			<div class="widget-content" style="white-space: nowrap">
 				<form id="searchHw" action="" method="POST">
-					&nbsp;&nbsp;&nbsp;&nbsp;账号&nbsp;
-					<input type="text" id="staffName" onfocus="onFocusStaffName();"/>
-					&nbsp;&nbsp;&nbsp;&nbsp;硬件类型&nbsp;
-					<select id="hwType" name="criteria.hwType" style="width:100px">
+					&nbsp;&nbsp;&nbsp;&nbsp;账号&nbsp; <input type="text" id="staffName"
+						onfocus="onFocusStaffName();" />
+					&nbsp;&nbsp;&nbsp;&nbsp;硬件类型&nbsp; <select id="hwType"
+						name="criteria.hwType" style="width: 100px">
 						<option value="-1" selected="selected">全部</option>
 						<%for (PubDdv ddv : ddvList) {%>
 						<option value="<%=ddv.getDdvId()%>"><%=ddv.getValue() %></option>
 						<%} %>
-					</select>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="button" onclick="searchHw();" style="margin-bottom:10px;width:50px;"/>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="reset-Btn" class="btn" value="重置" type="reset" style="margin-bottom:10px;width:50px;"/>
-					<input type="hidden" id="staffId" name="criteria.staffId" type="text" style="width:50px;"/>
-					<div id="agencyTree" class="widget-box ztree" style="display:none; width:80%">
-					</div>
+					</select> &nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn"
+						class="btn btn-primary" value="搜索" type="button"
+						onclick="searchHw();" style="margin-bottom: 10px; width: 50px;" />
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="reset-Btn"
+						class="btn btn-primary" value="重置" type="reset"
+						style="margin-bottom: 10px; width: 50px;" /> <input type="hidden"
+						id="staffId" name="criteria.staffId" type="text"
+						style="width: 50px;" />
+					<div id="agencyTree" class="widget-box ztree"
+						style="display: none; width: 80%"></div>
 				</form>
 			</div>
 		</div>
-         
-         
-         <div class="widget-box">
-            <div class="widget-content">
-            <table class="list_table location_center" style="margin-top: 0px;">
-            	<thead>
-            		<tr>
-            		<th>机构</th>
-            		<th>用户名</th>
-            		<th>硬件类型</th>
-            		<th>已授权数量</th>
-            		<th>授权总数</th>
-            		<th>操作</th>
-            		</tr>
-            	</thead>
-            	<tbody id="hwNumTblBody">
-            		<%for (PubHwNum num : hwNumList) {
+
+		<div class="widget-box">
+			<div class="widget-content">
+				<table class="list_table location_center" style="margin-top: 0px;">
+					<thead>
+						<tr>
+							<th>机构</th>
+							<th>用户名</th>
+							<th>硬件类型</th>
+							<th>已授权数量</th>
+							<th>授权总数</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="hwNumTblBody">
+						<%for (PubHwNum num : hwNumList) {
             			PubDdv ddv = ddvDao.find(num.getHwType().toString());
             			SysStaff staffTmp = staffDao.find(num.getStaffId().toString());
             			PubOrg orgTmp = orgDao.find(staffTmp.getStaffId().toString());
             		%>
-            		<tr>
-            		<td><%=orgTmp.getOrgName() %></td>
-            		<td><%=staffTmp.getName() %></td>
-            		<td><%=ddv.getValue() %></td>
-            		<td><%=hwDao.getCountOfHw(new BigInteger(staff.getStaffId()), num.getHwType()) %></td>
-            		<td><input type="text" readonly="readonly" value="<%=num.getNum() %>"/></td>
-            		<td><a href="#">设置</a>&nbsp;&nbsp;<a href="#" hwId="<%=num.getHwId() %>" style="display:none">保存</a></td>
-            		</tr>
-            		<%} %>
-            	</tbody>
-            </table>
-            
-            <table class="list_table location_center">
-				<thead>
-					<tr>
-						<th>序号</th>
-						<th>机构</th>
-						<th>用户名</th>
-						<th>授权日期</th>
-						<th>类型</th>
-						<th>硬件序列号</th>
-					</tr>
-				</thead>
-				<tbody>
-					<%
+						<tr>
+							<td><%=orgTmp.getOrgName() %></td>
+							<td><%=staffTmp.getName() %></td>
+							<td><%=ddv.getValue() %></td>
+							<td><%=hwDao.getCountOfHw(new BigInteger(staff.getStaffId()), num.getHwType()) %></td>
+							<td><input type="text" readonly="readonly"
+								value="<%=num.getNum() %>" /></td>
+							<td><a href="#">设置</a>&nbsp;&nbsp;<a href="#"
+								hwId="<%=num.getHwId() %>" style="display: none">保存</a></td>
+						</tr>
+						<%} %>
+					</tbody>
+				</table>
+
+				<table class="list_table location_center">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>机构</th>
+							<th>用户名</th>
+							<th>授权日期</th>
+							<th>类型</th>
+							<th>硬件序列号</th>
+						</tr>
+					</thead>
+					<tbody>
+						<%
 					int num = 0;
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					for (PubHw hw : hwList) { 
@@ -128,22 +137,22 @@ SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 						SysStaff staffTmp = staffDao.find(hw.getStaffId().toString());
             			PubOrg orgTmp = orgDao.find(staffTmp.getStaffId().toString());
 					%>
-					<tr>
-					<td><%=num %></td>
-					<td><%=orgTmp.getOrgName() %></td>
-					<td><%=staffTmp.getName() %></td>
-					<td><%=sdf.format(hw.getCreateTime()) %></td>
-					<td><%=ddv.getValue()%></td>
-					<td><%=hw.getCode() %></td>
-					</tr>
-					<%} %>
-				</tbody>
-			</table>
+						<tr>
+							<td><%=num %></td>
+							<td><%=orgTmp.getOrgName() %></td>
+							<td><%=staffTmp.getName() %></td>
+							<td><%=sdf.format(hw.getCreateTime()) %></td>
+							<td><%=ddv.getValue()%></td>
+							<td><%=hw.getCode() %></td>
+						</tr>
+						<%} %>
+					</tbody>
+				</table>
 			</div>
-         </div>
-         <div class="line_info  margin_top_25"></div>
-         <div class="line_info  margin_top_25"></div>
-       </div>
+		</div>
+		<div class="line_info  margin_top_25"></div>
+		<div class="line_info  margin_top_25"></div>
+	</div>
 </body>
 <script type="text/javascript">
 

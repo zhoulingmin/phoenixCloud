@@ -13,20 +13,13 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 PubOrgDao orgDao = (PubOrgDao)SpringUtils.getBean(PubOrgDao.class);
 PubOrg org = orgDao.find(staff.getStaffId().toString());
 
+RBook book = (RBook)request.getAttribute("book");
 List<RBookRe> resList = (List<RBookRe>)request.getAttribute("resList");
 if (resList == null) {
 	resList = new ArrayList<RBookRe>();
 }
-
-PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
-List<PubDdv> subjectList = ddvDao.findByTblAndField("r_book", "SUBJECT_ID");
-List<PubDdv> stuSegList = ddvDao.findByTblAndField("r_book", "STU_SEG_ID");
-List<PubDdv> classList = ddvDao.findByTblAndField("r_book", "CLASS_ID");
-PubPressDao pressDao = (PubPressDao)SpringUtils.getBean(PubPressDao.class);
-List<PubPress> pressList = pressDao.getAll();
-
-
 RBookDao bookDao = (RBookDao)SpringUtils.getBean("RBookDao");
+PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
 
 %>
 <!doctype html>
@@ -51,9 +44,7 @@ RBookDao bookDao = (RBookDao)SpringUtils.getBean("RBookDao");
 tr td,th{
 white-space:nowrap;
 }
-select{
-	width:100px;
-}
+
 </style>
 
 </head>
@@ -62,48 +53,22 @@ select{
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;资源管理&gt;资源查询&gt;首页
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍审核&gt;书籍资源
 		</div>
 	
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-				<form id="searchBook" action="<%=ctx %>/book/searchResNew.do" method="post">
-					<input type="hidden" name="bookRes.isAudit" value="-2">
-					<input type="hidden" name="bookInfo.isAudit" value="-2">
-					书名:
-					<input type="text" name="bookInfo.name" />
-					资源名:
-					<input type="text" name="bookRes.name" />
-					学段:
-					<select name="bookInfo.stuSegId">
-						<option value="0" selected="selected">全部</option>
-						<%for (PubDdv stu : stuSegList) { %>
-						<option value="<%=stu.getDdvId()%>"><%=stu.getValue() %></option>
-						<%} %>
-					</select>
-					&nbsp;&nbsp;&nbsp;&nbsp;学科:
-					<select name="bookInfo.subjectId">
-						<option value="0">全部</option>
-						<%for (PubDdv sub: subjectList) {%>
-						<option value="<%=sub.getDdvId() %>"><%=sub.getValue() %></option>
-						<%} %>
-					</select>
-					<br />
-					年级:
-					<select name="bookInfo.classId">
-						<option value="0" selected="selected">全部</option>
-						<%for (PubDdv cls : classList) { %>
-						<option value="<%=cls.getDdvId()%>"><%=cls.getValue() %></option>
-						<%} %>
-					</select>
-					&nbsp;&nbsp;&nbsp;&nbsp;出版社:
-					<select name="bookInfo.pressId">
-						<option value="0" selected="selected">全部</option>
-						<%for (PubPress press : pressList) { %>
-						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
-						<%} %>
-					</select>
+				<form id="searchBook" action="<%=ctx %>/book/searchResByPages.do" method="post">
+					<input type="hidden" name="bookRes.bookId" value="<%=book.getId()%>">
+					<input type="hidden" name="bookInfo.isAudit" value="0">
+					起始页码:
+					<input type="text" name="start" value="0" onchange="checkNum(this)"/>
+					结束页码:
+					<input type="text" name="end" value="<%=book.getPageNum()%>" onchange="checkNum(this)"/>
+					<security:phoenixSec purviewCode="RES_QUERY">
 					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn btn-primary" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					</security:phoenixSec>
+					&nbsp;&nbsp;&nbsp;&nbsp;<input name="clear" class="btn btn-primary" value="重置" type="button" style="margin-bottom:10px;width:50px;"/>
 				</form>
 			</div>
 		</div>
@@ -124,7 +89,6 @@ select{
 						<th>资源名称</th>
 						<th>格式</th>
 						<th>是否上传</th>
-						<th>审核状态</th>
 						<th>关联页码</th>
 						<th>备注</th>
 						<th>操作</th>
@@ -132,28 +96,14 @@ select{
 				</thead>
 				<tbody id="bookResTblBody">
 					<%if (resList.size() == 0) { %>
-					<tr><td colspan="8">请搜索图书资源！</td></tr>
+					<tr><td colspan="8">请选择输入起始页码和结束页码，搜索本图书资源！</td></tr>
 					<%} else { 
 						SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 						RBookPageResDao pgRsdao = (RBookPageResDao)SpringUtils.getBean("RBookPageResDao");
 						for (RBookRe res : resList) {
 							PubDdv fmDdv = ddvDao.find(res.getFormat().toString());
 							String relatedPages = pgRsdao.getResRelatedPages(new java.math.BigInteger(res.getId()));
-							RBook book = bookDao.find(res.getBookId().toString());
 							
-							String auditStatus = "";
-							byte isAudit = res.getIsAudit();
-							if (isAudit == (byte)-1) {
-								auditStatus = "制作中";
-							} else if (isAudit == (byte)0) {
-								auditStatus = "审核中";
-							} else if (isAudit == (byte)1) {
-								auditStatus = "待上架";
-							} else if (isAudit == (byte)2) {
-								auditStatus = "已上架";
-							} else if (isAudit == (byte)3) {
-								auditStatus = "已下架";
-							}
 					%>
 					<tr>
 						<td style="width:1%"><input type="checkbox" value="<%=res.getId()%>"/></td>
@@ -161,13 +111,16 @@ select{
 						<td><%=res.getName() %></td>
 						<td><%=fmDdv.getValue() %></td>
 						<td><%if (res.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
-						<td><%=auditStatus %></td>
 						<td><%=relatedPages %></td>
 						<td><%=res.getNotes() %></td>
 						<td>
+							<security:phoenixSec purviewCode="RES_DETAIL">
 							<a cla1ss="tip-top" title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
+							</security:phoenixSec>
 							<%if (res.getIsUpload() == (byte)1) {%>
+							<security:phoenixSec purviewCode="RES_DOWNLOAD">
 							<a class="tip-top" title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							</security:phoenixSec>
 							<%} %>
 						</td>
 					</tr>
@@ -192,7 +145,7 @@ select{
 <script type="text/javascript">
 
 function checkNum(which) {
-	if (!jQuery.isNumberic(which.value)) {
+	if (which.value.length > 0 && !jQuery.isNumeric(which.value)) {
 		alert("页码必须为数字！");
 		jQuery(this).focus();
 	}
@@ -206,6 +159,13 @@ function viewRes() {
 	}
 	window.location.href = "<%=ctx%>/book/viewRes.do?bookRes.resId=" + checkedItems[0].value;
 }
+
+jQuery(document).ready(function(){
+	jQuery("input[name='clear']").on("click", function() {
+		jQuery("input[name='start']").val("");
+		jQuery("input[name='end']").val("");
+	});
+});
 
 </script>
 

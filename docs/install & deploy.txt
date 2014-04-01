@@ -61,6 +61,8 @@ mysql -uroot -pdb_pass < res_db.sql
 默认用户名: sysAdmin
 密码: 1
 
+(建议采用 IE9或以上,firefox,chrome浏览器打开凤凰云端)
+
 (2)部署资源服务器
 拷贝resserver.war至tomcat解压目录中webapps目录下。
 如果tomcat已经启动，F5刷新webapps目录后，war将自动运行。如果tomcat未启动，双击start.bat，启动tomcat。

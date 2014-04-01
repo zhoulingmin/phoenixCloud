@@ -72,7 +72,7 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;权限管理&gt;权限配置
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;权限管理&gt;首页
 		</div>
 		
 		<div class="widget-box">
@@ -114,7 +114,7 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 							</div>
 						</div>
 					</div>
-					<security:phoenixSec purviewCode="PURVIEW_CONF">
+					<security:phoenixSec purviewCode="PRIVILEGE_UPDATE">
 					<div class="span6" style="float: right;">
 						<button class="btn btn-primary" type="button" style="margin-right: 20px; margin-bottom: 20px;" onclick="savePurCfg();">保存</button>
 					</div>
@@ -141,7 +141,7 @@ agencySetting = {
 		url: "<%=ctx%>/agency/agencyMgmt!getStaff.do",
 		autoParam: ["type", "selfId"]
 	},
-	<security:phoenixSec purviewCode="PURVIEW_QUERY">
+	<security:phoenixSec purviewCode="PRIVILEGE_QUERY">
 	callback: {
 		onClick: onClickUser,
 	}

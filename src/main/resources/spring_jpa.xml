@@ -21,7 +21,7 @@
 	<bean id="ctrlDbSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
 		<property name="uniqueResourceName" value="ctrlDS" />
 		<property name="xaDataSource" ref="ctrlDbXaDS" />
-		<property name="poolSize" value="3" />
+		<property name="poolSize" value="30" />
 	</bean>
 	<bean id="ctrlDbEmFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitName" value="ctrlDbUnit" />
@@ -53,7 +53,7 @@
 	<bean id="resDbSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
 		<property name="uniqueResourceName" value="resDS" />
 		<property name="xaDataSource" ref="resDbXaDS" />
-		<property name="poolSize" value="3" />
+		<property name="poolSize" value="30" />
 	</bean>
 	<bean id="resDbEmFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitName" value="resDbUnit" />

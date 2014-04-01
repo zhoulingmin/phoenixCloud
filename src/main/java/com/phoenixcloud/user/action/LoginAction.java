@@ -77,14 +77,15 @@ public class LoginAction extends ActionSupport implements RequestAware,
 
 	public String execute() {
 		
+		if (session.get("user") != null) {
+			return "success";
+		}
+		
 		if (staff == null) {
 			return "login";
 		}
 		
 		String ret = "NotFound";
-		if (session.get("user") != null) {
-			return "success";
-		}
 		
 		SysStaff user = staffDao.findByCode(staff.getCode());
 		if (user != null) {

@@ -23,6 +23,8 @@ String ctx = request.getContextPath();
 <meta name="keywords" content="江苏凤凰数字出版传媒有限公司">
 <meta name="description" content="江苏凤凰数字出版传媒有限公司">
 <title></title>
+<link rel="stylesheet" href="<%=ctx%>/css/bootstrap.min.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 <link rel="stylesheet" href="<%=ctx %>/css/common.css" />
 <link rel="stylesheet" href="<%=ctx %>/css/page.css" />
 <link rel="stylesheet" href="<%=ctx%>/css/zTreeStyle/zTreeStyle.css" type="text/css">
@@ -39,7 +41,7 @@ String ctx = request.getContextPath();
 		当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;个人资料
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;个人资料&gt;首页
 		</div>
 		<div class="box_main">
 			<form id="editUser" action="" method="POST">
@@ -53,7 +55,7 @@ String ctx = request.getContextPath();
 							value="staff.code" /></font>
 				</div>
 				<div class="line_info margin_top_5">
-					<font class="blue">邮箱：</font><font class="black"><input
+					<font class="blue">邮箱：</font><font class="black"><input type="text"
 						name="staff.email" value="<s:property value="staff.email"/>" /></font>
 				</div>
 				<div class="line_info margin_top_5">
@@ -107,8 +109,8 @@ String ctx = request.getContextPath();
 				</div>
 				-->
 				<div class="line_info margin_top_25">
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img
-						src="<%=ctx %>/image/save_btn.jpg" onclick="saveUser();">
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="button" class="btn btn-primary" value="保存" onclick="saveUser();">
 				</div>
 			</form>
 		</div>
@@ -119,7 +121,7 @@ String ctx = request.getContextPath();
 <script type="text/javascript">
 function saveUser() {
 	jQuery.ajax({
-		url: "<%=ctx%>/system/system_saveUser.do",
+		url: "<%=ctx%>/system/saveSelf.do",
 		data: jQuery("#editUser").serialize(),
 		type: "POST",
 		async: "false",

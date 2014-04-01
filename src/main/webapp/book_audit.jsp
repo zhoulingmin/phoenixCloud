@@ -56,7 +56,7 @@ white-space:nowrap;
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍查询&gt;首页
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍审核&gt;首页
 		</div>
 	
 		<div class="widget-box">
@@ -94,20 +94,24 @@ white-space:nowrap;
 						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
 						<%} %>
 					</select>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					<security:phoenixSec purviewCode="BOOK_QUERY">
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn btn-primary" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					</security:phoenixSec>
 				</form>
 			</div>
 		</div>
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-			<security:phoenixSec purviewCode="BOOK_ADUIT_OK">
-			&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="passBook" onclick="changeBookAuditStatus(1);" value="提交发布"/>
+			<security:phoenixSec purviewCode="BOOK_AUDIT_OK">
+			&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="passBook" onclick="changeBookAuditStatus(1);" value="提交发布"/>
 			</security:phoenixSec>
-			<security:phoenixSec purviewCode="BOOK_ADUIT_NO">
-			&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="rejectBook" onclick="changeBookAuditStatus(-1);" value="打回重新制作"/>
+			<security:phoenixSec purviewCode="BOOK_AUDIT_NO">
+			&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="rejectBook" onclick="changeBookAuditStatus(-1);" value="打回重新制作"/>
 			</security:phoenixSec>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewBook();" value="详情"/>
+			<security:phoenixSec purviewCode="BOOK_DETAIL">
+			&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="viewBook" onclick="viewBook();" value="详情"/>
+			</security:phoenixSec>
 			</div>
 		</div>
 
@@ -158,15 +162,20 @@ white-space:nowrap;
 						<td><%=staffTmp.getName() %></td>
 						<td><%=book.getNotes() %></td>
 						<td>
-							<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
-							<%if (book.getIsUpload() == (byte)1) {%>
-							<a class="tip-top" data-original-title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
-							<%} %>
-							<security:phoenixSec purviewCode="BOOK_ADUIT_OK">
-							<a name="passBook" class="tip-top" data-original-title="提交上架" href="#"><i class="icon-ok-circle"></i></a>
+							<security:phoenixSec purviewCode="BOOK_DETAIL">
+							<a class="tip-top" title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
 							</security:phoenixSec>
-							<security:phoenixSec purviewCode="BOOK_ADUIT_NO">
-							<a name="rejectBook"class="tip-top" data-original-title="打回重新制作" href="#"><i class="icon-ban-circle"></i></a>
+							<%if (book.getIsUpload() == (byte)1) {%>
+							<security:phoenixSec purviewCode="BOOK_DOWNLOAD">
+							<a class="tip-top" title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							</security:phoenixSec>
+							<%} %>
+							
+							<security:phoenixSec purviewCode="BOOK_AUDIT_OK">
+							<a name="passBook" class="tip-top" title="提交上架" href="#"><i class="icon-ok-circle"></i></a>
+							</security:phoenixSec>
+							<security:phoenixSec purviewCode="BOOK_AUDIT_NO">
+							<a name="rejectBook"class="tip-top" title="打回重新制作" href="#"><i class="icon-ban-circle"></i></a>
 							</security:phoenixSec>
 						</td>
 					</tr>
@@ -217,6 +226,7 @@ function changeBookAuditStatus(flag) {
 	chkItems = jQuery("#bookTblBody").find("input:checked");
 	if (chkItems == null || chkItems.length == 0) {
 		alert("请选择要操作的书籍！");
+		chkItems = null;
 		return;
 	}
 	for (var i = 0; i < chkItems.length; i++) {
@@ -232,6 +242,7 @@ function changeBookAuditStatus(flag) {
 		async: "false",
 		timeout: 30000,
 		data: {bookIdArr:ids},
+		dataType: "json",
 		success: function(ret) {
 			if (ret == null) {
 				alert("操作失败！");
@@ -243,6 +254,7 @@ function changeBookAuditStatus(flag) {
 			}
 			
 			jQuery(chkItems).parents("tr").remove();
+			jQuery("thead tr th input:checkbox").removeAttr("checked");
 			chkItems = null;
 		},
 		error: function() {

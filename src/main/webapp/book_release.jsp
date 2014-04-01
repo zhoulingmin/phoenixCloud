@@ -55,7 +55,7 @@ white-space:nowrap;
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍查询&gt;首页
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍发布&gt;首页
 		</div>
 	
 		<div class="widget-box">
@@ -93,20 +93,24 @@ white-space:nowrap;
 						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
 						<%} %>
 					</select>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					<security:phoenixSec purviewCode="BOOK_QUERY">
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn btn-primary" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					</security:phoenixSec>
 				</form>
 			</div>
 		</div>
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-				<security:phoenixSec purviewCode="BOOK_RELEASE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="releaseBook" onclick="changeBookAuditStatus(2);" value="上架"/>
+				<security:phoenixSec purviewCode="BOOK_DETAIL">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="viewBook" onclick="viewBook();" value="详情"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="BOOK_ON_SHELF">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="releaseBook" onclick="changeBookAuditStatus(2);" value="上架"/>
 				</security:phoenixSec>
 				<security:phoenixSec purviewCode="BOOK_OFF_SHELF">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="offShelfBook" onclick="changeBookAuditStatus(3);" value="下架"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="offShelfBook" onclick="changeBookAuditStatus(3);" value="下架"/>
 				</security:phoenixSec>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewBook();" value="详情"/>
 			</div>
 		</div>
 
@@ -149,7 +153,7 @@ white-space:nowrap;
 							if (audit == (byte)-1) {
 								isAudit = "制作中";
 							} else if (audit == (byte)0) {
-								isAudit = "待审核";
+								isAudit = "审核中";
 							} else if (audit == (byte)1) {
 								isAudit = "待上架";
 							} else if (audit == (byte)2) {
@@ -173,23 +177,27 @@ white-space:nowrap;
 						<td><%=staffTmp.getName() %></td>
 						<td><%=book.getNotes() %></td>
 						<td>
-							<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
+							<security:phoenixSec purviewCode="BOOK_DETAIL">
+							<a class="tip-top" title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
+							</security:phoenixSec>
 							<%if (book.getIsUpload() == (byte)1) {%>
-							<a class="tip-top" data-original-title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							<security:phoenixSec purviewCode="BOOK_DOWNLOAD">
+							<a class="tip-top" title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							</security:phoenixSec>
 							<%} %>
 							<%if (book.getIsAudit() == (byte)1 || book.getIsAudit() == (byte)3) { %>
-							<security:phoenixSec purviewCode="BOOK_RELEASE">
-							<a name="releaseBook" class="tip-top" data-original-title="上架" href="#"><i class=" icon-share-alt"></i></a>
+							<security:phoenixSec purviewCode="BOOK_ON_SHELF">
+							<a name="releaseBook" class="tip-top" title="上架" href="#"><i class=" icon-share-alt"></i></a>
 							</security:phoenixSec>
 							<security:phoenixSec purviewCode="BOOK_OFF_SHELF">
-							<a name="offShelfBook" class="tip-top" style="display:none" data-original-title="下架" href="#"><i class=" icon-download"></i></a>
+							<a name="offShelfBook" class="tip-top" style="display:none" title="下架" href="#"><i class=" icon-download"></i></a>
 							</security:phoenixSec>
 							<%} else if (book.getIsAudit() == (byte)2) { %>
-							<security:phoenixSec purviewCode="BOOK_RELEASE">
-							<a name="releaseBook" class="tip-top" style="display:none"  data-original-title="上架" href="#"><i class=" icon-share-alt"></i></a>
+							<security:phoenixSec purviewCode="BOOK_ON_SHELF">
+							<a name="releaseBook" class="tip-top" style="display:none"  title="上架" href="#"><i class=" icon-share-alt"></i></a>
 							</security:phoenixSec>
 							<security:phoenixSec purviewCode="BOOK_OFF_SHELF">
-							<a name="offShelfBook" class="tip-top" data-original-title="下架" href="#"><i class=" icon-download"></i></a>
+							<a name="offShelfBook" class="tip-top" title="下架" href="#"><i class=" icon-download"></i></a>
 							</security:phoenixSec>
 							<%} %>
 						</td>
@@ -261,6 +269,7 @@ function changeBookAuditStatus(flag) {
 		async: "false",
 		timeout: 30000,
 		data: {bookIdArr:ids},
+		dataType:"json",
 		success: function(ret) {
 			if (ret == null) {
 				alert("操作失败！");
@@ -279,13 +288,14 @@ function changeBookAuditStatus(flag) {
 				if (ret.flag == 2) {
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","none");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook']").css("display","inline");
+					chkItems[i].setAttribute("audit", "2");
 				} else if (ret.flag == 3) {
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","inline");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook']").css("display","none");
+					chkItems[i].setAttribute("audit", "3");
 				}
-					
 			}
-
+			jQuery("table").find("input:checkbox").removeAttr("checked");
 			chkItems = null;
 		},
 		error: function() {
@@ -323,8 +333,9 @@ jQuery(document).ready(function() {
 					
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","none");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook']").css("display","inline");
-					
+					chkItems[i].getAttribute("audit", "2");
 				}
+				jQuery("table").find("input:checkbox").removeAttr("checked");
 				chkItems = null;
 			},
 			error: function() {
@@ -354,15 +365,16 @@ jQuery(document).ready(function() {
 				}
 				alert("书籍下架成功！");
 				for(var i=0; i<chkItems.length; i++){
-					if (ret.flag == 2 && chkItems[i].getAttribute("audit") == "2") {
+					if (ret.flag == 3 && chkItems[i].getAttribute("audit") != "2") {
 						jQuery(chkItems[i]).removeAttr("checked");
 						continue;
 					}
 					
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","inline");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook']").css("display","none");
-					
+					chkItems[i].getAttribute("audit", "3");
 				}
+				jQuery("table").find("input:checkbox").removeAttr("checked");
 				chkItems = null;
 			},
 			error: function() {

@@ -6,13 +6,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.mail.Session;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
@@ -35,7 +33,6 @@ import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.PubPress;
 import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.RBook;
-import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.PhoenixProperties;
@@ -191,6 +188,7 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 				book.setPressId(bookInfo.getPressId());
 				book.setStuSegId(bookInfo.getStuSegId());
 				book.setSubjectId(bookInfo.getSubjectId());
+				book.setBookNo(bookInfo.getBookNo());
 				book.setUpdateTime(new Date());
 				iBookService.saveBook(book);
 			}
@@ -387,7 +385,9 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 		
 		try {
 			PrintWriter out = response.getWriter();
-			out.print("flag:" + flag);
+			JSONObject ret = new JSONObject();
+			ret.put("flag", flag);
+			out.print(ret.toString());
 			out.flush();
 			out.close();
 		} catch (Exception e) {

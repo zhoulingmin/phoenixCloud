@@ -60,7 +60,7 @@ td input{width:106px;}
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍管理&gt;编辑目录
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍查询&gt;书籍目录
 		</div>
 		
 		<div class="widget-box">

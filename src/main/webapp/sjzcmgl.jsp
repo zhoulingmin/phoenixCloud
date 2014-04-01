@@ -56,7 +56,7 @@ width:100px;
 		当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;注册码管理&gt;注册码
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍管理&gt;注册码&gt;首页
 		</div>
 		
 		<div class="widget-content">
@@ -99,13 +99,13 @@ width:100px;
 						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
 						<%} %>
 					</select>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" onclick="searchBook();" type="button" style="margin-bottom:10px;width:50px;"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn btn-primary" value="搜索" onclick="searchBook();" type="button" style="margin-bottom:10px;width:50px;"/>
 					</form>
 				</div>
 				<table id="bookTbl">
 					<thead>
 						<tr>
-							<th style="width:1%"><input style="width: 3px;" type="checkbox" id="bookTitleChker" onclick="checkAllBook(this)"></th>
+							<th style="width:1%"><input type="checkbox" id="bookTitleChker" onclick="checkAllBook(this)"></th>
 							<th>书名</th>
 							<th>书籍编码</th>
 							<th>隶属机构</th>
@@ -144,7 +144,7 @@ width:100px;
 					<table id="regCodeTbl">
 						<thead>
 							<tr>
-								<th style="width:1%"><input style="width: 3px;" type="checkbox" onclick="checkAllRegCode(this)"></th>
+								<th style="width:1%"><input type="checkbox" onclick="checkAllRegCode(this)"></th>
 								<th>书名</th>
 								<th>注册码</th>
 								<th>有效期</th>
@@ -198,7 +198,8 @@ function batchDelRegCode() {
 			}
 			jQuery(delArr).each(function() {
 				jQuery("#regCode_" + this).parents("tr").remove();
-			});			
+			});	
+			jQuery("thead tr th input:checkbox").removeAttr("checked");
 		},
 		error: function(XMLReq, txt) {
 			if (txt != null) {
@@ -240,7 +241,7 @@ function queryRegCode() {
 			jQuery("#regCodeTbl thead").find("input:checkbox").removeAttr("checked");
 			jQuery("#regCodeTblBody").children().remove();
 			jQuery(regCodeArr).each(function(idx) {
-				var trElm = "<tr><td style='width:1%;'><input style='width:3px;' type='checkbox' id='regCode_" + this.regCodeId + "'></td>";
+				var trElm = "<tr><td style='width:1%;'><input type='checkbox' id='regCode_" + this.regCodeId + "'></td>";
 				trElm += "<td>" + this.bookName + "</td>";
 				trElm += "<td>" + this.code + "</td>";
 				trElm += "<td>" + this.validDate + "</td>";
@@ -302,7 +303,7 @@ function batchGenRegCode() {
 			jQuery("#regCodeTbl thead").find("input:checkbox").removeAttr("checked");
 			jQuery("#regCodeTblBody").children().remove();
 			jQuery(regCodeArr).each(function(idx) {
-				var trElm = "<tr><td style='width:1%;'><input style='width:3px;' type='checkbox' id='regCode_" + this.regCodeId + "'></td>";
+				var trElm = "<tr><td style='width:1%;'><input type='checkbox' id='regCode_" + this.regCodeId + "'></td>";
 				trElm += "<td>" + this.bookName + "</td>";
 				trElm += "<td>" + this.code + "</td>";
 				trElm += "<td>" + this.validDate + "</td>";
@@ -358,7 +359,7 @@ function searchBook() {
 			jQuery("#bookTblBody").children().remove();
 			jQuery("#bookTbl thead").find("input:checkbox").removeAttr("checked");
 			jQuery(bookArr).each(function(idx) {
-				var trElm = "<tr><td style='width:1%;'><input style='width:3px;' type='checkbox' id='book_" + this.bookId + "'></td>";
+				var trElm = "<tr><td style='width:1%;'><input type='checkbox' id='book_" + this.bookId + "'></td>";
 				trElm += "<td>" + this.name + "</td>";
 				trElm += "<td>" + this.bookNo + "</td>";
 				trElm += "<td>" + this.orgName + "</td>";

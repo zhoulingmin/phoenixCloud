@@ -63,7 +63,7 @@ select{
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;资源管理&gt;资源查询
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;资源管理&gt;资源审核&gt;首页
 		</div>
 	
 		<div class="widget-box">
@@ -104,22 +104,25 @@ select{
 						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
 						<%} %>
 					</select>
-					
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					<security:phoenixSec purviewCode="RES_QUERY">
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn btn-primary" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					</security:phoenixSec>
 				</form>
 			</div>
 		</div>
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-				<security:phoenixSec purviewCode="BOOK_RES_ADUIT_OK">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="passRes" onclick="changeBookAuditStatus(1);" value="提交发布"/>
+				<security:phoenixSec purviewCode="RES_DETAIL">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="viewRes" onclick="viewRes();" value="详情"/>
 				</security:phoenixSec>
-				<security:phoenixSec purviewCode="BOOK_RES_ADUIT_NO">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="rejectRes" onclick="changeBookAuditStatus(-1);" value="打回重新制作"/>
+				<security:phoenixSec purviewCode="RES_AUDIT_OK">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="passRes" onclick="changeBookAuditStatus(1);" value="提交发布"/>
 				</security:phoenixSec>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewRes" onclick="viewRes();" value="详情"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="back" onclick="history.back();;" value="返回"/>
+				<security:phoenixSec purviewCode="RES_AUDIT_NO">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="rejectRes" onclick="changeBookAuditStatus(-1);" value="打回重新制作"/>
+				</security:phoenixSec>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="back" onclick="history.back(); return false;" value="返回"/>
 			</div>
 		</div>
 
@@ -152,9 +155,9 @@ select{
 							String auditStatus = "";
 							byte isAudit = res.getIsAudit();
 							if (isAudit == (byte)-1) {
-								auditStatus = "未审核";
+								auditStatus = "制作中";
 							} else if (isAudit == (byte)0) {
-								auditStatus = "待审核";
+								auditStatus = "审核中";
 							} else if (isAudit == (byte)1) {
 								auditStatus = "待上架";
 							} else if (isAudit == (byte)2) {
@@ -173,15 +176,19 @@ select{
 						<td><%=relatedPages %></td>
 						<td><%=res.getNotes() %></td>
 						<td>
-							<a cla1ss="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
-							<security:phoenixSec purviewCode="BOOK_RES_ADUIT_OK">
-							<a name="passRes" class="tip-top" data-original-title="提交发布" href="#"><i class="icon-ok-circle"></i></a>
+							<security:phoenixSec purviewCode="RES_DETAIL">
+							<a cla1ss="tip-top" title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
 							</security:phoenixSec>
-							<security:phoenixSec purviewCode="BOOK_RES_ADUIT_NO">
-							<a name="rejectRes" class="tip-top" data-original-title="打回重新制作" href="#"><i class="icon-ban-circle"></i></a>
+							<security:phoenixSec purviewCode="RES_AUDIT_OK">
+							<a name="passRes" class="tip-top" title="提交发布" href="#"><i class="icon-ok-circle"></i></a>
+							</security:phoenixSec>
+							<security:phoenixSec purviewCode="RES_AUDIT_NO">
+							<a name="rejectRes" class="tip-top" title="打回重新制作" href="#"><i class="icon-ban-circle"></i></a>
 							</security:phoenixSec>
 							<%if (res.getIsUpload() == (byte)1) {%>
-							<a class="tip-top" data-original-title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							<security:phoenixSec purviewCode="RES_DOWNLOAD">
+							<a class="tip-top" title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							</security:phoenixSec>
 							<%} %>
 						</td>
 					</tr>
@@ -258,13 +265,20 @@ function changeBookAuditStatus(flag) {
 		async: "false",
 		timeout: 30000,
 		data: {resIdArr:ids},
-		success: function() {
-			if (flag == 1) {
+		dataType:"json",
+		success: function(ret) {
+			if (ret == null) {
+				alert("操作失败！");
+				chkItems = null;
+				return;
+			}
+			if (ret.flag == 1) {
 				alert("提交上架成功！");
-			} else if (flag == -1) {
+			} else if (ret.flag == -1) {
 				alert("打回重新制作成功！");
 			}
 			jQuery(chkItems).parents("tr").remove();
+			jQuery("thead tr th input:checkbox").removeAttr("checked");
 			chkItems = null;
 		},
 		error: function() {
@@ -279,7 +293,7 @@ function changeBookAuditStatus(flag) {
 }
 
 jQuery(document).ready(function() {
-	<security:phoenixSec purviewCode="BOOK_RES_ADUIT_OK">
+	<security:phoenixSec purviewCode="RES_AUDIT_OK">
 	jQuery("a[name='passRes']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");
@@ -306,7 +320,7 @@ jQuery(document).ready(function() {
 		return false;
 	});
 	</security:phoenixSec>
-	<security:phoenixSec purviewCode="BOOK_RES_ADUIT_NO">
+	<security:phoenixSec purviewCode="RES_AUDIT_NO">
 	jQuery("a[name='rejectRes']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");

@@ -61,9 +61,9 @@ if (staffTmp != null) {
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍制作&gt;修改书籍
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍制作&gt;修改书籍
 		</div>
-		
+		<security:phoenixSec purviewCode="BOOK_UPLOAD">
 		<div class="widget-box">
 			<div class="widget-content">
 				<div class="fileinput fileinput-new" data-provides="fileinput">
@@ -77,11 +77,13 @@ if (staffTmp != null) {
 						<a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
 						<input type="hidden" name="bookId" value="<s:property value="bookInfo.bookId"/>" />
 						<input type="hidden" name="isUpload" value="<s:property value="bookInfo.isUpload"/>" />
-						<input id="uploadBtn" type="submit" class="btn" onclick="return checkfile();" name="submit" value="上传"/>						
+						
+						<input id="uploadBtn" type="submit" class="btn btn-primary" onclick="return checkfile();" name="submit" value="上传"/>						
 					</form>
 				</div>
 			</div>
 		</div>
+		</security:phoenixSec>
 
 		<div class="widget-box">
 			<div class="widget-title">
@@ -207,7 +209,9 @@ if (staffTmp != null) {
 					</div>
 				
 					<div class="form-actions">
+						<security:phoenixSec purviewCode="BOOK_UPDATE">
 						<button class="btn btn-primary" type="button"  onclick="saveBook();">保存</button>
+						</security:phoenixSec>
 						<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();return false;">返回</button>
 					</div>
 				</form>
@@ -303,10 +307,12 @@ jQuery(function() {
 	jQuery("select").each(function(idx) {
 		jQuery(this).val(this.getAttribute("value"));
 	});
+	<security:phoenixSec purviewCode="BOOK_UPLOAD">
 	var isUpload = jQuery("input[name='isUpload']")[0].value;
 	if (isUpload != null && isUpload == 1) {
 		jQuery("#uploadBtn").val("更新");
 	}
+	</security:phoenixSec>
 });
 
 </script>

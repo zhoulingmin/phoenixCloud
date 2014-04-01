@@ -57,7 +57,7 @@ font: 13px '宋体',Arial,sans-serif;
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;账号管理&gt;编辑账号
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;账号管理&gt;修改
 		</div>
 
 		<div class="widget-box">
@@ -112,10 +112,17 @@ font: 13px '宋体',Arial,sans-serif;
 						</div>
 					</div>
 					
+					<div class="control-group">
+						<label class="control-label">邮箱</label>
+						<div class="controls">
+							<input type="text" name="staff.email" value="<s:property value="staff.email"/>">
+						</div>
+					</div>
+					
 					<div id="datetimepicker1" class="control-group">
 						<label class="control-label">有效期</label>
 						<div class="controls">
-							<input data-format="yyyy/MM/dd" type="text" name="staff.validDate" value="<%=validate%>">
+							<input data-format="yyyy/MM/dd" type="text" name="staff.validDate" value="<%=validate%>"  style="width: 206px;">
 							<span class="add-on">
 						      <i data-time-icon="icon-time" data-date-icon="icon-calendar">
 						      </i>

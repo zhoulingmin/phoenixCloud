@@ -11,6 +11,7 @@
 <%@page import="com.phoenixcloud.bean.PubDdv" %>
 <%@page import="com.phoenixcloud.util.SpringUtils" %>
 <%@page import="java.util.List" %>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%
 	String ctx = request.getContextPath();
@@ -131,7 +132,7 @@
 			<%} %>
 		</select>
 	</span>
-	<div id="datetimepicker1" class="input-append date">
+	<div id="datetimepicker1" class="input-append date" <%if(!isView){%>style="display:none"<%}%>>
 	<label style="display:inline;margin-left:20px;">创建时间:</label>
 	<input data-format="yyyy/MM/dd hh:mm:ss" type="text" id="createTime" name="createTime" style="margin-left:34px;" value="<%=createTime%>" />
 		<span class="add-on">
@@ -151,10 +152,12 @@
 	<span class="editAgency" <%if (!isView) { %>style="display:none"<%} %>>隶属机构目录:<input type="text" id="parentName" name="parentName" value="<%=parentName%>"></span>
 	<span class="editAgency">备注:<textarea id="agencyNotes" name="agencyNotes" maxlength="255" style="width: 296px; height: 255px;"><%=notes%></textarea></span>
 	<%if(!isView) { %>
-	<input style="margin-left:230px" class="btn" type="button" name="save" onclick="updateAgency();" value="保存" />
-	<input type="button" name="cancel" class="btn" onclick="self.close();" value="取消" />
+	<security:phoenixSec purviewCode="ORG_UPDATE">
+	<input style="margin-left:230px" class="btn btn-primary" type="button" name="save" onclick="updateAgency();" value="保存" />
+	</security:phoenixSec>
+	<input type="button" name="cancel" class="btn btn-primary" onclick="self.close();" value="取消" />
 	<%} else { %>
-	<input style="margin-left:310px" type="button" name="ok" class="btn" onclick="self.close();" value="确定" />
+	<input style="margin-left:310px" type="button" name="ok" class="btn btn-primary" onclick="self.close();" value="确定" />
 	<%} %>
 </body>
 <script type="text/javascript">

@@ -37,7 +37,7 @@ String ctx = request.getContextPath();
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="image/home_icon.jpg">&nbsp;机构管理&gt;首页
+			<img src="image/home_icon.jpg">&nbsp;个人信息管理&gt;机构管理&gt;首页
 		</div>
 
 		<div class="widget-box">
@@ -46,24 +46,28 @@ String ctx = request.getContextPath();
 					&nbsp;&nbsp;&nbsp;&nbsp;机构目录名称&nbsp;<input id="cataName" name="criteria.cataName" type="text" style="width:50px;"/>
 					&nbsp;&nbsp;&nbsp;&nbsp;机构名称&nbsp;<input id="orgName" name="criteria.orgName" type="text" style="width:50px;"/>
 					&nbsp;&nbsp;&nbsp;&nbsp;备注&nbsp;<input id="notes" name="criteria.notes" type="text" style="width:50px;"/>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="button" onclick="searchAgency();" style="margin-bottom:10px;width:50px;"/>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="reset-Btn" class="btn" value="重置" type="reset" style="margin-bottom:10px;width:50px;"/>
+					<security:phoenixSec purviewCode="ORG_MGMT_MENU">
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn btn-primary" value="搜索" type="button" onclick="searchAgency();" style="margin-bottom:10px;width:50px;"/>
+					</security:phoenixSec>
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="reset-Btn" class="btn btn-primary" value="重置" type="reset" style="margin-bottom:10px;width:50px;"/>
 				</form>
 			</div>
 		</div>
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
+				<security:phoenixSec purviewCode="ORG_DETAIL">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="viewAgency" onclick="popUpViewAgency();" value="详情"/>
+				</security:phoenixSec>
 				<security:phoenixSec purviewCode="ORG_ADD">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addAgency" onclick="popUpAddAgency();" value="新建"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="addAgency" onclick="popUpAddAgency();" value="新建"/>
 				</security:phoenixSec>
 				<security:phoenixSec purviewCode="ORG_UPDATE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeAgency" onclick="removeAgency();" value="删除"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="removeAgency" onclick="removeAgency();" value="删除"/>
 				</security:phoenixSec>
-				<security:phoenixSec purviewCode="ORG_DELETE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editAgency" onclick="popUpEditAgency();" value="修改"/>
+				<security:phoenixSec purviewCode="ORG_REMOVE">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="editAgency" onclick="popUpEditAgency();" value="修改"/>
 				</security:phoenixSec>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewAgency" onclick="popUpViewAgency();" value="详情"/>
 			</div>
 		</div>		
 		
@@ -508,7 +512,7 @@ function searchAgency() {
 }
 
 $(document).ready(function(){
-	<security:phoenixSec purviewCode="ORG_MENU">
+	<security:phoenixSec purviewCode="ORG_MGMT_MENU">
 	zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, zTreeNodes);
 	</security:phoenixSec>
 });

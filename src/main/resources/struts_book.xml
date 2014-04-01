@@ -56,7 +56,10 @@
 		</action>
 		
 		<action name="searchResByPages" class="bookResMgmtAction" method="searchResByPage">
-			<result name="success">/book_res_zhizuo.jsp</result>
+			<result name="book_zhizuo">/book_res_zhizuo.jsp</result>
+			<result name="book_audit">/book_audit_res_query.jsp</result>
+			<result name="book_release">/book_release_res_query.jsp</result>
+			<result name="success">/book_audit_res_query.jsp</result>
 		</action>
 		
 		<action name="modifyBookRes" class="bookResMgmtAction" method="editRes">
@@ -68,7 +71,7 @@
 		</action>
 		
 		<action name="bookResQuery" class="bookResMgmtAction" method="getAll">
-			<result name="success">/book_res_query.jsp</result>
+			<result name="success">/book_query_res_query.jsp</result>
 		</action>
 		
 		<action name="addRes" class="bookResMgmtAction" method="addRes"></action>
@@ -80,7 +83,7 @@
 		<action name="searchResNew" class="bookResMgmtAction" method="searchResNew">
 			<result name="search">/resour_search.jsp</result>
 			<result name="audit">/resour_audit.jsp</result>
-			<result name="release">/resour_audit.jsp</result>
+			<result name="release">/resour_release.jsp</result>
 		</action>
 		
 		<action name="*_*" class="{1}MgmtAction" method="{2}" >

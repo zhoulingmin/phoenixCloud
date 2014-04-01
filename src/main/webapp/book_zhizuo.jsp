@@ -56,7 +56,7 @@ white-space:nowrap;
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍查询&gt;首页
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍制作&gt;首页
 		</div>
 	
 		<div class="widget-box">
@@ -94,42 +94,46 @@ white-space:nowrap;
 						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
 						<%} %>
 					</select>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					<security:phoenixSec purviewCode="BOOK_QUERY">
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn btn-primary" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					</security:phoenixSec>
 				</form>
 			</div>
 		</div>
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
+				<security:phoenixSec purviewCode="BOOK_DETAIL">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="viewBook" onclick="viewBook();" value="详情"/>
+				</security:phoenixSec>
 				<security:phoenixSec purviewCode="BOOK_ADD">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="addBook" onclick="addBook();" value="新建"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="addBook" onclick="addBook();" value="新建"/>
 				</security:phoenixSec>
 				
 				<security:phoenixSec purviewCode="BOOK_UPDATE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="editBook();" value="修改"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="removeBook" onclick="editBook();" value="修改"/>
 				</security:phoenixSec>
 				
-				<security:phoenixSec purviewCode="BOOK_DELETE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="removeBook" onclick="removeBooks();" value="删除"/>
+				<security:phoenixSec purviewCode="BOOK_REMOVE">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="removeBook" onclick="removeBooks();" value="删除"/>
 				</security:phoenixSec>
 				
-				<security:phoenixSec purviewCode="BOOK_UPLOAD_AFFIX">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="uploadBook" onclick="uploadBook();" value="上传附件"/>
+				<security:phoenixSec purviewCode="BOOK_UPLOAD">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="uploadBook" onclick="uploadBook();" value="上传附件"/>
 				</security:phoenixSec>
 				
-				<security:phoenixSec purviewCode="BOOK_DIR_UPDATE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookDire" onclick="editBookDire();" value="目录"/>
+				<security:phoenixSec purviewCode="BOOK_DIR_QUERY">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="editBookDire" onclick="editBookDire();" value="目录"/>
 				</security:phoenixSec>
 				
-				<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookRes" onclick="editBookRes();" value="资源"/>
+				<security:phoenixSec purviewCode="RES_QUERY">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="editBookRes" onclick="editBookRes();" value="资源"/>
 				</security:phoenixSec>
 				
-				<security:phoenixSec purviewCode="BOOK_ADUIT_UP">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="commitBook" onclick="commitBook();" value="提交审核"/>
+				<security:phoenixSec purviewCode="BOOK_COMMIT_AUDIT">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="commitBook" onclick="commitBook();" value="提交审核"/>
 				</security:phoenixSec>
 				
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewBook();" value="详情"/>
 			</div>
 		</div>
 
@@ -180,36 +184,39 @@ white-space:nowrap;
 						<td><%=staffTmp.getName() %></td>
 						<td><%=book.getNotes() %></td>
 						<td>
-							<security:phoenixSec purviewCode="BOOK_UPLOAD_AFFIX">
-							<%if (book.getIsUpload() == (byte)0) {%>
-							<a class="tip-top" data-original-title="上传" href="<%=ctx%>/book/modifyBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-upload"></i></a>
-							<%} %>
+							<security:phoenixSec purviewCode="BOOK_DETAIL">
+							<a class="tip-top" title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
 							</security:phoenixSec>
-							
-							<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
+							<%if (book.getIsUpload() == (byte)0) {%>
+							<security:phoenixSec purviewCode="BOOK_UPLOAD">
+							<a class="tip-top" title="上传" href="<%=ctx%>/book/modifyBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-upload"></i></a>
+							</security:phoenixSec>
+							<%} %>
 							
 							<security:phoenixSec purviewCode="BOOK_UPDATE">
-							<a class="tip-top" data-original-title="修改" href="<%=ctx%>/book/modifyBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-edit"></i></a>
+							<a class="tip-top" title="修改" href="<%=ctx%>/book/modifyBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-edit"></i></a>
 							</security:phoenixSec>
 							
-							<security:phoenixSec purviewCode="BOOK_DIR_UPDATE">
-							<a class="tip-top" data-original-title="目录" href="<%=ctx%>/book/bookDire.do?mode=-1&bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
+							<security:phoenixSec purviewCode="BOOK_DIR_QUERY">
+							<a class="tip-top" title="目录" href="<%=ctx%>/book/bookDire.do?mode=-1&bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
 							</security:phoenixSec>
 							
-							<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
-							<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookRes.do?bookRes.bookId=<%=book.getId()%>&bookInfo.isAudit=-1"><i class="icon-file"></i></a>
+							<security:phoenixSec purviewCode="RES_QUERY">
+							<a class="tip-top" title="资源" href="<%=ctx%>/book/bookRes.do?bookRes.bookId=<%=book.getId()%>&bookInfo.isAudit=-1"><i class="icon-file"></i></a>
 							</security:phoenixSec>
 							
 							<%if (book.getIsUpload() == (byte)1) {%>
-							<a class="tip-top" data-original-title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							<security:phoenixSec purviewCode="BOOK_DOWNLOAD">
+							<a class="tip-top" title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							</security:phoenixSec>
 							<%} %>
 							
-							<security:phoenixSec purviewCode="BOOK_ADUIT_UP">
-							<a name="commitBook" class="tip-top" data-original-title="提交审核" href="#"><i class="icon-arrow-up"></i></a>
+							<security:phoenixSec purviewCode="BOOK_COMMIT_AUDIT">
+							<a name="commitBook" class="tip-top" title="提交审核" href="#"><i class="icon-arrow-up"></i></a>
 							</security:phoenixSec>
 							
-							<security:phoenixSec purviewCode="BOOK_DELETE">
-							<a name="removeBook" class="tip-top" data-original-title="删除" href="#"><i class="icon-remove"></i></a>
+							<security:phoenixSec purviewCode="BOOK_REMOVE">
+							<a name="removeBook" class="tip-top" title="删除" href="#"><i class="icon-remove"></i></a>
 							</security:phoenixSec>
 						</td>
 					</tr>
@@ -320,6 +327,7 @@ function commitBook() {
 		success: function() {
 			alert("提交审核成功！");
 			jQuery(chkItems).parents("tr").remove();
+			jQuery("thead tr th input:checkbox").removeAttr("checked");
 			chkItems = null;
 		},
 		error: function() {
@@ -358,6 +366,7 @@ function removeBooks() {
 		success: function() {
 			alert("删除成功！");
 			jQuery(chkItems).parents("tr").remove();
+			jQuery("thead tr th input:checkbox").removeAttr("checked");
 			chkItems = null;
 		},
 		error: function() {
@@ -367,7 +376,7 @@ function removeBooks() {
 }
 
 jQuery(document).ready(function() {
-	<security:phoenixSec purviewCode="BOOK_DETELE">
+	<security:phoenixSec purviewCode="BOOK_REMOVE">
 	jQuery("a[name='removeBook']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");
@@ -393,7 +402,7 @@ jQuery(document).ready(function() {
 		return false;
 	});
 	</security:phoenixSec>
-	<security:phoenixSec purviewCode="BOOK_ADUIT_UP">
+	<security:phoenixSec purviewCode="BOOK_COMMIT_AUDIT">
 	jQuery("a[name='commitBook']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");

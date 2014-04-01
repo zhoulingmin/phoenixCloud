@@ -4,6 +4,7 @@
 <%@page import="com.phoenixcloud.dao.ctrl.PubDdvDao" %>
 <%@page import="com.phoenixcloud.bean.PubDdv" %>
 <%@page import="java.util.List" %>
+<%@taglib prefix="security" uri="/WEB-INF/security.tld" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%
 	String ctx = request.getContextPath();
@@ -64,8 +65,10 @@
 	</span>
 	<span class="addAgency">备注:<textarea id="agencyNotes" name="agencyNotes" maxlength="255" style="width: 296px; height: 255px;"></textarea></span>
 	<span class="addAgency">数目:<input type="text" id="number" name="number" value="1" /></span>
-	<input style="margin-left:230px" class="btn" type="button" name="save" onclick="addAgency();" value="创建" />
-	<input type="button" name="cancel" class="btn" onclick="self.close();" value="取消" />
+	<security:phoenixSec purviewCode="ORG_ADD">
+	<input style="margin-left:230px" class="btn btn-primary" type="button" name="save" onclick="addAgency();" value="创建" />
+	</security:phoenixSec>
+	<input type="button" name="cancel" class="btn btn-primary" onclick="self.close();" value="取消" />
 	
 	
 </body>

@@ -60,17 +60,15 @@ td input{width:106px;}
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div id="contextMenu" class="dropdown clearfix">
 	    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:absolute;margin-bottom:5px;">
-	    	<security:phoenixSec purviewCode="BOOK_DIR_ADD">
+	    	<security:phoenixSec purviewCode="BOOK_EDIT_DIR">
 	        <li><a tabindex="1" href="#">新建</a></li>
-	        </security:phoenixSec>
-	        <security:phoenixSec purviewCode="BOOK_DIR_DELETE">
 	        <li><a tabindex="2" href="#">删除</a></li>
 	        </security:phoenixSec>
 	    </ul>
 	</div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍管理&gt;编辑目录
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍制作&gt;书籍目录
 		</div>
 		
 		<div class="widget-box">
@@ -132,7 +130,7 @@ td input{width:106px;}
 			<br />
 			<br />
 			<input style="float:right; margin-right:30px;" type="button" name="cancel" class="btn btn-primary" onclick="history.back();return false;" value="返回" />
-			<security:phoenixSec purviewCode="BOOK_DIR_UPDATE">
+			<security:phoenixSec purviewCode="BOOK_EDIT_DIR">
 			<input style="float:right; margin-right:30px;" class="btn btn-primary" type="button" name="update" onclick="updateDire();return false;" value="保存" />
 			</security:phoenixSec>
 		</div>
@@ -208,7 +206,7 @@ var $curDire;
 // 初始化，手动初始化
 // 初始化之后，开启异步加载
 $(document).ready(function(){
-	<security:phoenixSec purviewCode="BOOK_DIR_UPDATE">
+	<security:phoenixSec purviewCode="BOOK_EDIT_DIR">
 	$("tbody tr").on("contextmenu", function(event) {
 		$contextMenu.css({
 			  display: "block",

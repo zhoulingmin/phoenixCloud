@@ -93,16 +93,24 @@ white-space:nowrap;
 						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
 						<%} %>
 					</select>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					<security:phoenixSec purviewCode="BOOK_QUERY">
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn btn-primary" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					</security:phoenixSec>
 				</form>
 			</div>
 		</div>
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookDire" onclick="editBookDire();" value="目录"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="editBookRes" onclick="editBookRes();" value="资源"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewBook" onclick="viewBook();" value="详情"/>
+				<security:phoenixSec purviewCode="BOOK_DETAIL">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="viewBook" onclick="viewBook();" value="详情"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="BOOK_SEARCH_DIR">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="editBookDire" onclick="editBookDire();" value="目录"/>
+				</security:phoenixSec>
+				<security:phoenixSec purviewCode="BOOK_SEARCH_RES">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="editBookRes" onclick="editBookRes();" value="资源"/>
+				</security:phoenixSec>
 			</div>
 		</div>
 
@@ -145,7 +153,7 @@ white-space:nowrap;
 							if (audit == (byte)-1) {
 								isAudit = "制作中";
 							} else if (audit == (byte)0) {
-								isAudit = "待审核";
+								isAudit = "审核中";
 							} else if (audit == (byte)1) {
 								isAudit = "待上架";
 							} else if (audit == (byte)2) {
@@ -169,11 +177,19 @@ white-space:nowrap;
 						<td><%=staffTmp.getName() %></td>
 						<td><%=book.getNotes() %></td>
 						<td>
-							<a class="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
-							<a class="tip-top" data-original-title="目录" href="<%=ctx%>/book/bookDireQuery.do?mode=-2&bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
-							<a class="tip-top" data-original-title="资源" href="<%=ctx%>/book/bookResQuery.do?bookRes.bookId=<%=book.getId()%>&bookInfo.isAudit=-2"><i class="icon-file"></i></a>
+							<security:phoenixSec purviewCode="BOOK_DETAIL">
+							<a class="tip-top" title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
+							</security:phoenixSec>
+							<security:phoenixSec purviewCode="BOOK_SEARCH_DIR">
+							<a class="tip-top" title="目录" href="<%=ctx%>/book/bookDireQuery.do?mode=-2&bookId=<%=book.getId()%>"><i class="icon-th-list"></i></a>
+							</security:phoenixSec>
+							<security:phoenixSec purviewCode="BOOK_SEARCH_RES">
+							<a class="tip-top" title="资源" href="<%=ctx%>/book/bookResQuery.do?bookRes.bookId=<%=book.getId()%>&bookInfo.isAudit=-2"><i class="icon-file"></i></a>
+							</security:phoenixSec>
 							<%if (book.getIsUpload() == (byte)1) {%>
-							<a class="tip-top" data-original-title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							<security:phoenixSec purviewCode="BOOK_DOWNLOAD">
+							<a class="tip-top" title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							</security:phoenixSec>
 							<%} %>
 						</td>
 					</tr>

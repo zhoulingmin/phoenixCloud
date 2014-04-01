@@ -45,7 +45,7 @@ if (level == null || "null".equalsIgnoreCase(level)) {
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍制作&gt;创建书籍目录
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍制作&gt;书籍目录&gt;创建
 		</div>
 
 		<div class="widget-box">
@@ -88,7 +88,9 @@ if (level == null || "null".equalsIgnoreCase(level)) {
 				</div>
 				
 				<div class="form-actions">
+					<security:phoenixSec purviewCode="BOOK_EDIT_DIR">
 					<button class="btn btn-primary" type="button"  onclick="addDire();">创建</button>
+					</security:phoenixSec>
 					<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();return false;">取消</button>
 				</div>
 			</form>

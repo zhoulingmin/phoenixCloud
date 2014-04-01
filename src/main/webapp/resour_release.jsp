@@ -63,7 +63,7 @@ select{
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;资源管理&gt;资源查询
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;资源管理&gt;资源发布&gt;首页
 		</div>
 	
 		<div class="widget-box">
@@ -104,21 +104,22 @@ select{
 						<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
 						<%} %>
 					</select>
-					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					<security:phoenixSec purviewCode="RES_QUERY">
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="search-Btn" class="btn btn-primary" value="搜索" type="submit" style="margin-bottom:10px;width:50px;"/>
+					</security:phoenixSec>
 				</form>
 			</div>
 		</div>
 		
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-				<security:phoenixSec purviewCode="BOOK_RES_RELEASE">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="releaseRes" onclick="changeBookAuditStatus(2);" value="上架"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="viewRes" onclick="viewRes();" value="详情"/>
+				<security:phoenixSec purviewCode="RES_ON_SHELF">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="releaseRes" onclick="changeBookAuditStatus(2);" value="上架"/>
 				</security:phoenixSec>
-				<security:phoenixSec purviewCode="BOOK_RES_OFF_SHELF">
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="offShelfRes" onclick="changeBookAuditStatus(3);" value="下架"/>
+				<security:phoenixSec purviewCode="RES_OFF_SHELF">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="offShelfRes" onclick="changeBookAuditStatus(3);" value="下架"/>
 				</security:phoenixSec>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="viewRes" onclick="viewRes();" value="详情"/>
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn" name="back" onclick="history.back();;" value="返回"/>
 			</div>
 		</div>
 
@@ -151,9 +152,9 @@ select{
 							String auditStatus = "";
 							byte isAudit = res.getIsAudit();
 							if (isAudit == (byte)-1) {
-								auditStatus = "未审核";
+								auditStatus = "制作中";
 							} else if (isAudit == (byte)0) {
-								auditStatus = "待审核";
+								auditStatus = "审核中";
 							} else if (isAudit == (byte)1) {
 								auditStatus = "待上架";
 							} else if (isAudit == (byte)2) {
@@ -172,17 +173,27 @@ select{
 						<td><%=relatedPages %></td>
 						<td><%=res.getNotes() %></td>
 						<td>
-							<a cla1ss="tip-top" data-original-title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
+							<security:phoenixSec purviewCode="RES_DETAIL">
+							<a cla1ss="tip-top" title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
+							</security:phoenixSec>
 							<%if (res.getIsUpload() == (byte)1) {%>
-							<a class="tip-top" data-original-title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							<security:phoenixSec purviewCode="RES_DOWNLOAD">
+							<a class="tip-top" title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							</security:phoenixSec>
 							<%} %>
 							<%if (res.getIsAudit() == (byte)1 || res.getIsAudit() == (byte)3) { %>
-							<security:phoenixSec purviewCode="BOOK_RES_RELEASE">
-							<a name="releaseRes" class="tip-top" data-original-title="上架" href="#"><i class="icon-ok-circle"></i></a>
+							<security:phoenixSec purviewCode="RES_ON_SHELF">
+							<a name="releaseRes" class="tip-top" title="上架" href="#"><i class="icon-ok-circle"></i></a>
+							</security:phoenixSec>
+							<security:phoenixSec purviewCode="RES_OFF_SHELF">
+							<a name="offShelfRes" class="tip-top" style="display:none" title="下架" href="#"><i class="icon-download"></i></a>
 							</security:phoenixSec>
 							<%}else if (res.getIsAudit() == (byte)2) {%>
-							<security:phoenixSec purviewCode="BOOK_RES_OFF_SHELF">
-							<a name="offShelfRes" class="tip-top" data-original-title="下架" href="#"><i class="icon-ok-circle"></i></a>
+							<security:phoenixSec purviewCode="RES_ON_SHELF">
+							<a name="releaseRes" class="tip-top" style="display:none" title="上架" href="#"><i class="icon-ok-circle"></i></a>
+							</security:phoenixSec>
+							<security:phoenixSec purviewCode="RES_OFF_SHELF">
+							<a name="offShelfRes" class="tip-top" title="下架" href="#"><i class="icon-download"></i></a>
 							</security:phoenixSec>
 							<%} %>
 						</td>
@@ -263,6 +274,7 @@ function changeBookAuditStatus(flag) {
 		async: "false",
 		timeout: 30000,
 		data: {resIdArr:ids},
+		dataType:"json",
 		success: function(ret) {
 			if (ret == null) {
 				alert("操作失败！");
@@ -273,18 +285,21 @@ function changeBookAuditStatus(flag) {
 				alert("资源下架成功！");
 			}
 			for(var i=0; i<chkItems.length; i++){
-				if ((ret.flag == 3 && chkItems[i].getAttribute("audit") == "1") || (ret.flag == 2 && chkItems[i].getAttribute("audit") == "2")) {
+				if ((ret.flag == 3 && chkItems[i].getAttribute("audit") != "2") || (ret.flag == 2 && chkItems[i].getAttribute("audit") == "2")) {
 					jQuery(chkItems[i]).removeAttr("checked");
 					continue;
 				}
 				if (ret.flag == 2) {
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseRes']").css("display","none");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfRes']").css("display","inline");
+					chkItems[i].setAttribute("audit", "2");
 				} else if (ret.flag == 3) {
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseRes']").css("display","inline");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfRes']").css("display","none");
+					chkItems[i].setAttribute("audit", "3");
 				}
 			}
+			jQuery("table").find("input:checkbox").removeAttr("checked");
 			chkItems = null;
 		},
 		error: function() {
@@ -295,7 +310,7 @@ function changeBookAuditStatus(flag) {
 }
 
 jQuery(document).ready(function() {
-	<security:phoenixSec purviewCode="BOOK_RES_RELEASE">
+	<security:phoenixSec purviewCode="RES_ON_SHELF">
 	jQuery("a[name='releaseRes']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");
@@ -309,7 +324,8 @@ jQuery(document).ready(function() {
 			async: "false",
 			timeout: 30000,
 			data: {resIdArr: id},
-			success: function() {
+			dataType:"json",
+			success: function(ret) {
 				if (ret == null) {
 					alert("操作失败！");
 					return;
@@ -321,10 +337,12 @@ jQuery(document).ready(function() {
 						continue;
 					}
 					
-					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","none");
-					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook]'").css("display","inline");
+					jQuery(chkItems[i]).parents("tr").find("a[name='releaseRes']").css("display","none");
 					
+					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfRes']").css("display","inline");
+					chkItems[i].setAttribute("audit", "2");
 				}
+				jQuery("table").find("input:checkbox").removeAttr("checked");
 				chkItems = null;
 			},
 			error: function() {
@@ -335,7 +353,7 @@ jQuery(document).ready(function() {
 		return false;
 	});
 	</security:phoenixSec>
-	<security:phoenixSec purviewCode="BOOK_RES_OFF_SHELF">
+	<security:phoenixSec purviewCode="RES_OFF_SHELF">
 	jQuery("a[name='offShelfRes']").on("click", function(e) {
 		if (chkItems != null) {
 			alert("网络繁忙，请稍后重试！");
@@ -349,6 +367,7 @@ jQuery(document).ready(function() {
 			async: "false",
 			timeout: 30000,
 			data: {resIdArr: id},
+			dataType:"json",
 			success: function(ret) {
 				if (ret == null) {
 					alert("操作失败！");
@@ -356,13 +375,15 @@ jQuery(document).ready(function() {
 				}
 				alert("资源下架成功！");
 				for (var i = 0; i<chkItems.length; i++) {
-					if (ret.flag == 3 && chkItems[i].getAttribute("audit") == "1") {
+					if (ret.flag == 3 && chkItems[i].getAttribute("audit") != "2") {
 						jQuery(chkItems[i]).removeAttr("checked");
 						continue;
 					}
-					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","inline");
-					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook']").css("display","none");
+					jQuery(chkItems[i]).parents("tr").find("a[name='releaseRes']").css("display","inline");
+					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfRes']").css("display","none");
+					chkItems[i].setAttribute("audit", "3");
 				}
+				jQuery("table").find("input:checkbox").removeAttr("checked");
 				chkItems = null;
 			},
 			error: function() {

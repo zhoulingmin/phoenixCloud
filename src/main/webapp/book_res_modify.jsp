@@ -51,9 +51,9 @@ String pages = pgRsDao.getResRelatedPages(new java.math.BigInteger(vs.findString
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍制作&gt;修改资源
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍制作&gt;书籍资源&gt;修改
 		</div>
-		
+		<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
 		<div class="widget-box">
 			<div class="widget-content">
 				<div class="fileinput fileinput-new" data-provides="fileinput">
@@ -70,11 +70,12 @@ String pages = pgRsDao.getResRelatedPages(new java.math.BigInteger(vs.findString
 						<input type="hidden" name="bookRes.isUpload" value="<s:property value="bookRes.isUpload"/>" />
 						<input type="hidden" name="bookRes.cataAddr" value="<s:property value="bookRes.cataAddr"/>" />
 						<input type="hidden" name="bookInfo.isAudit" value="-1" />
-						<input id="uploadBtn" type="submit" class="btn" onclick="return checkfile();" name="submit" value="上传"/>						
+						<input id="uploadBtn" type="submit" class="btn btn-primary" onclick="return checkfile();" name="submit" value="上传"/>						
 					</form>
 				</div>
 			</div>
 		</div>
+		</security:phoenixSec>
 
 		<div class="widget-box">
 			<div class="widget-title">
@@ -123,9 +124,9 @@ String pages = pgRsDao.getResRelatedPages(new java.math.BigInteger(vs.findString
 					
 					
 					<div class="form-actions">
-						<secutiry:phoenixSec purviewCode="BOOK_RES_UPDATE">
+						<security:phoenixSec purviewCode="BOOK_RES_UPDATE">
 						<button class="btn btn-primary" type="button"  onclick="saveRes();">保存</button>
-						</secutiry:phoenixSec>
+						</security:phoenixSec>
 						<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();return false;">取消</button>
 					</div>
 				</form>
@@ -166,11 +167,12 @@ $(function() {
 	jQuery("select").each(function(idx) {
 		jQuery(this).val(this.getAttribute("value"));
 	});
-	
+	<security:phoenixSec purviewCode="BOOK_RES_UPLOAD">
 	var isUpload = jQuery("input[name='bookRes.isUpload']")[0].value;
 	if (isUpload != null && isUpload == 1) {
 		jQuery("#uploadBtn").val("更新");
 	}
+	</security:phoenixSec>
 });
 
 

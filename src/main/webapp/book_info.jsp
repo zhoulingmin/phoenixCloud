@@ -71,7 +71,7 @@ byte audit = (Byte)vs.findValue("bookInfo.isAudit");
 if (audit == (byte)-1) {
 	isAudit = "制作中";
 } else if (audit == (byte)0) {
-	isAudit = "待审核";
+	isAudit = "审核中";
 } else if (audit == (byte)1) {
 	isAudit = "待上架";
 } else if (audit == (byte)2) {
@@ -191,67 +191,6 @@ if (audit == (byte)-1) {
 
 	</div>
 </body>
-
-<script type="text/javascript">
-function saveUser() {
-	jQuery.ajax({
-		url: "<%=ctx%>/system/system_saveUser.do",
-		data: jQuery("#editUser").serialize(),
-		type: "POST",
-		async: "false",
-		timeout: 30000,
-		success: function() {
-			alert("修改账号成功！");
-			window.parent.location.reload(true);
-		},
-		error: function() {
-			alert("修改账号失败！");
-		}
-	});
-}
-
-function onfocusOrg() {
-	jQuery("#agencyTree").css("display", "block");
-}
-
-var zTreeObj,
-setting = {
-	view: {
-		selectedMulti: false
-	},
-	async: {
-		enable: true,
-		url: "<%=ctx%>/agency/agencyMgmt!getAgency.do",
-		autoParam: ["type", "selfId"]
-	},
-	callback: {
-		onClick: onSelOrg
-	}
-},
-zTreeNodes = [];
-
-function onSelOrg(event, treeId, treeNode, clickFlag) {
-	if (treeNode != null && !treeNode.isParent) {
-		// 1. set org field value
-		jQuery(jQuery("input[name='staff.orgId']")[0]).val(treeNode.selfId);
-		jQuery(jQuery("input[name='orgNameTmp']")[0]).val(treeNode.name);
-		// 2. hide
-		jQuery("#agencyTree").css("display", "none");
-	}
-}
-
-$(function() {	
-	jQuery("select").each(function(idx) {
-		jQuery(this).val(this.getAttribute("value"));
-	});
-	
-	zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, zTreeNodes);
-	jQuery("#agencyTree").on("blur", function(event) {
-		jQuery(this).css("display", "none");
-	});
-});
-
-</script>
 
 </html>
 

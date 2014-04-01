@@ -20,6 +20,8 @@ String ctx = request.getContextPath();
 <meta name="keywords" content="江苏凤凰数字出版传媒有限公司">
 <meta name="description" content="江苏凤凰数字出版传媒有限公司">
 <title></title>
+<link rel="stylesheet" href="<%=ctx%>/css/bootstrap.min.css" />
+<link rel="stylesheet" href="<%=ctx%>/css/unicorn.main.css" />
 <link rel="stylesheet" href="<%=ctx %>/css/common.css" />
 <link rel="stylesheet" href="<%=ctx %>/css/page.css" />
 <script src="<%=ctx %>/js/jquery-1.7.1.min.js"></script>
@@ -32,7 +34,7 @@ String ctx = request.getContextPath();
      <div class="local">当前机构：<%=org.getOrgName() %></div>
       <div class="right_main">
          <div class="head">
-           <img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;修改密码
+           <img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;修改密码&gt;首页
          </div>
          <form id="modifyPassFrm" action="" method="POST">
          <input type="hidden" name="staff.staffId" value="<s:property value="staff.staffId"/>" />
@@ -44,7 +46,7 @@ String ctx = request.getContextPath();
             <input type="password" class="txts" value="<s:property value="staff.password"/>" /><font class="grey"> 6-12位数字、字母、下划线，区分大小写</font></div>
             <div class="line_info margin_top_10"><font class="blue">&nbsp;&nbsp;&nbsp;&nbsp;新密码：</font> <input id="pass1" type="password" name="staff.password" class="txts" placeholder="新密码"></div>
             <div class="line_info margin_top_10"><font class="blue"> 确认新密码：</font> <input id="pass2" type="password" class="txts" placeholder="再次输入新密码"></div>
-            <div class="line_info margin_top_25">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="<%=ctx %>/image/save_btn.jpg" onclick="savePass();"></div>
+            <div class="line_info margin_top_25">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="保存" class="btn btn-primary" onclick="savePass();"></div>
          </div>
          </form>
        </div>

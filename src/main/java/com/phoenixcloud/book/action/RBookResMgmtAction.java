@@ -18,6 +18,8 @@ import java.util.Stack;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.dispatcher.SessionMap;
@@ -501,7 +503,9 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		
 		try {
 			PrintWriter out = response.getWriter();
-			out.print("flag:" + flag);
+			JSONObject ret = new JSONObject();
+			ret.put("flag", flag);
+			out.print(ret.toString());
 			out.flush();
 			out.close();
 		} catch (Exception e) {
@@ -535,35 +539,47 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
     }
     
     public String searchResByPage() {
-    	int startPage = -1;
-    	int endPage = -1;
-    	if (StringUtils.isNumeric(start)) {
-	    	try {
-	    		startPage = Integer.parseInt(start);
-	    	} catch (Exception e) {
-	    		MiscUtils.getLogger().info(e.toString());
+    	if (!StringUtils.isBlank(start) && !StringUtils.isBlank(end)) {
+	    	int startPage = -1;
+	    	int endPage = -1;
+	    	if (StringUtils.isNumeric(start)) {
+		    	try {
+		    		startPage = Integer.parseInt(start);
+		    	} catch (Exception e) {
+		    		MiscUtils.getLogger().info(e.toString());
+		    	}
 	    	}
+	    	if (StringUtils.isNumeric(end)) {
+	    		try {
+	        		endPage = Integer.parseInt(end);
+	        	} catch (Exception e) {
+	        		MiscUtils.getLogger().info(e.toString());
+	        	}
+	    	}
+	    	
+	    	List<BigInteger> resIds = pgRsDao.getResIdsByBookIdPageRange(bookRes.getBookId(), startPage, endPage);
+	    	List<RBookRe> resList = new ArrayList<RBookRe>();
+	    	for (BigInteger resId: resIds) {
+	    		RBookRe tmp = iBookService.findBookRes(resId.toString());
+	    		if (tmp == null || tmp.getDeleteState() == (byte)1){
+	    			continue;
+	    		}
+	    		resList.add(tmp);
+	    	}
+			this.request.put("resList", resList);
+			RBook book = iBookService.findBook(bookRes.getBookId().toString());
+			this.request.put("book", book);
+    	} else {
+    		getAll();
     	}
-    	if (StringUtils.isNumeric(end)) {
-    		try {
-        		endPage = Integer.parseInt(end);
-        	} catch (Exception e) {
-        		MiscUtils.getLogger().info(e.toString());
-        	}
-    	}
-    	
-    	List<BigInteger> resIds = pgRsDao.getResIdsByBookIdPageRange(bookRes.getBookId(), startPage, endPage);
-    	List<RBookRe> resList = new ArrayList<RBookRe>();
-    	for (BigInteger resId: resIds) {
-    		RBookRe tmp = iBookService.findBookRes(resId.toString());
-    		if (tmp == null){
-    			continue;
-    		}
-    		resList.add(tmp);
-    	}
-		this.request.put("resList", resList);
-		RBook book = iBookService.findBook(bookRes.getBookId().toString());
-		this.request.put("book", book);
+		
+		if (bookInfo.getIsAudit() == (byte)-1) {
+			return "book_zhizuo";
+		} else if (bookInfo.getIsAudit() == (byte)0) {
+			return "book_audit";
+		} else if (bookInfo.getIsAudit() == (byte)1) {
+			return "book_release";
+		}
 		
 		return "success";
     }
