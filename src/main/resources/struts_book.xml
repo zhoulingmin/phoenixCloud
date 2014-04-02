@@ -26,6 +26,10 @@
 			<result name="querySearch">/book_query.jsp</result>
 		</action>
 		
+		<action name="searchBookNewForResMake" class="bookMgmtAction" method="searchBookNew">
+			<result name="querySearch">/resour_make.jsp</result>
+		</action>
+		
 		<action name="searchRes" class="bookResMgmtAction" method="searchRes">
 			<result name="editSearch">/bookRes_getAll.jsp</result>
 			<result name="querySearch">/bookRes_queryAll.jsp</result>

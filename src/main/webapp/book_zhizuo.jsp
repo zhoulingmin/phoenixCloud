@@ -175,7 +175,9 @@ white-space:nowrap;
 						<td><%=book.getName() %></td>
 						<td><%=book.getBookNo() %></td>
 						<td><%=orgTmp.getOrgName() %></td>
-						<td><%if (book.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
+						<td><%if (book.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %>
+							<input type="hidden" name="isUpload" value="<%=book.getIsUpload() %>" />
+						</td>
 						<td><%=subTmp.getValue() %></td>
 						<td><%=stuTmp.getValue() %></td>
 						<td><%=clsTmp.getValue() %></td>
@@ -313,6 +315,9 @@ function commitBook() {
 		return;
 	}
 	for (var i = 0; i < chkItems.length; i++) {
+		if (jQuery(chkItems[i]).parents("tr").find("input[name='isUpload']")[0].value == 0) {
+			continue;
+		}
 		ids += chkItems[i].value;
 		if (i != (chkItems.length - 1)) {
 			ids += ",";
@@ -327,7 +332,14 @@ function commitBook() {
 		data: {bookIdArr:ids},
 		success: function() {
 			alert("提交审核成功！");
-			jQuery(chkItems).parents("tr").remove();
+			jQuery(chkItems).each(function(){
+				jQuery(this).parents("tr").remove();
+				if (jQuery(chkItems[i]).parents("tr").find("input[name='isUpload']")[0].value == 0) {
+					jQuery(this).parents("tr").find("input:checkbox").removeAttr("checked");
+					return;
+				}
+				jQuery(this).parents("tr").remove();
+			});
 			jQuery("thead tr th input:checkbox").removeAttr("checked");
 			chkItems = null;
 		},
@@ -411,6 +423,11 @@ jQuery(document).ready(function() {
 			return;
 		}
 		chkItems = jQuery(this.parentNode.parentNode).find("input:first-child");
+		if (jQuery(chkItems).parents("tr").find("input[name='isUpload']")[0].value == 0) {
+			alert("请先上传图书文件后，再提交审核！");
+			chkItems = null;
+			return;
+		}
 		var id = chkItems.val().toString();
 		jQuery.ajax({
 			url: "<%=ctx%>/book/book_changeAuditStatus.do?flag=0",

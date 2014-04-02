@@ -60,7 +60,7 @@ white-space:nowrap;
 	
 		<div class="widget-box">
 			<div class="widget-content" style="white-space:nowrap;">
-				<form id="searchBook" action="<%=ctx %>/book/searchBookNew.do" method="post">
+				<form id="searchBook" action="<%=ctx %>/book/searchBookNewForResMake.do" method="post">
 					<input type="hidden" name="bookInfo.isAudit" value="-2" >
 					书名:
 					<input type="text" name="bookInfo.name" />

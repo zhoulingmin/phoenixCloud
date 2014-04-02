@@ -37,7 +37,7 @@ String ctx = request.getContextPath();
 		当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;凤凰书城云端&gt;首页
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;凤凰书城云端
 		</div>
 		<div class="box_main">
 		</div>

@@ -242,6 +242,12 @@ function checkfile() {
 		alert("请先选择文件！");
 		return false;
 	}
+	
+	if (jQuery("#bookFile").val().lastIndexOf(".pkg") == -1) {
+		alert("请选择pkg格式的文件！");
+		return false;
+	}
+	
 	return true;
 }
 

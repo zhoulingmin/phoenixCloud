@@ -67,7 +67,7 @@ width:100px;
 				</div>
 				<div class="widget-content" style="white-space:nowrap">
 					<form id="searchBook" method="post" action="/phoenixCloud/book/searchBook.do?dataType=JSON">
-					<input type="hidden" name="bookInfo.isAudit" value="2" >
+					<input type="hidden" name="bookInfo.isAudit" value="-2" >
 					书名:
 					<input type="text" name="bookInfo.name" />
 					学段:

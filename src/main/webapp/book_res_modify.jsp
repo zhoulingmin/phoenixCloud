@@ -138,7 +138,7 @@ String pages = pgRsDao.getResRelatedPages(new java.math.BigInteger(vs.findString
 <script type="text/javascript">
 
 function checkfile() {
-	if(jQuery("#bookFile").val().length == 0) {
+	if(jQuery("#resFile").val().length == 0) {
 		alert("请先选择文件！");
 		return false;
 	}
