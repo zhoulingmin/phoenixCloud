@@ -171,9 +171,8 @@ setting = {
 	},
 	async: {
 		enable: true,
-		url: "<%=ctx%>/agency/agencyMgmt!getStaff.do",
-		autoParam: ["type", "selfId"],
-		otherParam: ["isClient", "true"]
+		url: "<%=ctx%>/agency/agencyMgmt!getStaff.do?isClient=true",
+		autoParam: ["type", "selfId"]
 	},
 	callback: {
 		onClick: onSelUser

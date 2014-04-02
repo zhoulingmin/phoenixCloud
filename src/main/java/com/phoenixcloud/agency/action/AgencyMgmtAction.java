@@ -545,5 +545,15 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		}
 		return null;
 	}
+	public void addActionError(String anErrorMessage) {
+        //validationAware.addActionError(anErrorMessage);
+    }
 
+    public void addActionMessage(String aMessage) {
+        //validationAware.addActionMessage(aMessage);
+    }
+
+    public void addFieldError(String fieldName, String errorMessage) {
+        //validationAware.addFieldError(fieldName, errorMessage);
+    }
 }

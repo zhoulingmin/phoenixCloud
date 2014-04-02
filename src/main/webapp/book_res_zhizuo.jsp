@@ -242,7 +242,7 @@ function addRes() {
 	if (checkedItems != null && checkedItems.length == 1) {
 		parentId = checkedItems[0].value;
 	}
-	window.location.href = "<%=ctx%>/RES_ADD.jsp?mode=-1&bookId=<%=book.getBookId()%>&parentId=" + parentId;
+	window.location.href = "<%=ctx%>/book_res_add.jsp?mode=-1&bookId=<%=book.getBookId()%>&parentId=" + parentId;
 }
 
 function editRes() {
