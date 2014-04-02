@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.phoenixcloud.bean.PubDdv;
 import com.phoenixcloud.bean.PubHw;
 import com.phoenixcloud.bean.PubHwNum;
 import com.phoenixcloud.bean.PubOrg;
@@ -31,6 +32,7 @@ import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
 import com.phoenixcloud.bean.SysStaffRegCode;
+import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.PubHwDao;
 import com.phoenixcloud.dao.ctrl.PubHwNumDao;
 import com.phoenixcloud.dao.ctrl.PubOrgDao;
@@ -93,6 +95,8 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	
 	@Autowired
 	private PubOrgDao orgDao;
+	
+	@Autowired PubDdvDao ddvDao;
 	
 	private String staffIdArr;
 	
@@ -289,6 +293,20 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		staff.setCreateTime(curDate);
 		staff.setUpdateTime(curDate);
 		iSysService.saveStaff(staff);
+		
+		Date date = new Date();
+		List<PubDdv> ddvList = ddvDao.findByTblAndField("pub_hardware", "HW_TYPE");
+		for (PubDdv ddv : ddvList) {
+			PubHwNum num = new PubHwNum();
+			num.setHwType(new BigInteger(ddv.getId()));
+			num.setNum(0);
+			num.setNotes("");
+			num.setStaffId(new BigInteger(staff.getId()));
+			num.setCreateTime(date);
+			num.setUpdateTime(date);
+			hwNumDao.persist(num);
+		}
+		
 		return null;
 	}
 	
