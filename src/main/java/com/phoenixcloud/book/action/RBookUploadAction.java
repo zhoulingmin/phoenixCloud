@@ -149,7 +149,7 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	}
 	
 	private JSONObject upoadBookToResServer(String url) throws Exception {
-		
+		MiscUtils.getLogger().info("URL: " + url);
 		Client client = new Client();
 		WebResource webRes = client.resource(url);
 		webRes.accept(MediaType.APPLICATION_JSON);

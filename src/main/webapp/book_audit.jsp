@@ -56,7 +56,7 @@ white-space:nowrap;
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍审核&gt;首页
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍审核
 		</div>
 	
 		<div class="widget-box">
@@ -246,6 +246,8 @@ function changeBookAuditStatus(flag) {
 		success: function(ret) {
 			if (ret == null) {
 				alert("操作失败！");
+				chkItems = null;
+				return;
 			}
 			if (ret.flag == 1) {
 				alert("提交上架成功！");

@@ -55,7 +55,7 @@ SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 		当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;授权信息&gt;首页
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;授权信息
 		</div>
 
 		<div class="widget-box">
@@ -172,7 +172,8 @@ setting = {
 	async: {
 		enable: true,
 		url: "<%=ctx%>/agency/agencyMgmt!getStaff.do",
-		autoParam: ["type", "selfId"]
+		autoParam: ["type", "selfId"],
+		otherParam: ["isClient", "true"]
 	},
 	callback: {
 		onClick: onSelUser

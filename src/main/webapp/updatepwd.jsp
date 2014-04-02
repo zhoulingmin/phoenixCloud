@@ -34,7 +34,7 @@ String ctx = request.getContextPath();
      <div class="local">当前机构：<%=org.getOrgName() %></div>
       <div class="right_main">
          <div class="head">
-           <img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;修改密码&gt;首页
+           <img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;修改密码
          </div>
          <form id="modifyPassFrm" action="" method="POST">
          <input type="hidden" name="staff.staffId" value="<s:property value="staff.staffId"/>" />

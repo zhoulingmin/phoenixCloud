@@ -63,7 +63,7 @@ select{
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;资源管理&gt;资源发布&gt;首页
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;资源管理&gt;资源发布
 		</div>
 	
 		<div class="widget-box">
@@ -278,6 +278,8 @@ function changeBookAuditStatus(flag) {
 		success: function(ret) {
 			if (ret == null) {
 				alert("操作失败！");
+				chkItems = null;
+				return;
 			}
 			if (ret.flag == 2) {
 				alert("资源上架成功！");
@@ -293,10 +295,12 @@ function changeBookAuditStatus(flag) {
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseRes']").css("display","none");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfRes']").css("display","inline");
 					chkItems[i].setAttribute("audit", "2");
+					jQuery(chkItems[i]).parents("tr").children("td:nth-child(6)").html("已上架");
 				} else if (ret.flag == 3) {
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseRes']").css("display","inline");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfRes']").css("display","none");
 					chkItems[i].setAttribute("audit", "3");
+					jQuery(chkItems[i]).parents("tr").children("td:nth-child(6)").html("已下架");
 				}
 			}
 			jQuery("table").find("input:checkbox").removeAttr("checked");
@@ -328,6 +332,7 @@ jQuery(document).ready(function() {
 			success: function(ret) {
 				if (ret == null) {
 					alert("操作失败！");
+					chkItems = null;
 					return;
 				}
 				alert("资源上架成功！");
@@ -338,9 +343,9 @@ jQuery(document).ready(function() {
 					}
 					
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseRes']").css("display","none");
-					
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfRes']").css("display","inline");
 					chkItems[i].setAttribute("audit", "2");
+					jQuery(chkItems[i]).parents("tr").children("td:nth-child(6)").html("已上架");
 				}
 				jQuery("table").find("input:checkbox").removeAttr("checked");
 				chkItems = null;
@@ -371,6 +376,7 @@ jQuery(document).ready(function() {
 			success: function(ret) {
 				if (ret == null) {
 					alert("操作失败！");
+					chkItems = null;
 					return;
 				}
 				alert("资源下架成功！");
@@ -382,6 +388,7 @@ jQuery(document).ready(function() {
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseRes']").css("display","inline");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfRes']").css("display","none");
 					chkItems[i].setAttribute("audit", "3");
+					jQuery(chkItems[i]).parents("tr").children("td:nth-child(6)").html("已下架");
 				}
 				jQuery("table").find("input:checkbox").removeAttr("checked");
 				chkItems = null;

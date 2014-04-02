@@ -56,7 +56,7 @@ white-space:nowrap;
 	<div class="local">当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍制作&gt;首页
+			<img src="<%=ctx%>/image/home_icon.jpg">&nbsp;书籍管理&gt;书籍制作
 		</div>
 	
 		<div class="widget-box">
@@ -309,6 +309,7 @@ function commitBook() {
 	chkItems = jQuery("#bookTblBody").find("input:checked");
 	if (chkItems == null || chkItems.length == 0) {
 		alert("请选择要操作的书籍！");
+		chkItems = null;
 		return;
 	}
 	for (var i = 0; i < chkItems.length; i++) {
@@ -348,6 +349,7 @@ function removeBooks() {
 	chkItems = jQuery("#bookTblBody").find("input:checked");
 	if (chkItems == null || chkItems.length == 0) {
 		alert("请选择要删除的书籍！");
+		chkItems = null;
 		return;
 	}
 	for (var i = 0; i < chkItems.length; i++) {

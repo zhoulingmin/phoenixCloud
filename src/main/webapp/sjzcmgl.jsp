@@ -56,7 +56,7 @@ width:100px;
 		当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍管理&gt;注册码&gt;首页
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;书籍管理&gt;注册码
 		</div>
 		
 		<div class="widget-content">

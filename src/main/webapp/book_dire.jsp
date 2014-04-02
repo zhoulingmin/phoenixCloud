@@ -162,7 +162,7 @@ function updateDire() {
 				if (updatedCount != count) {
 					alert("保存书籍目录失败！");
 				} else {
-					alert("保存书籍成功！");
+					alert("保存书籍目录成功！");
 				}
 				isAjax = false;
 			}, count * 30 * 1000);
@@ -187,7 +187,7 @@ function updateDire() {
 			success: function() {
 				updatedCount++;
 				if (updatedCount == count) {
-					alert("保存书籍成功！");
+					alert("保存书籍目录成功！");
 					clearTimeout(timerCheck);
 					isAjax = false;
 				}
@@ -208,6 +208,9 @@ var $curDire;
 $(document).ready(function(){
 	<security:phoenixSec purviewCode="BOOK_EDIT_DIR">
 	$("tbody tr").on("contextmenu", function(event) {
+		if (jQuery(this).index() < 2) {
+			return false;
+		}
 		$contextMenu.css({
 			  display: "block",
 			  left: event.clientX,

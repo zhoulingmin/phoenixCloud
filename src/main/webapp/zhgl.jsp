@@ -68,6 +68,7 @@ PubOrg org = orgDao.find(staff.getOrgId().toString());
 							<th style='width:1%'><input type="checkbox" id="titleChk" onchange="checkAll(this)"></th>
 							<th>用户名</th>
 							<th>账号</th>
+							<th>账号类型</th>
 							<th>创建时间</th>
 							<th>所属机构</th>
 							<th>是否有效</th>
@@ -75,7 +76,7 @@ PubOrg org = orgDao.find(staff.getOrgId().toString());
 					</thead>
 					<tbody id="userTblBody">
 						<tr>
-							<td colspan="5">请点击某个机构，进行用户搜索！</td>
+							<td colspan="6">请点击某个机构，进行用户搜索！</td>
 						</tr>
 					</tbody>
 				</table>
@@ -111,6 +112,7 @@ function getAll() {
 				trElm += "<td style='width:1%'><input type='checkbox' staffId='" + this.id + "'/></td>";
 				trElm += "<td>" + this.name + "</td>";
 				trElm += "<td>" + this.code + "</td>";
+				trElm += "<td>" + this.type + "</td>";
 				trElm += "<td>" + this.createTime + "</td>";
 				trElm += "<td>" + this.orgName + "</td>";
 				trElm += "<td>" + this.isExpired + "</td>";
@@ -231,6 +233,7 @@ function onSelOrg(event, treeId, treeNode, clickFlag) {
 					trElm += "<td style='width:1%'><input type='checkbox' staffId='" + this.id + "'/></td>";
 					trElm += "<td>" + this.name + "</td>";
 					trElm += "<td>" + this.code + "</td>";
+					trElm += "<td>" + this.type + "</td>";
 					trElm += "<td>" + this.createTime + "</td>";
 					trElm += "<td>" + this.orgName + "</td>";
 					trElm += "<td>" + this.isExpired + "</td>";

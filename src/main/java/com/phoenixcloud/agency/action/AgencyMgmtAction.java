@@ -22,9 +22,11 @@ import org.springframework.stereotype.Component;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.agency.service.IAgencyMgmtService;
+import com.phoenixcloud.bean.PubDdv;
 import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.PubOrgCata;
 import com.phoenixcloud.bean.SysStaff;
+import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.util.MiscUtils;
 
@@ -52,6 +54,11 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 	
 	@Autowired
 	private SysStaffDao staffDao;
+	
+	@Autowired
+	private PubDdvDao ddvDao;
+	
+	private boolean isClient;
 	
 	public javax.servlet.http.HttpServletResponse getResponse() {
 		return response;
@@ -162,6 +169,14 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 	
 	public com.phoenixcloud.agency.vo.Criteria getCriteria() {
 		return criteria;
+	}
+
+	public boolean isClient() {
+		return isClient;
+	}
+
+	public void setClient(boolean isClient) {
+		this.isClient = isClient;
 	}
 
 	public void setCriteria(com.phoenixcloud.agency.vo.Criteria criteria) {
@@ -306,15 +321,25 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 			}
 		} else { 
 			// get all staffs belong to this org
-			List<SysStaff> staffList = staffDao.findByOrgId(selfId);
-			for (SysStaff staff : staffList) {
-				JSONObject jsonObj = new JSONObject();
-				jsonObj.put("type", "staff");
-				jsonObj.put("selfId", staff.getId());
-				jsonObj.put("name", staff.getName());
-				jsonObj.put("isParent", false);
-				jsonArr.add(jsonObj);
-			}
+			PubDdv ddv = ddvDao.findClientUserDdv();
+			do {
+				if (isClient && ddv == null) {
+					break;
+				}
+				List<SysStaff> staffList = staffDao.findByOrgId(selfId);
+				for (SysStaff staff : staffList) {
+					if ((isClient && !staff.getStaffTypeId().toString().equals(ddv.getId())) // 只显示客户端的用户
+							|| (!isClient && staff.getStaffTypeId().toString().equals(ddv.getId()))) { // 只显示server用户
+						continue;
+					}
+					JSONObject jsonObj = new JSONObject();
+					jsonObj.put("type", "staff");
+					jsonObj.put("selfId", staff.getId());
+					jsonObj.put("name", staff.getName());
+					jsonObj.put("isParent", false);
+					jsonArr.add(jsonObj);
+				}
+			} while(false);
 		}
 		
 		response.setCharacterEncoding("utf-8"); 

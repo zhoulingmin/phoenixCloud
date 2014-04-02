@@ -247,8 +247,8 @@ function checkfile() {
 
 function checkBookNoExist(){
 	var bookNo = jQuery("input[name='bookInfo.bookNo']")[0];
-	if (bookNo == null || bookNo.value.trim().length == 0 || !jQuery.isNumeric(bookNo.value.trim())) {
-		alert("书籍编码不能为空，且必须为数字！");
+	if (bookNo == null || bookNo.value.trim().length == 0) {
+		alert("书籍编码不能为空！");
 		return;
 	}
 	

@@ -41,7 +41,7 @@ String ctx = request.getContextPath();
 		当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;个人资料&gt;首页
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;个人资料
 		</div>
 		<div class="box_main">
 			<form id="editUser" action="" method="POST">

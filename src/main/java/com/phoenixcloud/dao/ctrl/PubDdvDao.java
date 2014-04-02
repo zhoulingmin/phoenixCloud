@@ -36,4 +36,11 @@ public class PubDdvDao extends AbstractCtrlDao<PubDdv> {
 		}
 		return ddvList;
 	}
+	
+	public PubDdv findClientUserDdv() {
+		Query query = entityManager.createQuery("select pd from PubDdv pd " +
+				"where pd.tableName = 'sys_staff' and pd.fieldName = 'STAFF_TYPE_ID' " +
+				"and pd.value='客户端用户' and pd.deleteState = '0'");
+		return getSingleResultOrNull(query);
+	}
 }

@@ -72,7 +72,7 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		当前机构：<%=org.getOrgName() %></div>
 	<div class="right_main">
 		<div class="head">
-			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;权限管理&gt;首页
+			<img src="<%=ctx %>/image/home_icon.jpg">&nbsp;个人信息管理&gt;权限管理
 		</div>
 		
 		<div class="widget-box">
@@ -139,7 +139,8 @@ agencySetting = {
 	async: {
 		enable: true,
 		url: "<%=ctx%>/agency/agencyMgmt!getStaff.do",
-		autoParam: ["type", "selfId"]
+		autoParam: ["type", "selfId"],
+		otherParam: ["isClient", "false"]
 	},
 	<security:phoenixSec purviewCode="PRIVILEGE_QUERY">
 	callback: {

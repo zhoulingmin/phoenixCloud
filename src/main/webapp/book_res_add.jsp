@@ -107,7 +107,7 @@ List<PubDdv> formatList = ddvDao.findByTblAndField("r_book_res", "FORMAT");
 				</div>
 				
 				<div class="form-actions">
-					<security:phoenixSec purviewCode="BOOK_RES_ADD">
+					<security:phoenixSec purviewCode="RES_ADD">
 					<button class="btn btn-primary" type="button"  onclick="addRes();">创建</button>
 					</security:phoenixSec>
 					<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();return false;">取消</button>

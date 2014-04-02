@@ -81,14 +81,17 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 			<a href="#">资源管理</a>
 		</h3>
 		<ul>
-			<sec:phoenixSec purviewCode="RES_SEARCH_MENU">
-			<li><a href="<%=ctx %>/resour_search.jsp" target="f_r">资源查询</a></li>
+			<sec:phoenixSec purviewCode="RES_MAKE_MENU">
+			<li><a href="<%=ctx %>/resour_make.jsp" target="f_r">资源制作</a></li>
 			</sec:phoenixSec>
 			<sec:phoenixSec purviewCode="RES_AUDIT_MENU">
 			<li><a href="<%=ctx %>/resour_audit.jsp" target="f_r">资源审核</a></li>
 			</sec:phoenixSec>
 			<sec:phoenixSec purviewCode="RES_RELEASE_MENU">
 			<li><a href="<%=ctx %>/resour_release.jsp" target="f_r">资源发布</a></li>
+			</sec:phoenixSec>
+			<sec:phoenixSec purviewCode="RES_SEARCH_MENU">
+			<li><a href="<%=ctx %>/resour_search.jsp" target="f_r">资源查询</a></li>
 			</sec:phoenixSec>
 		</ul>
 		</sec:phoenixSec>

@@ -109,7 +109,7 @@ String fileSizeMarker = "${fileSize_}";
 				</div>
 				
 				<div class="form-actions">
-					<security:phoenixSec purviewCode="BOOK_RES_ADD">
+					<security:phoenixSec purviewCode="RES_ADD">
 					<button class="btn btn-primary" type="button"  onclick="saveRes();">批量上传资源</button>
 					</security:phoenixSec>
 					<button class="btn btn-primary" style="margin-left:50px" onclick="history.back();return false;">取消</button>
