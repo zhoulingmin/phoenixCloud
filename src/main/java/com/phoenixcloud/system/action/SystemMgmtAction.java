@@ -338,11 +338,20 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	}
 	
 	public String saveUser() throws Exception{
+		boolean isClientUser = false;
+		
 		SysStaff oldStaff = iSysService.findStaffById(staff.getStaffId());
 		if (oldStaff == null) {
 			throw new Exception("系统中不存在此账户，保存失败！");
 		}
-		oldStaff.setUpdateTime(new Date());
+		
+		PubDdv clientDdv = ddvDao.findClientUserDdv();
+		if (clientDdv != null && clientDdv.getId().equals(oldStaff.getStaffTypeId().toString())) {
+			isClientUser = true;
+		}
+		
+		Date date = new Date();
+		oldStaff.setUpdateTime(date);
 		oldStaff.setEmail(staff.getEmail());
 		oldStaff.setName(staff.getName());
 		oldStaff.setOrgId(staff.getOrgId());
@@ -352,6 +361,39 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		oldStaff.setStaffTypeId(staff.getStaffTypeId());
 				
 		iSysService.saveStaff(oldStaff);
+		
+		List<PubDdv> hwTypeList = ddvDao.findByTblAndField("pub_hardware", "HW_TYPE");
+		if (!isClientUser && clientDdv != null && clientDdv.getId().equals(staff.getStaffTypeId().toString())) {
+			// server end user was changed to client end user
+			for (PubDdv hwType : hwTypeList) {
+				PubHwNum num = hwNumDao.findByStaffIdHwTypeIgnoreDelState(new BigInteger(staff.getId()), new BigInteger(hwType.getId()));
+				if (num != null) {
+					num.setUpdateTime(date);
+					num.setDeleteState((byte)0);
+					hwNumDao.merge(num);
+				} else {
+					num = new PubHwNum();
+					num.setHwType(new BigInteger(hwType.getId()));
+					num.setNum(0);
+					num.setNotes("");
+					num.setStaffId(new BigInteger(staff.getId()));
+					num.setCreateTime(date);
+					num.setUpdateTime(date);
+					hwNumDao.persist(num);
+				}
+			}
+		} else {
+			for (PubDdv hwType : hwTypeList) {
+				PubHwNum num = hwNumDao.findByStaffIdHwTypeIgnoreDelState(new BigInteger(staff.getId()), 
+						new BigInteger(hwType.getId()));
+				if (num != null) {
+					num.setUpdateTime(date);
+					num.setDeleteState((byte)1);
+					hwNumDao.merge(num);
+				}
+			}
+		}
+		
 		return null;
 	}
 	

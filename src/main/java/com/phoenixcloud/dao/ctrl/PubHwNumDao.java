@@ -52,4 +52,16 @@ public class PubHwNumDao extends AbstractCtrlDao<PubHwNum>{
 		}
 		return query.getResultList();
 	}
+	
+	public PubHwNum findByStaffIdHwTypeIgnoreDelState(BigInteger statffId, BigInteger hwType) {
+		Query query = entityManager.createQuery("select num from PubHwNum num where num.staffId = ?1" +
+				" and num.hwType = ?2");
+		query.setParameter(1, statffId);
+		query.setParameter(2, hwType);
+		List<PubHwNum> numList = query.getResultList();
+		if (numList.size() > 0) {
+			return numList.get(0);
+		}
+		return null;
+	}
 }
