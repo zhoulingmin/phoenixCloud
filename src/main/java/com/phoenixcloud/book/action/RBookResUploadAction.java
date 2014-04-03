@@ -11,11 +11,13 @@ import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 import net.sf.json.JSONObject;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
@@ -186,7 +188,15 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 			MiscUtils.getLogger().info(retObj.get("error"));
 			return "success";
 		}
-		res.setAllAddr(baseURL.toString() + "downloadFile" + suffixURL);
+		
+		HttpServletRequest req = ServletActionContext.getRequest();
+		String scheme = phoenixProp.getProperty("protocol_file_transfer") + "://";
+		String host = req.getServerName();
+		int port = req.getServerPort();
+		String ctxName = phoenixProp.getProperty("res_server_appname");
+		
+		res.setAllAddr(scheme + host + ":" + port + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
+		
 		res.setUpdateTime(new Date());
 		res.setIsUpload((byte)1);
 		res.setName(resFileFileName);
