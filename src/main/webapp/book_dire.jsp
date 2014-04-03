@@ -208,8 +208,14 @@ var $curDire;
 $(document).ready(function(){
 	<security:phoenixSec purviewCode="BOOK_EDIT_DIR">
 	$("tbody tr").on("contextmenu", function(event) {
-		if (jQuery(this).index() < 2) {
+		var index = jQuery(this).index();
+		if (index == 1 || index == 2) { // 封面及目录节点 不可以删除
 			return false;
+		}
+		if (index == 0) {
+			$contextMenu.find("li:eq(1)").css("display", "none");
+		} else {
+			$contextMenu.find("li:eq(1)").css("display", "inline");
 		}
 		$contextMenu.css({
 			  display: "block",
@@ -220,6 +226,9 @@ $(document).ready(function(){
 		return false;
 	});
 	</security:phoenixSec>
+	
+	$("tbody tr:eq(1) td:eq(1)").html($("tbody tr:eq(1) td:eq(1) input:eq(0)").val());
+	$("tbody tr:eq(2) td:eq(1)").html($("tbody tr:eq(2) td:eq(1) input:eq(0)").val());
 	
 	$("tbody tr").on("mouseover", function(event) {
 		$(this).attr("bgcolor", "#E6E6FA");

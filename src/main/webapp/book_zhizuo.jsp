@@ -333,7 +333,6 @@ function commitBook() {
 		success: function() {
 			alert("提交审核成功！");
 			jQuery(chkItems).each(function(){
-				jQuery(this).parents("tr").remove();
 				if (jQuery(chkItems[i]).parents("tr").find("input[name='isUpload']")[0].value == 0) {
 					jQuery(this).parents("tr").find("input:checkbox").removeAttr("checked");
 					return;

@@ -100,7 +100,7 @@ SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 						<%for (PubHwNum num : hwNumList) {
             			PubDdv ddv = ddvDao.find(num.getHwType().toString());
             			SysStaff staffTmp = staffDao.find(num.getStaffId().toString());
-            			PubOrg orgTmp = orgDao.find(staffTmp.getStaffId().toString());
+            			PubOrg orgTmp = orgDao.find(staffTmp.getOrgId().toString());
             		%>
 						<tr>
 							<td><%=orgTmp.getOrgName() %></td>

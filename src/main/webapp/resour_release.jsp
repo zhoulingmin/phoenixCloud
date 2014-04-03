@@ -183,17 +183,17 @@ select{
 							<%} %>
 							<%if (res.getIsAudit() == (byte)1 || res.getIsAudit() == (byte)3) { %>
 							<security:phoenixSec purviewCode="RES_ON_SHELF">
-							<a name="releaseRes" class="tip-top" title="上架" href="#"><i class="icon-ok-circle"></i></a>
+							<a name="releaseRes" class="tip-top" title="上架" href="#"><i class="icon-chevron-up"></i></a>
 							</security:phoenixSec>
 							<security:phoenixSec purviewCode="RES_OFF_SHELF">
-							<a name="offShelfRes" class="tip-top" style="display:none" title="下架" href="#"><i class="icon-download"></i></a>
+							<a name="offShelfRes" class="tip-top" style="display:none" title="下架" href="#"><i class="icon-chevron-down"></i></a>
 							</security:phoenixSec>
 							<%}else if (res.getIsAudit() == (byte)2) {%>
 							<security:phoenixSec purviewCode="RES_ON_SHELF">
-							<a name="releaseRes" class="tip-top" style="display:none" title="上架" href="#"><i class="icon-ok-circle"></i></a>
+							<a name="releaseRes" class="tip-top" style="display:none" title="上架" href="#"><i class="icon-chevron-up"></i></a>
 							</security:phoenixSec>
 							<security:phoenixSec purviewCode="RES_OFF_SHELF">
-							<a name="offShelfRes" class="tip-top" title="下架" href="#"><i class="icon-download"></i></a>
+							<a name="offShelfRes" class="tip-top" title="下架" href="#"><i class="icon-chevron-down"></i></a>
 							</security:phoenixSec>
 							<%} %>
 						</td>

@@ -236,6 +236,14 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 			jsonObj.put("id", staff.getId());
 			jsonObj.put("name", staff.getName());
 			jsonObj.put("code", staff.getCode());
+			
+			PubDdv ddv = ddvDao.find(staff.getStaffTypeId().toString());
+			if (ddv != null) {
+				jsonObj.put("type", ddv.getValue());
+			} else {
+				jsonObj.put("type", "未知用户类型");
+			}
+			
 			jsonObj.put("createTime", sdf.format(staff.getCreateTime()));
 			if (staff.isExpired()) {
 				jsonObj.put("isExpired", "否");

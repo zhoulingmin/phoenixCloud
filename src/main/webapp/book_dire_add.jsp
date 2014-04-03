@@ -101,8 +101,15 @@ if (level == null || "null".equalsIgnoreCase(level)) {
 </body>
 <script type="text/javascript">
 
-
+var isAdding = false;
 function addDire() {
+	
+	if (isAdding) {
+		alert("正在创建，请稍后！");
+		return;
+	}
+	
+	isAdding = true;
 	jQuery.ajax({
 		url: "<%=ctx%>/book/bookDire_addDire.do",
 		type: "post",
@@ -115,6 +122,7 @@ function addDire() {
 		},
 		error: function() {
 			alert("创建目录失败！");
+			isAdding = false;
 		}
 	});
 	

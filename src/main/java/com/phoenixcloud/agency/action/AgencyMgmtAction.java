@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -58,7 +59,7 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 	@Autowired
 	private PubDdvDao ddvDao;
 	
-	private boolean isClient;
+	private String[] isClient;
 	
 	public javax.servlet.http.HttpServletResponse getResponse() {
 		return response;
@@ -171,14 +172,6 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		return criteria;
 	}
 
-	public boolean isClient() {
-		return isClient;
-	}
-
-	public void setClient(boolean isClient) {
-		this.isClient = isClient;
-	}
-
 	public void setCriteria(com.phoenixcloud.agency.vo.Criteria criteria) {
 		this.criteria = criteria;
 	}
@@ -285,6 +278,7 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		// 1.根据type判断是机构目录还是机构
 		// 2.根据selfId获取子节点
 		if (type != null && !"cata".equals(type) && !"org".equals(type)) {
+			//ServletActionContext.getRequest().getParameterNames()
 			return null;
 		}
 		if (selfId == null) {
@@ -323,13 +317,17 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 			// get all staffs belong to this org
 			PubDdv ddv = ddvDao.findClientUserDdv();
 			do {
-				if (isClient && ddv == null) {
+				if (isClient == null) {
+					break;
+				}
+				boolean flag = Boolean.parseBoolean(isClient[0]);
+				if (flag && ddv == null) {
 					break;
 				}
 				List<SysStaff> staffList = staffDao.findByOrgId(selfId);
 				for (SysStaff staff : staffList) {
-					if ((isClient && !staff.getStaffTypeId().toString().equals(ddv.getId())) // 只显示客户端的用户
-							|| (!isClient && staff.getStaffTypeId().toString().equals(ddv.getId()))) { // 只显示server用户
+					if ((flag && !staff.getStaffTypeId().toString().equals(ddv.getId())) // 只显示客户端的用户
+							|| (!flag && staff.getStaffTypeId().toString().equals(ddv.getId()))) { // 只显示server用户
 						continue;
 					}
 					JSONObject jsonObj = new JSONObject();
@@ -360,6 +358,14 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		return null;
 	}
 	
+	public String[] getIsClient() {
+		return isClient;
+	}
+
+	public void setIsClient(String[] isClient) {
+		this.isClient = isClient;
+	}
+
 	public String getAgency() {
 		// 1.根据type判断是机构目录还是机构
 		// 2.根据selfId获取子节点

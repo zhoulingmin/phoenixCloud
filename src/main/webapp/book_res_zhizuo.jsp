@@ -352,7 +352,6 @@ function commitRes() {
 		data: {resIdArr:ids},
 		success: function() {
 			alert("提交审核成功！");
-			jQuery(chkItems).parents("tr").remove();
 			jQuery(chkItems).each(function(){
 				if(jQuery(this).parents("tr").find("input[name='isUpload']")[0].value) {
 					jQuery(this).parents("tr").find("input:checkbox").removeAttr("checked");

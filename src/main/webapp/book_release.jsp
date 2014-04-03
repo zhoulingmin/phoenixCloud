@@ -187,17 +187,17 @@ white-space:nowrap;
 							<%} %>
 							<%if (book.getIsAudit() == (byte)1 || book.getIsAudit() == (byte)3) { %>
 							<security:phoenixSec purviewCode="BOOK_ON_SHELF">
-							<a name="releaseBook" class="tip-top" title="上架" href="#"><i class=" icon-share-alt"></i></a>
+							<a name="releaseBook" class="tip-top" title="上架" href="#"><i class="icon-chevron-up"></i></a>
 							</security:phoenixSec>
 							<security:phoenixSec purviewCode="BOOK_OFF_SHELF">
-							<a name="offShelfBook" class="tip-top" style="display:none" title="下架" href="#"><i class=" icon-download"></i></a>
+							<a name="offShelfBook" class="tip-top" style="display:none" title="下架" href="#"><i class="icon-chevron-down"></i></a>
 							</security:phoenixSec>
 							<%} else if (book.getIsAudit() == (byte)2) { %>
 							<security:phoenixSec purviewCode="BOOK_ON_SHELF">
-							<a name="releaseBook" class="tip-top" style="display:none"  title="上架" href="#"><i class=" icon-share-alt"></i></a>
+							<a name="releaseBook" class="tip-top" style="display:none"  title="上架" href="#"><i class="icon-chevron-up"></i></a>
 							</security:phoenixSec>
 							<security:phoenixSec purviewCode="BOOK_OFF_SHELF">
-							<a name="offShelfBook" class="tip-top" title="下架" href="#"><i class=" icon-download"></i></a>
+							<a name="offShelfBook" class="tip-top" title="下架" href="#"><i class="icon-chevron-down"></i></a>
 							</security:phoenixSec>
 							<%} %>
 						</td>

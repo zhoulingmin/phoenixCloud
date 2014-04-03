@@ -139,7 +139,8 @@ agencySetting = {
 	async: {
 		enable: true,
 		url: "<%=ctx%>/agency/agencyMgmt!getStaff.do?isClient=false",
-		autoParam: ["type", "selfId"]
+		autoParam: ["type", "selfId"],
+		otherParam: {"isClient": "false"}
 	},
 	<security:phoenixSec purviewCode="PRIVILEGE_QUERY">
 	callback: {
