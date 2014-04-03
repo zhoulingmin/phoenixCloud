@@ -302,17 +302,20 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		staff.setUpdateTime(curDate);
 		iSysService.saveStaff(staff);
 		
-		Date date = new Date();
-		List<PubDdv> ddvList = ddvDao.findByTblAndField("pub_hardware", "HW_TYPE");
-		for (PubDdv ddv : ddvList) {
-			PubHwNum num = new PubHwNum();
-			num.setHwType(new BigInteger(ddv.getId()));
-			num.setNum(0);
-			num.setNotes("");
-			num.setStaffId(new BigInteger(staff.getId()));
-			num.setCreateTime(date);
-			num.setUpdateTime(date);
-			hwNumDao.persist(num);
+		PubDdv clientDdv = ddvDao.findClientUserDdv();
+		if (clientDdv != null && clientDdv.getId().equals(staff.getStaffTypeId().toString())) {
+			Date date = new Date();
+			List<PubDdv> ddvList = ddvDao.findByTblAndField("pub_hardware", "HW_TYPE");
+			for (PubDdv ddv : ddvList) {
+				PubHwNum num = new PubHwNum();
+				num.setHwType(new BigInteger(ddv.getId()));
+				num.setNum(0);
+				num.setNotes("");
+				num.setStaffId(new BigInteger(staff.getId()));
+				num.setCreateTime(date);
+				num.setUpdateTime(date);
+				hwNumDao.persist(num);
+			}
 		}
 		
 		return null;
