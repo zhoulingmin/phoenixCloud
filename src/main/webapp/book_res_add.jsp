@@ -119,8 +119,13 @@ List<PubDdv> formatList = ddvDao.findByTblAndField("r_book_res", "FORMAT");
 
 </body>
 <script type="text/javascript">
-
+var isAdding = false;
 function addRes() {
+	if (isAdding) {
+		alert("正在创建资源，请稍后！");
+		return;
+	}
+	isAdding = true;
 	jQuery.ajax({
 		url: "<%=ctx%>/book/addRes.do",
 		type: "post",
@@ -133,6 +138,7 @@ function addRes() {
 		},
 		error: function() {
 			alert("创建资源失败！");
+			isAdding = false;
 		}
 	});
 	
