@@ -141,7 +141,6 @@ function addRes() {
 			isAdding = false;
 		}
 	});
-	
 }
 
 </script>

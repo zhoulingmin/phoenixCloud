@@ -47,6 +47,10 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	private File bookFile;
 	private String bookFileContentType;
 	private String bookFileFileName;
+	
+	private File coverFile;
+	private String coverFileContentType;
+	private String coverFileFileName;
 
 	private String bookId;
 	
@@ -93,6 +97,30 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 
 	public void setBookId(String bookId) {
 		this.bookId = bookId;
+	}
+
+	public File getCoverFile() {
+		return coverFile;
+	}
+
+	public void setCoverFile(File coverFile) {
+		this.coverFile = coverFile;
+	}
+
+	public String getCoverFileContentType() {
+		return coverFileContentType;
+	}
+
+	public void setCoverFileContentType(String coverFileContentType) {
+		this.coverFileContentType = coverFileContentType;
+	}
+
+	public String getCoverFileFileName() {
+		return coverFileFileName;
+	}
+
+	public void setCoverFileFileName(String coverFileFileName) {
+		this.coverFileFileName = coverFileFileName;
 	}
 
 	public String uploadBook() throws Exception {
@@ -225,5 +253,9 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	public void setSession(Map<String, Object> arg0) {
 		// TODO Auto-generated method stub
 		this.session = (SessionMap)arg0;
+	}
+	
+	public String uploadBookCover() {
+		return "success";
 	}
 }
