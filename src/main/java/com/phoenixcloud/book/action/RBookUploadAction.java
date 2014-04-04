@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.dispatcher.SessionMap;
@@ -30,6 +31,7 @@ import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
+import com.phoenixcloud.dao.res.RBookDao;
 import com.phoenixcloud.util.MiscUtils;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
@@ -59,6 +61,9 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	
 	@Autowired
 	private PubServerAddrDao serAddrDao;
+	
+	@Autowired
+	private RBookDao bookDao;
 	
 	PhoenixProperties phoenixProp = PhoenixProperties.getInstance();
 	
@@ -256,6 +261,29 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	}
 	
 	public String uploadBookCover() {
+		try {
+			do {
+				if (bookId == null || StringUtils.isBlank(bookId)) {
+					break;
+				}
+				RBook book = bookDao.find(bookId);
+				if (book == null) {
+					break;
+				}
+				book.setCoverContType(coverFileContentType);
+				byte[] img = new byte[(int) coverFile.length()];
+				
+				int count = new FileInputStream(coverFile).read(img);
+				if (count != coverFile.length()) {
+					book.setCoverImg(null);
+				} else {
+					book.setCoverImg(img);
+				}
+				bookDao.merge(book);
+			} while(false);
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
 		return "success";
 	}
 }

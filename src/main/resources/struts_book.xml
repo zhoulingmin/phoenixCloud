@@ -8,8 +8,10 @@
 		</action>
 
 		<action name="uploadBookCoverPic" class="bookUploadAction" method="uploadBookCover">
-			<result name="success">/book_cover_image.jsp</result>
+			<result name="success">/book_cover_image.jsp?bookId=${bookId}</result>
 		</action>
+		
+		<action name="showBookConver" class="bookMgmtAction" method="showCover"></action>
 		
 		<action name="uploadBookRes" class="bookResUploadAction" method="uploadRes">
 			<result name="success" type="redirect">/book/bookRes_editRes.do?mode=${bookInfo.isAudit}&amp;bookRes.resId=${bookRes.resId}</result>

@@ -54,23 +54,31 @@
 				<span class="icon"><i class="icon-align-justify"></i></span>
 				<h5>上传书籍封面</h5>
 			</div>
-			<div class="widget-content nopadding">
+			<div class="widget-content">
+				<br>
+				<security:phoenixSec purviewCode="BOOK_UPLOAD_COVER">
 				<div class="fileinput fileinput-new" data-provides="fileinput">
 					<form id="uploadCoverFrm"
 						action="<%=ctx%>/book/uploadBookCoverPic.do"
 						onsubmit="checkfile()" method="POST" enctype="multipart/form-data">
 						<span class="btn btn-default btn-file"> <span
 							class="fileinput-new">请选择封面图片</span> <span
-							class="fileinput-exists">重新选择封面图片</span> <input id="resFile"
+							class="fileinput-exists">重新选择封面图片</span> <input id="coverFile"
 							type="file" name="coverFile">
 						</span> <span class="fileinput-filename"></span> <a href="#"
 							class="close fileinput-exists" data-dismiss="fileinput"
 							style="float: none">&times;</a> <input type="hidden"
-							name="bookInfo.bookId" value="<%=bookId%>" /> <input
+							name="bookId" value="<%=bookId%>" /> <input
 							id="uploadBtn" type="submit" class="btn btn-primary"
 							onclick="return checkfile();" name="submit" value="上传" />
 					</form>
 				</div>
+				</security:phoenixSec>
+				<br>
+				<div class="fileinput-preview thumbnail" style="width: 102px; height: 141px; line-height: 150px;">
+					<img src="<%=ctx%>/book/showBookConver.do?bookInfo.bookId=<%=bookId%>" alt="没有封面图片"/>
+				</div>
+				<br><br>
 			</div>
 		</div>
 	</div>
@@ -78,10 +86,18 @@
 </body>
 <script type="text/javascript">
 	function checkfile() {
-		if (jQuery("#resFile").val().length == 0) {
+		var fileName = jQuery("#coverFile").val();
+		if (fileName.length == 0) {
 			alert("请先选择文件！");
 			return false;
 		}
+		var regImgFile = /.(jpg|jpeg|png|gif|bmp|tiff)$/;
+		
+		if (!regImgFile.test(fileName)) {
+			alert("请上传图片作为封面，目前支持格式: jpg, jpeg, png, bmp, tiff");
+			return false;
+		} 
+		
 		return true;
 	}
 </script>

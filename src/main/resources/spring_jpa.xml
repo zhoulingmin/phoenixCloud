@@ -22,6 +22,7 @@
 		<property name="uniqueResourceName" value="ctrlDS" />
 		<property name="xaDataSource" ref="ctrlDbXaDS" />
 		<property name="poolSize" value="30" />
+		<property name="testQuery" value="select 1" />
 	</bean>
 	<bean id="ctrlDbEmFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitName" value="ctrlDbUnit" />
@@ -54,6 +55,8 @@
 		<property name="uniqueResourceName" value="resDS" />
 		<property name="xaDataSource" ref="resDbXaDS" />
 		<property name="poolSize" value="30" />
+		<property name="testQuery" value="select 1" />
+		
 	</bean>
 	<bean id="resDbEmFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitName" value="resDbUnit" />
@@ -69,7 +72,7 @@
 
 				<prop key="hibernate.cache.use_second_level_cache">false</prop>
 				<prop key="hibernate.cache.use_query_cache">false</prop>
-
+				
 				<prop key="hibernate.max_fetch_depth">3</prop>
 			</props>
 		</property>
@@ -98,7 +101,8 @@
 	            <prop key="com.atomikos.icatch.log_base_dir">${atomikos_log_base_dir}</prop>
 	            <prop key="com.atomikos.icatch.log_base_name">tmlog</prop>
 	            <prop key="com.atomikos.icatch.tm_unique_name">com.atomikos.spring.jdbc.tm</prop>
-	            <prop key="com.atomikos.icatch.console_log_level">${console_log_level}</prop>
+	            <prop key="com.atomikos.icatch.console_log_level">${atomikos_console_log_level}</prop>
+	            <prop key="com.atomikos.icatch.serial_jta_transactions">${atomikos_serial_jta_transactions}</prop>
 	        </props>
 	    </constructor-arg>
 	</bean>
