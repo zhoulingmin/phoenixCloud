@@ -2,6 +2,7 @@
 1.环境准备 (tomcat6 + mysql5.5)
 2.数据导入
 3.部署凤凰书城应用
+4.环境限制说明
 
 
 1.环境准备 (tomcat6 + mysql5.5)
@@ -68,3 +69,7 @@ mysql -uroot -pdb_pass < res_db.sql
 如果tomcat已经启动，F5刷新webapps目录后，war将自动运行。如果tomcat未启动，双击start.bat，启动tomcat。
 
 半分钟后，在Firefox中输入http://localhost:8080/resserver  界面出现Hello World!，表明部署成功
+
+4.环境限制说明
+1) 上传的图书及资源文件，最大200MB
+2) 上传的封面，最大1MB
