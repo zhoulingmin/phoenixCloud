@@ -406,7 +406,7 @@ jQuery(document).ready(function() {
 		}
 		chkItems = jQuery(this.parentNode.parentNode).find("input:first-child");
 		if (jQuery(chkItems).parents("tr").find("input[name='isUpload']").value == 0) {
-			alert("请先上车资源文件后，再提交审核！");
+			alert("请先上传资源文件后，再提交审核！");
 			return;
 		}
 		var id = chkItems.val().toString();

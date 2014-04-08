@@ -35,6 +35,9 @@ import com.phoenixcloud.dao.res.RBookDao;
 import com.phoenixcloud.util.MiscUtils;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.client.urlconnection.HTTPSProperties;
 import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;
 
@@ -180,7 +183,17 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	
 	private JSONObject upoadBookToResServer(String url) throws Exception {
 		MiscUtils.getLogger().info("URL: " + url);
-		Client client = new Client();
+		Client client = null;
+		
+		if (url.startsWith("https")) {
+			ClientConfig config = new DefaultClientConfig();
+			config.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES,
+                    new HTTPSProperties());
+			client = Client.create(config);
+		} else {
+			client = new Client();
+		}
+		
 		WebResource webRes = client.resource(url);
 		webRes.accept(MediaType.APPLICATION_JSON);
 		client.setChunkedEncodingSize(1024 * 16);
