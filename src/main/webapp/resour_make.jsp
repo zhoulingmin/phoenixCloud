@@ -178,7 +178,7 @@ white-space:nowrap;
 							<a class="tip-top" title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
 							</security:phoenixSec>
 							<security:phoenixSec purviewCode="BOOK_SEARCH_RES">
-							<a class="tip-top" title="资源" href="<%=ctx%>/book/bookRes.do?bookRes.bookId=<%=book.getId()%>&bookInfo.isAudit=-2"><i class="icon-file"></i></a>
+							<a class="tip-top" title="资源" href="<%=ctx%>/book/bookResMake.do?bookRes.bookId=<%=book.getId()%>"><i class="icon-file"></i></a>
 							</security:phoenixSec>
 						</td>
 					</tr>
@@ -209,22 +209,13 @@ function checkAll(which) {
 	}
 }
 
-function editBookDire() {
-	var checkedItems = jQuery("#bookTblBody").find("input:checked");
-	if (checkedItems == null || checkedItems.length != 1) {
-		alert("请选择一本书籍后重试！");
-		return;
-	}
-	window.location.href = "<%=ctx%>/book/bookRes.do?bookInfo.isAudit=-2&bookRes.bookId=" + checkedItems[0].value;
-}
-
 function editBookRes() {
 	var checkedItems = jQuery("#bookTblBody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
 		alert("请选择一本书籍后重试！");
 		return;
 	}
-	window.location.href = "<%=ctx%>/book/bookResQuery.do?bookInfo.isAudit=-2&bookRes.bookId=" + checkedItems[0].value;
+	window.location.href = "<%=ctx%>/book/bookRes.do?bookInfo.isAudit=-2&bookRes.bookId=" + checkedItems[0].value;
 }
 
 function viewBook() {
