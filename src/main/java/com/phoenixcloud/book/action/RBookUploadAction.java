@@ -3,10 +3,18 @@ package com.phoenixcloud.book.action;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URLEncoder;
+import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.security.cert.CertificateException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
@@ -32,6 +40,7 @@ import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
 import com.phoenixcloud.dao.res.RBookDao;
+import com.phoenixcloud.util.ClientHelper;
 import com.phoenixcloud.util.MiscUtils;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
@@ -170,7 +179,7 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 		HttpServletRequest req = ServletActionContext.getRequest();
 		String scheme = phoenixProp.getProperty("protocol_file_transfer") + "://";
 		String host = req.getServerName();
-		int port = req.getServerPort();
+		int port = addr.getBookSerPort();
 		String ctxName = phoenixProp.getProperty("res_server_appname");
 		
 		book.setAllAddr(scheme + host + ":" + port + "/" + ctxName +  "/rest/book/downloadFile" + suffixURL);
@@ -186,10 +195,48 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 		Client client = null;
 		
 		if (url.startsWith("https")) {
-			ClientConfig config = new DefaultClientConfig();
-			config.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES,
-                    new HTTPSProperties());
-			client = Client.create(config);
+			/*HostnameVerifier hv = new HostnameVerifier() {
+				@Override
+				public boolean verify(String hostname, SSLSession session) {
+					MiscUtils.getLogger().warn("Warning: URL Host: " + hostname
+							+ " vs. " + session.getPeerHost());
+					return true;
+				}
+			};
+			HttpsURLConnection.setDefaultHostnameVerifier(hv); 
+			try {
+				// Create a trust manager that does not validate certificate
+				// chains
+				TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+					public void checkClientTrusted(
+							java.security.cert.X509Certificate[] certs,
+							String authType) {
+					}
+
+					public void checkServerTrusted(
+							java.security.cert.X509Certificate[] certs,
+							String authType) {
+					}
+
+					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+						return null;
+					}
+				}};
+
+				// Install the all-trusting trust manager
+				SSLContext sc = SSLContext.getInstance("SSL");
+				sc.init(null, trustAllCerts, new java.security.SecureRandom());
+				HttpsURLConnection.setDefaultSSLSocketFactory(sc
+						.getSocketFactory());
+				
+				ClientConfig config = new DefaultClientConfig();
+				config.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES,
+	                    new HTTPSProperties(hv, sc));
+				client = Client.create(config);
+			} catch (Exception ex) {
+				throw new RuntimeException(ex);
+			}*/
+			client = ClientHelper.createClient();
 		} else {
 			client = new Client();
 		}
