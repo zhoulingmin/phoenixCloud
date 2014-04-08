@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.processors.JsonBeanProcessor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
@@ -35,6 +37,7 @@ import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
+import com.phoenixcloud.common.Constants;
 import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.PubOrgDao;
@@ -427,4 +430,58 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
                 os.write(buf, 0, len);
         }
     }
+	
+	public String showCover() {
+		String conType = "image/jpeg";
+		try {
+			do {
+				if (bookInfo == null || StringUtils.isBlank(bookInfo.getBookId())) {
+					break;
+				}
+				RBook book = bookDao.find(bookInfo.getBookId());
+				if (book == null) {
+					break;
+				}
+				conType = book.getCoverContType(); 
+				byte[] imgContent = book.getCoverImg();
+				if (imgContent == null || imgContent.length == 0) {
+					break;
+				} else {
+					response.setCharacterEncoding("utf-8");
+					response.setContentType(conType);
+					try {
+						OutputStream out = response.getOutputStream();
+						out.write(imgContent);
+						out.flush();
+						out.close();
+					} catch (Exception e) {
+						MiscUtils.getLogger().info(e.toString());
+						break;
+					}
+				}
+				
+			} while(false);
+			
+			
+			InputStream in = getClass().getResourceAsStream("/cover.jpg");
+						
+			if (in != null) {
+				response.setCharacterEncoding("utf-8");
+				response.setContentType(conType);
+				
+				OutputStream out = response.getOutputStream();
+				byte[] buf = new byte[1024*16]; // 16K
+				int count = 0;
+				while ((count = in.read(buf)) != -1) {
+					out.write(buf, 0, count);
+				}
+				out.flush();
+				out.close();
+				in.close();
+			}
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
+		return null;
+	}
 }

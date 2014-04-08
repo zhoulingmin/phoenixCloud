@@ -227,8 +227,14 @@ $(document).ready(function(){
 	});
 	</security:phoenixSec>
 	
-	$("tbody tr:eq(1) td:eq(1)").html($("tbody tr:eq(1) td:eq(1) input:eq(0)").val());
-	$("tbody tr:eq(2) td:eq(1)").html($("tbody tr:eq(2) td:eq(1) input:eq(0)").val());
+	var coverElm = $("tbody tr:eq(1) td:eq(1) input:eq(0)").val();
+	coverElm += "<input type='hidden' name='name' value='" + coverElm + "' />";
+	coverElm += "<a title=\"封面图片\" href=\"<%=ctx%>/book_cover_image.jsp?bookId=<%=book.getBookId()%>\"><i class=\"icon-picture\" style=\"margin-top: -2px;\"></i></a>";
+	$("tbody tr:eq(1) td:eq(1)").html(coverElm);
+	
+	var direElm = $("tbody tr:eq(2) td:eq(1) input:eq(0)").val();
+	direElm += "<input type='hidden' name='name' value='" + direElm + "' />";
+	$("tbody tr:eq(2) td:eq(1)").html(direElm);
 	
 	$("tbody tr").on("mouseover", function(event) {
 		$(this).attr("bgcolor", "#E6E6FA");

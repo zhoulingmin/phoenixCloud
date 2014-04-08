@@ -334,6 +334,8 @@ function commitRes() {
 		chkItems = null;
 		return;
 	}
+	
+	var count = 0;
 	for (var i = 0; i < chkItems.length; i++) {
 		if (jQuery(chkItems[i]).parents("tr").find("input[name='isUpload']")[0].value == 0) {
 			continue;
@@ -342,6 +344,18 @@ function commitRes() {
 		if (i != (chkItems.length - 1)) {
 			ids += ",";
 		}
+		count++;
+	}
+	
+	if (count == 0) {
+		alert("请先上传资源文件后，再提交审核！");
+		chkItems = null;
+		return;
+	}
+	
+	if (count < chkItems.length) {
+		var prompt = "有" + (chkItems.length - count) + "个资源未上传，将不会被提交审核！";
+		alert(prompt);
 	}
 	
 	jQuery.ajax({
@@ -405,8 +419,8 @@ jQuery(document).ready(function() {
 			return;
 		}
 		chkItems = jQuery(this.parentNode.parentNode).find("input:first-child");
-		if (jQuery(chkItems).parents("tr").find("input[name='isUpload']").value == 0) {
-			alert("请先上车资源文件后，再提交审核！");
+		if (jQuery(chkItems).parents("tr").find("input[name='isUpload']")[0].value == 0) {
+			alert("请先上传资源文件后，再提交审核！");
 			return;
 		}
 		var id = chkItems.val().toString();

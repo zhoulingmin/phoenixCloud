@@ -2,6 +2,7 @@ package com.phoenixcloud.bean;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.sql.Blob;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -9,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -83,6 +85,13 @@ public class RBook extends AbstractModel<String> implements Serializable {
 	
 	@Column(name="PAGE_NUM")
 	private int pageNum;
+	
+	@Lob
+	@Column(name="COVER_IMG")
+	private byte[] coverImg;
+	
+	@Column(name="COVER_CONT_TYPE", length=50)
+	private String coverContType;
 
 	public RBook() {
 	}
@@ -285,5 +294,21 @@ public class RBook extends AbstractModel<String> implements Serializable {
 		}
 
 		return allAddr.substring(lastIdx + 1);
+	}
+
+	public String getCoverContType() {
+		return coverContType;
+	}
+
+	public void setCoverContType(String coverContType) {
+		this.coverContType = coverContType;
+	}
+
+	public byte[] getCoverImg() {
+		return coverImg;
+	}
+
+	public void setCoverImg(byte[] coverImg) {
+		this.coverImg = coverImg;
 	}
 }
