@@ -224,7 +224,7 @@ function editBookRes() {
 		alert("请选择一本书籍后重试！");
 		return;
 	}
-	window.location.href = "<%=ctx%>/book/bookResQuery.do?bookInfo.isAudit=-2&bookRes.bookId=" + checkedItems[0].value;
+	window.location.href = "<%=ctx%>/book/bookRes.do?bookInfo.isAudit=-2&bookRes.bookId=" + checkedItems[0].value;
 }
 
 function viewBook() {
