@@ -54,7 +54,7 @@ public class RBookPageResDao extends AbstractResDao<RBookPageRes>{
 	}
 	
 	public List<BigInteger> getResIdsByBookIdPageRange(BigInteger bookId, int start, int end){
-		String sql = "select pgRs.resId from RBookPageRes pgRs where pgRs.deleteState = 0 and pgRs.bookId = ?1";
+		String sql = "select distinct pgRs.resId from RBookPageRes pgRs where pgRs.deleteState = 0 and pgRs.bookId = ?1";
 		Vector params = new Vector();
 		int index = 2;
 		if (start >= 0) {
