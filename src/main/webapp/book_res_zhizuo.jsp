@@ -138,7 +138,7 @@ white-space:nowrap;
 							}
 					%>
 					<tr>
-						<td style="width:1%"><input type="checkbox" value="<%=res.getId()%>"/></td>
+						<td style="width:1%"><%if (isAudit == (byte)-1) { %><input type="checkbox" value="<%=res.getId()%>"/><%} %></td>
 						<td><%=book.getName() %></td>
 						<td><%=res.getName() %></td>
 						<td><%=fmDdv.getValue() %></td>
@@ -367,11 +367,11 @@ function commitRes() {
 		success: function() {
 			alert("提交审核成功！");
 			jQuery(chkItems).each(function(){
-				if(jQuery(this).parents("tr").find("input[name='isUpload']")[0].value) {
+				if(jQuery(this).parents("tr").find("input[name='isUpload']")[0].value == 0) {
 					jQuery(this).parents("tr").find("input:checkbox").removeAttr("checked");
 					return;
 				}
-				jQuery(this).parents("tr").remove();
+				jQuery(this).parents("tr").children("td:eq(5)").html("审核中");
 			});
 			jQuery("thead tr th input:checkbox").removeAttr("checked");
 			chkItems = null;
@@ -432,7 +432,7 @@ jQuery(document).ready(function() {
 			data: {resIdArr: id},
 			success: function() {
 				alert("提交审核成功！");
-				jQuery(chkItems).parents("tr").remove();
+				jQuery(chkItems).parents("tr").children("td:eq(5)").html("待审核");
 				chkItems = null;
 			},
 			error: function() {

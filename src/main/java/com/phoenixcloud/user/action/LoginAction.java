@@ -89,7 +89,11 @@ public class LoginAction extends ActionSupport implements RequestAware,
 		
 		SysStaff user = staffDao.findByCode(staff.getCode());
 		if (user != null) {
-			if (!user.getPassword().equals(staff.getPassword())) {
+			
+			PubDdv clientUserDdv = ddvDao.findClientUserDdv();
+			if (clientUserDdv != null && clientUserDdv.getId().equals(user.getStaffTypeId().toString())) {
+				ret = "clientUser";
+			} else if (!user.getPassword().equals(staff.getPassword())) {
 				ret = "ErrorPass";
 			} else if (user.isExpired()) {
 				ret = "Expired";

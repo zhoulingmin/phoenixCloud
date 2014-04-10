@@ -15,7 +15,10 @@ if (session != null) {
 String msg = (String)request.getParameter("reason");
 String prompt = "";
 String promptDisplay="display:none";
-if ("NotFound".equalsIgnoreCase(msg)) {
+if ("clientUser".equalsIgnoreCase(msg)) {
+	prompt = "客户端用户，不能登录云端！";
+	promptDisplay="";
+} else if ("NotFound".equalsIgnoreCase(msg)) {
 	prompt = "无此用户！";
 	promptDisplay="";
 } else if ("ErrorPass".equalsIgnoreCase(msg)) {
