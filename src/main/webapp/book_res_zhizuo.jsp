@@ -421,6 +421,7 @@ jQuery(document).ready(function() {
 		chkItems = jQuery(this.parentNode.parentNode).find("input:first-child");
 		if (jQuery(chkItems).parents("tr").find("input[name='isUpload']")[0].value == 0) {
 			alert("请先上传资源文件后，再提交审核！");
+			chkItems = null;
 			return;
 		}
 		var id = chkItems.val().toString();
