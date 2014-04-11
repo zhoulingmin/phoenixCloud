@@ -432,7 +432,8 @@ jQuery(document).ready(function() {
 			data: {resIdArr: id},
 			success: function() {
 				alert("提交审核成功！");
-				jQuery(chkItems).parents("tr").children("td:eq(5)").html("待审核");
+				jQuery(chkItems).parents("tr").children("td:eq(5)").html("审核中");
+				jQuery(chkItems).parents("tr").children("td>input").remove();
 				chkItems = null;
 			},
 			error: function() {
