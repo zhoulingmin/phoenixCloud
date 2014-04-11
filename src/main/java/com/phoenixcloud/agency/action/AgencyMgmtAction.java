@@ -352,9 +352,6 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
         	MiscUtils.getLogger().info(e.toString());
         }
         
-        type = null;
-        selfId = BigInteger.ZERO;
-        
 		return null;
 	}
 	

@@ -32,7 +32,7 @@ public class LoginAction extends ActionSupport implements RequestAware,
 	private static final long serialVersionUID = 4096920054621958080L;
 	private RequestMap request;
 	private HttpServletResponse response;
-	private SessionMap session;
+	private SessionMap<String, Object> session;
 	
 	private SysStaff staff;
 	@Resource
@@ -60,7 +60,7 @@ public class LoginAction extends ActionSupport implements RequestAware,
 	@Override
 	public void setSession(Map<String, Object> session) {
 		// TODO Auto-generated method stub
-		this.session = (SessionMap) session;
+		this.session = (SessionMap<String, Object>) session;
 	}
 
 	@Override
@@ -75,6 +75,7 @@ public class LoginAction extends ActionSupport implements RequestAware,
 		this.request = (RequestMap) request;
 	}
 
+	@SuppressWarnings("unchecked")
 	public String execute() {
 		
 		if (session.get("user") != null) {
@@ -99,21 +100,7 @@ public class LoginAction extends ActionSupport implements RequestAware,
 				ret = "Expired";
 			} else {
 				session.put("user", user);
-//				PubDdv ddv = ddvDao.find(user.getStaffTypeId().toString());
 				ret = "success";
-//				if (ddv != null) {
-//					String role = ddv.getValue();
-//					if ("超级管理员".equals(role)) {
-//						session.put("role", "admin");
-//						ret += "_admin";
-//					} else if ("管理员".equals(role)) {
-//						session.put("role", "manager");
-//						ret += "_manager";
-//					} else if  ("普通用户".equals(role)) {
-//						session.put("role", "user");
-//						ret += "_user";
-//					}					
-//				}
 			}
 		}
 		return ret;

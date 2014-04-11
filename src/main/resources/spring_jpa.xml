@@ -16,7 +16,7 @@
 		<property name="pinGlobalTxToPhysicalConnection" value="true" />
 		<property name="user" value="${ctrl_db_username}" />
 		<property name="password" value="${ctrl_db_password}" />
-		<property name="url" value="${ctrl_db_uri}${ctrl_db_name}" />
+		<property name="url" value="${ctrl_db_uri}${ctrl_db_name}?useUnicode=true&amp;characterEncoding=UTF-8" />
 	</bean>
 	<bean id="ctrlDbSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
 		<property name="uniqueResourceName" value="ctrlDS" />
@@ -49,7 +49,7 @@
 		<property name="pinGlobalTxToPhysicalConnection" value="true" />
 		<property name="user" value="${res_db_username}" />
 		<property name="password" value="${res_db_password}" />
-		<property name="url" value="${res_db_uri}${res_db_name}" />
+		<property name="url" value="${res_db_uri}${res_db_name}?useUnicode=true&amp;characterEncoding=UTF-8" />
 	</bean>
 	<bean id="resDbSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
 		<property name="uniqueResourceName" value="resDS" />
@@ -116,7 +116,7 @@
 	</bean>
 
 	<bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.J2eeUserTransaction">
-		<property name="transactionTimeout" value="300" />
+		<property name="transactionTimeout" value="3000" />
 	</bean>
 
 	<bean id="transactionManager"
