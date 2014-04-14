@@ -178,7 +178,7 @@ white-space:nowrap;
 							<a class="tip-top" title="详情" href="<%=ctx%>/book/viewBook.do?bookInfo.bookId=<%=book.getId()%>" ><i class="icon-eye-open"></i></a>
 							</security:phoenixSec>
 							<security:phoenixSec purviewCode="BOOK_SEARCH_RES">
-							<a class="tip-top" title="资源" href="<%=ctx%>/book/bookResMake.do?bookRes.bookId=<%=book.getId()%>"><i class="icon-file"></i></a>
+							<a class="tip-top" title="资源" href="<%=ctx%>/book/bookRes.do?bookRes.bookId=<%=book.getId()%>"><i class="icon-file"></i></a>
 							</security:phoenixSec>
 						</td>
 					</tr>

@@ -372,6 +372,10 @@ function commitRes() {
 					return;
 				}
 				jQuery(this).parents("tr").children("td:eq(5)").html("审核中");
+				jQuery(this).parents("tr").children("td:last-child").children("a[name='commitRes']").remove();
+				jQuery(this).parents("tr").children("td:last-child").children("a[name='removeRes']").remove();
+				jQuery(this).parents("tr").children("td:last-child").children("a[title='修改']").remove();
+				jQuery(this).parents("tr").children("td:eq(0)").children("input").remove();
 			});
 			jQuery("thead tr th input:checkbox").removeAttr("checked");
 			chkItems = null;
@@ -433,7 +437,10 @@ jQuery(document).ready(function() {
 			success: function() {
 				alert("提交审核成功！");
 				jQuery(chkItems).parents("tr").children("td:eq(5)").html("审核中");
-				jQuery(chkItems).parents("tr").children("td>input").remove();
+				jQuery(chkItems).parents("tr").children("td:last-child").children("a[name='commitRes']").remove();
+				jQuery(chkItems).parents("tr").children("td:last-child").children("a[name='removeRes']").remove();
+				jQuery(chkItems).parents("tr").children("td:last-child").children("a[title='修改']").remove();
+				jQuery(chkItems).parents("tr").children("td:eq(0)").children("input").remove();
 				chkItems = null;
 			},
 			error: function() {
