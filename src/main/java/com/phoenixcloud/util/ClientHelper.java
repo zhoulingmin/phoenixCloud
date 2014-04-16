@@ -15,7 +15,11 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.client.urlconnection.HTTPSProperties;
-
+/**
+ * 
+ * @author Administrator
+ *	This class is used to configure ssl for jersey client
+ */
 public class ClientHelper {
 	public static ClientConfig configureClient() {
 		HostnameVerifier hv = new HostnameVerifier() {

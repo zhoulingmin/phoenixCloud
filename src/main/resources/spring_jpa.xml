@@ -35,10 +35,8 @@
 				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
 				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
 				<prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
-
 				<prop key="hibernate.cache.use_second_level_cache">false</prop>
 				<prop key="hibernate.cache.use_query_cache">false</prop>
-
 				<prop key="hibernate.max_fetch_depth">3</prop>
 			</props>
 		</property>
@@ -69,10 +67,8 @@
 				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
 				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
 				<prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
-
 				<prop key="hibernate.cache.use_second_level_cache">false</prop>
 				<prop key="hibernate.cache.use_query_cache">false</prop>
-				
 				<prop key="hibernate.max_fetch_depth">3</prop>
 			</props>
 		</property>
@@ -87,7 +83,6 @@
 	<tx:annotation-driven transaction-manager="txManager" />
 	-->
 	<tx:annotation-driven />
-	<tx:jta-transaction-manager />
 	
 	
 	<bean id="userTransactionService" class="com.atomikos.icatch.config.UserTransactionServiceImp"
@@ -115,8 +110,8 @@
     	<property name="startupTransactionService" value="false" />
 	</bean>
 
-	<bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.J2eeUserTransaction">
-		<property name="transactionTimeout" value="3000" />
+	<bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.UserTransactionImp" depends-on="userTransactionService">
+		<property name="transactionTimeout" value="300" />
 	</bean>
 
 	<bean id="transactionManager"
@@ -125,6 +120,7 @@
 		<property name="transactionManager" ref="atomikosTransactionManager" />
 		<property name="userTransaction" ref="atomikosUserTransaction" />
 		<property name="allowCustomIsolationLevels" value="true" />
+		<qualifier value="jta" />
 	</bean>
 	
 	<bean id="ctrlDbSharedEm" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
