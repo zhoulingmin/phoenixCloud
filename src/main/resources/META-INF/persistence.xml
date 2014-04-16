@@ -1,37 +1,18 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd" version="1.0">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd" version="2.0">
 
 	<persistence-unit name="ctrlDbUnit" transaction-type="JTA">
-		<class>com.phoenixcloud.bean.PubDdv</class>
-		<class>com.phoenixcloud.bean.PubHw</class>
-		<class>com.phoenixcloud.bean.PubOrg</class>
-		<class>com.phoenixcloud.bean.PubOrgCata</class>
-		<class>com.phoenixcloud.bean.PubPress</class>
-		<class>com.phoenixcloud.bean.PubServerAddr</class>
-		<class>com.phoenixcloud.bean.SysLog</class>
-		<class>com.phoenixcloud.bean.SysPurview</class>
-		<class>com.phoenixcloud.bean.SysStaff</class>
-		<class>com.phoenixcloud.bean.SysStaffOrgBook</class>
-		<class>com.phoenixcloud.bean.SysStaffPurview</class>
-		<class>com.phoenixcloud.bean.SysStaffRegCode</class>
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<properties>
 			<property name="hibernate.transaction.manager_lookup_class"
 			value="com.atomikos.icatch.jta.hibernate3.TransactionManagerLookup" />
-			<!-- 
-			<property name="hibernate.transaction.factory_class"
-			value="org.hibernate.transaction.CMTTransactionFactory" />
-			 -->
 			<property name="hibernate.transaction.factory_class"
 			value="com.atomikos.icatch.jta.hibernate3.AtomikosJTATransactionFactory" />
 		</properties>
 	</persistence-unit>
 	
 	<persistence-unit name="resDbUnit" transaction-type="JTA">
-		<class>com.phoenixcloud.bean.RBook</class>
-		<class>com.phoenixcloud.bean.RBookDire</class>
-		<class>com.phoenixcloud.bean.RBookRe</class>
-		<class>com.phoenixcloud.bean.RRegCode</class>
-		<class>com.phoenixcloud.bean.RBookLog</class>
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<properties>
 			<property name="hibernate.transaction.manager_lookup_class"
 			value="com.atomikos.icatch.jta.hibernate3.TransactionManagerLookup" />
