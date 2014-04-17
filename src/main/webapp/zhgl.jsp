@@ -222,8 +222,9 @@ function onSelOrg(event, treeId, treeNode, clickFlag) {
 			timeout: 30000,
 			async: false,
 			success: function(userArr) {
-				if (userArr == null || userArr.length == 0) {
+				if (userArr == null) {
 					alert("加载用户数据失败！");
+					isLoadingUser = false;
 					return;
 				}
 				
