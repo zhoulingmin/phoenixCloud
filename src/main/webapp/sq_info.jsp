@@ -45,9 +45,12 @@ SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 
 <script src="<%=ctx %>/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="<%=ctx %>/js/public.js"></script>
-<script type="text/javascript"
-	src="<%=ctx%>/js/ztree/jquery.ztree.core-3.5.js"></script>
+<script type="text/javascript" src="<%=ctx%>/js/ztree/jquery.ztree.core-3.5.js"></script>
 
+<style type="text/css">
+td {padding-top: 2px; padding-bottom: 2px;}
+</style>
+	
 </head>
 
 <body>
@@ -107,7 +110,7 @@ SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 							<td><%=staffTmp.getName() %></td>
 							<td><%=ddv.getValue() %></td>
 							<td><%=hwDao.getCountOfHw(new BigInteger(staff.getStaffId()), num.getHwType()) %></td>
-							<td><input type="text" readonly="readonly"
+							<td><input type="text" readonly="readonly" style="margin-bottom:0px;padding:0px;"
 								value="<%=num.getNum() %>" /></td>
 							<td><a href="#">设置</a>&nbsp;&nbsp;<a href="#"
 								hwId="<%=num.getHwId() %>" style="display: none">保存</a></td>
