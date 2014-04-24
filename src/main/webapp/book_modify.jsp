@@ -33,6 +33,8 @@ SysStaff staffTmp = staffDao.find(vs.findString("bookInfo.staffId"));
 if (staffTmp != null) {
 	accntName = staffTmp.getName();
 }
+String beautifySize = new java.text.DecimalFormat(",###").format((Integer)vs.findValue("bookInfo.bookSize"));
+
 
 %>
 
@@ -176,6 +178,14 @@ if (staffTmp != null) {
 						<label class="control-label">页数</label>
 						<div class="controls">
 							<input type="text" name="bookInfo.pageNum" value="<s:property value="bookInfo.pageNum"/>">
+						</div>
+					</div>
+					
+					<div class="control-group">
+						<label class="control-label">书籍大小(字节)</label>
+						<div class="controls">
+							<input type="hidden" name="bookInfo.bookSize" value="<s:property value="bookInfo.bookSize"/>" readonly="readonly">
+							<input type="text" name="bookSizeTmp" value="<%=beautifySize %>" readonly="readonly">
 						</div>
 					</div>
 					

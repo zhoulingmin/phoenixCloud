@@ -123,6 +123,7 @@ white-space:nowrap;
 						<th>书籍编码</th>
 						<th>隶属机构</th>
 						<th>上传状态</th>
+						<th>书籍大小(字节)</th>
 						<th>审核状态</th>
 						<th>学科</th>
 						<th>学段</th>
@@ -168,6 +169,7 @@ white-space:nowrap;
 						<td><%=book.getBookNo() %></td>
 						<td><%=orgTmp.getOrgName() %></td>
 						<td><%if (book.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
+						<td><%=book.getBeatifySize() %></td>
 						<td><%=isAudit %></td>
 						<td><%=subTmp.getValue() %></td>
 						<td><%=stuTmp.getValue() %></td>
@@ -337,7 +339,7 @@ jQuery(document).ready(function() {
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","none");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook']").css("display","inline");
 					chkItems[i].getAttribute("audit", "2");
-					jQuery(chkItems[i]).parents("tr").children("td:nth-child(6)").html("已上架");
+					jQuery(chkItems[i]).parents("tr").children("td:nth-child(7)").html("已上架");
 				}
 				jQuery("table").find("input:checkbox").removeAttr("checked");
 				chkItems = null;
@@ -378,7 +380,7 @@ jQuery(document).ready(function() {
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","inline");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook']").css("display","none");
 					chkItems[i].getAttribute("audit", "3");
-					jQuery(chkItems[i]).parents("tr").children("td:nth-child(6)").html("已下架");
+					jQuery(chkItems[i]).parents("tr").children("td:nth-child(7)").html("已下架");
 				}
 				jQuery("table").find("input:checkbox").removeAttr("checked");
 				chkItems = null;

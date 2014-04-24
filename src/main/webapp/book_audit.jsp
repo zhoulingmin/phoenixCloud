@@ -124,6 +124,7 @@ white-space:nowrap;
 						<th>书籍编码</th>
 						<th>隶属机构</th>
 						<th>上传状态</th>
+						<th>书籍大小(字节)</th>
 						<th>学科</th>
 						<th>学段</th>
 						<th>年级</th>
@@ -154,6 +155,7 @@ white-space:nowrap;
 						<td><%=book.getBookNo() %></td>
 						<td><%=orgTmp.getOrgName() %></td>
 						<td><%if (book.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
+						<td><%=book.getBeatifySize() %></td>
 						<td><%=subTmp.getValue() %></td>
 						<td><%=stuTmp.getValue() %></td>
 						<td><%=clsTmp.getValue() %></td>

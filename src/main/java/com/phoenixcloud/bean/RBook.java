@@ -3,6 +3,7 @@ package com.phoenixcloud.bean;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Blob;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -92,6 +93,9 @@ public class RBook extends AbstractModel<String> implements Serializable {
 	
 	@Column(name="COVER_CONT_TYPE", length=50)
 	private String coverContType;
+	
+	@Column(name="BOOK_SIZE", length=10)
+	private int bookSize = 0;
 
 	public RBook() {
 	}
@@ -310,5 +314,17 @@ public class RBook extends AbstractModel<String> implements Serializable {
 
 	public void setCoverImg(byte[] coverImg) {
 		this.coverImg = coverImg;
+	}
+
+	public int getBookSize() {
+		return bookSize;
+	}
+	
+	public String getBeatifySize() {
+		return new DecimalFormat(",###").format(bookSize);
+	}
+
+	public void setBookSize(int bookSize) {
+		this.bookSize = bookSize;
 	}
 }

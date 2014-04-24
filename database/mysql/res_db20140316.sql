@@ -34,6 +34,7 @@ CREATE TABLE `r_book` (
   `IP_ADDR` varchar(15) DEFAULT NULL,
   `ALL_ADDR` text,
   `IS_UPLOAD` tinyint(1) NOT NULL COMMENT '1：是，0：否',
+  `BOOK_SIZE` int(10),
   `IS_AUDIT` tinyint(1) NOT NULL COMMENT '制作中、待审核、待发布、待上架、上架',
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,

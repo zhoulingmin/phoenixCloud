@@ -185,6 +185,7 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 		book.setAllAddr(scheme + host + ":" + port + "/" + ctxName +  "/rest/book/downloadFile" + suffixURL);
 		book.setUpdateTime(new Date());
 		book.setIsUpload((byte)1);
+		book.setBookSize((int)bookFile.length());
 		iBookService.saveBook(book);
 		
 		return "success";

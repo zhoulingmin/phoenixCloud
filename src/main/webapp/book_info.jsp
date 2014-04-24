@@ -80,6 +80,8 @@ if (audit == (byte)-1) {
 	isAudit = "已下架";
 }
 
+String beatifySize = new java.text.DecimalFormat(",###").formart((Integer)vs.findValue("book.bookSize"));
+
 %>
 
 <!doctype html>
@@ -162,6 +164,10 @@ if (audit == (byte)-1) {
 				<div class="line_info margin_top_5">
 					<font class="blue">是否上传: </font>
 					<font color="black"><%=isUpload %></font>
+				</div>
+				<div class="line_info margin_top_5">
+					<font class="blue">书籍大小(字节): </font>
+					<font color="black"><%=beatifySize %></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">审核状态: </font>
