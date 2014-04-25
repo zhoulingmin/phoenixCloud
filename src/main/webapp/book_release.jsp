@@ -293,10 +293,12 @@ function changeBookAuditStatus(flag) {
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","none");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook']").css("display","inline");
 					chkItems[i].setAttribute("audit", "2");
+					jQuery(chkItems[i]).parents("tr").children("td:nth-child(7)").html("已上架");
 				} else if (ret.flag == 3) {
 					jQuery(chkItems[i]).parents("tr").find("a[name='releaseBook']").css("display","inline");
 					jQuery(chkItems[i]).parents("tr").find("a[name='offShelfBook']").css("display","none");
 					chkItems[i].setAttribute("audit", "3");
+					jQuery(chkItems[i]).parents("tr").children("td:nth-child(7)").html("已下架");
 				}
 			}
 			jQuery("table").find("input:checkbox").removeAttr("checked");
