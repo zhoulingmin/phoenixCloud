@@ -1,5 +1,6 @@
 package com.phoenixcloud.user.action;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -76,7 +77,7 @@ public class LoginAction extends ActionSupport implements RequestAware,
 	}
 
 	@SuppressWarnings("unchecked")
-	public String execute() {
+	public String login() {
 		
 		if (session.get("user") != null) {
 			return "success";
@@ -104,5 +105,20 @@ public class LoginAction extends ActionSupport implements RequestAware,
 			}
 		}
 		return ret;
+	}
+	
+	public String register() {
+		String ret = "success";
+		// check exist or not
+		SysStaff user = staffDao.findByCode(staff.getCode());
+		if (user != null) {
+			return "existed";
+		}
+		Date date = new Date();
+		staff.setCreateTime(date);
+		staff.setUpdateTime(date);
+		date.setYear(date.getYear() + 10);
+		staff.setValidDate(date);
+		return "success";
 	}
 }

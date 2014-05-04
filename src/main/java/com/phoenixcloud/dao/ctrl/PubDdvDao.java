@@ -25,6 +25,12 @@ public class PubDdvDao extends AbstractCtrlDao<PubDdv> {
 		return null;
 	}
 	
+	public PubDdv find(String id) {
+		Query query = entityManager.createQuery("select pd from PubDdv pd where pd.deleteState = '0' and pd.ddvId = ?1");
+		query.setParameter(1, id);
+		return getSingleResultOrNull(query);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<PubDdv> findByTblAndField(String tblName, String fieldName) {
 		Query query = entityManager.createQuery("select pd from PubDdv pd where pd.tableName = ?1 and pd.fieldName = ?2");

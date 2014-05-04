@@ -15,8 +15,10 @@ import net.sf.json.JSONObject;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.RequestMap;
+import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.interceptor.SessionAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -28,15 +30,18 @@ import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.PubOrgCata;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.dao.ctrl.PubDdvDao;
+import com.phoenixcloud.dao.ctrl.PubOrgCataDao;
+import com.phoenixcloud.dao.ctrl.PubOrgDao;
 import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
 @Component
-public class AgencyMgmtAction extends ActionSupport implements RequestAware, ServletResponseAware {
+public class AgencyMgmtAction extends ActionSupport implements RequestAware, ServletResponseAware, SessionAware {
 	private static final long serialVersionUID = 3155881995974380162L;
 	private RequestMap request;
 	private javax.servlet.http.HttpServletResponse response;
+	private SessionMap session;
 	
 	private String type;
 	private String agencyName;
@@ -58,6 +63,12 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 	
 	@Autowired
 	private PubDdvDao ddvDao;
+	
+	@Autowired
+	private PubOrgDao orgDao;
+	
+	@Autowired
+	private PubOrgCataDao cataDao;
 	
 	private String[] isClient;
 	
@@ -274,6 +285,50 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		return null;
 	}
 	
+	private JSONObject getParentTreeOfAgency(SysStaff staff, boolean allCata) {
+		if (staff == null) {
+			return null;
+		}
+		JSONObject tree = null;
+		PubOrg org = orgDao.find(staff.getOrgId().toString());
+		if (org == null) {
+			return null;
+		}
+		PubOrgCata cata = org.getPubOrgCata();
+		if (cata == null) {
+			return null;
+		}
+		tree = new JSONObject();
+		
+		tree.put("type", "cata");
+		tree.put("selfId", cata.getId());
+		tree.put("name", cata.getCataName());
+		tree.put("isParent", true);
+		
+		JSONObject child = null;
+		if (!allCata) {
+			child = new JSONObject();
+			child.put("type", "org");
+			child.put("selfId", org.getId());
+			child.put("name", org.getOrgName());
+			child.put("isParent", false);
+			tree.put("child", child);
+		}
+		cata = cataDao.find(cata.getParentCataId().toString());
+		while (cata != null) {
+			child = tree;
+			tree = new JSONObject();
+			tree.put("type", "cata");
+			tree.put("selfId", cata.getId());
+			tree.put("name", cata.getCataName());
+			tree.put("isParent", true);
+			tree.put("child", child);
+			cata = cataDao.find(cata.getParentCataId().toString());
+		}
+
+		return tree;
+	}
+	
 	public String getStaff() {
 		// 1.根据type判断是机构目录还是机构
 		// 2.根据selfId获取子节点
@@ -362,7 +417,13 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 	public void setIsClient(String[] isClient) {
 		this.isClient = isClient;
 	}
-
+	
+	public String getAgencyTree() {
+		SysStaff curUser = (SysStaff)session.get("user");
+		//if ()
+		return null;
+	}
+	
 	public String getAgency() {
 		// 1.根据type判断是机构目录还是机构
 		// 2.根据selfId获取子节点
@@ -559,4 +620,10 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
     public void addFieldError(String fieldName, String errorMessage) {
         //validationAware.addFieldError(fieldName, errorMessage);
     }
+
+	@Override
+	public void setSession(Map<String, Object> arg0) {
+		// TODO Auto-generated method stub
+		this.session = (SessionMap) arg0;
+	}
 }

@@ -221,7 +221,12 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	public String getAllUserJson(){
 		List<SysStaff> staffList = null;
 		if (selfId == null) {
-			staffList = staffDao.getAll();
+			SysStaff staff = (SysStaff)session.get("user");
+			if (staff != null && iSysService.isOrgAdmin(staff)) {
+				staffList = staffDao.findByOrgId(staff.getOrgId());
+			} else {
+				staffList = staffDao.getAll();
+			}
 		} else {
 			staffList = staffDao.findByOrgId(selfId);
 		}

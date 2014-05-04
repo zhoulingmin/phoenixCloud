@@ -10,12 +10,14 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.phoenixcloud.bean.PubDdv;
 import com.phoenixcloud.bean.PubHw;
 import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
 import com.phoenixcloud.bean.SysStaffRegCode;
+import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.PubHwDao;
 import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
 import com.phoenixcloud.dao.ctrl.SysPurviewDao;
@@ -44,6 +46,9 @@ public class SysServiceImpl implements ISysService{
 	
 	@Autowired
 	private PubServerAddrDao serverAddrDao;
+	
+	@Autowired
+	private PubDdvDao ddvDao;
 	
 	public void setPurviewDao(SysPurviewDao purviewDao) {
 		this.purviewDao = purviewDao;
@@ -101,6 +106,20 @@ public class SysServiceImpl implements ISysService{
 	@Override
 	public SysStaff findStaffById(String id) {
 		return staffDao.find(id);
+	}
+	
+	public boolean isOrgAdmin(SysStaff staff) {
+		if (staff == null) {
+			return false;
+		}
+		PubDdv ddv = ddvDao.find(staff.getStaffTypeId().toString());
+		if (ddv == null) {
+			return false;
+		}
+		if (!"机构管理员".equals(ddv.getValue())) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override

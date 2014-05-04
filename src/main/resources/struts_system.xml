@@ -9,7 +9,7 @@
 		<action name="modifyPass" class="systemMgmtAction" method="editUser">
 			<result name="success">/updatepwd.jsp</result>
 		</action>
-		<action name="login" class="com.phoenixcloud.user.action.LoginAction" >
+		<action name="login" class="com.phoenixcloud.user.action.LoginAction" method="login">
 			<result name="success">/index.jsp</result>
 			<result name="NotFound">/login.jsp?reason=NotFound</result>
 			<result name="ErrorPass">/login.jsp?reason=ErrorPass</result>
@@ -19,6 +19,9 @@
 		</action>
 		<action name="getAuthHw" class="systemMgmtAction" method="getAllHw">
 			<result name="success">/sq_info.jsp</result>
+		</action>
+		<action name="register" class="com.phoenixcloud.user.action.LoginAction" method="register">
+			<result name="success">/index.jsp</result>
 		</action>
 		
 		<action name="getAllUser" class="systemMgmtAction" method="getAllUserJson"></action>
