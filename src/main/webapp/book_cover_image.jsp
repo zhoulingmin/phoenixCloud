@@ -67,10 +67,10 @@
 							type="file" name="coverFile">
 						</span> <span class="fileinput-filename"></span> <a href="#"
 							class="close fileinput-exists" data-dismiss="fileinput"
-							style="float: none">&times;</a> <input type="hidden"
-							name="bookId" value="<%=bookId%>" /> <input
-							id="uploadBtn" type="submit" class="btn btn-primary"
-							onclick="return checkfile();" name="submit" value="上传" />
+							style="float: none">&times;</a> 
+						<input type="hidden" name="bookId" value="<%=bookId%>" /> 
+						<input id="uploadBtn" type="submit" class="btn btn-primary" onclick="return checkfile();" name="submit" value="上传" />
+						<input type="button" onclick="history.back();return false;" style="margin-left:50px" class="btn btn-primary" value="返回" />
 					</form>
 				</div>
 				</security:phoenixSec>

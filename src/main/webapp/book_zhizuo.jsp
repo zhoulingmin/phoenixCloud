@@ -326,6 +326,12 @@ function commitBook() {
 		}
 	}
 	
+	if (ids.length == 0) {
+		alert("请选择已经上传图书文件的图书进行提交！");
+		chkItems = null;
+		return;
+	}
+	
 	jQuery.ajax({
 		url: "<%=ctx%>/book/book_changeAuditStatus.do?flag=0",
 		type: "POST",
@@ -335,7 +341,7 @@ function commitBook() {
 		success: function() {
 			alert("提交审核成功！");
 			jQuery(chkItems).each(function(){
-				if (jQuery(chkItems[i]).parents("tr").find("input[name='isUpload']")[0].value == 0) {
+				if (jQuery(this).parents("tr").find("input[name='isUpload']")[0].value == 0) {
 					jQuery(this).parents("tr").find("input:checkbox").removeAttr("checked");
 					return;
 				}
