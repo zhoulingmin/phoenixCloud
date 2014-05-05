@@ -185,7 +185,7 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 		baseURL.append("/rest/res/");
 
 		StringBuffer suffixURL = new StringBuffer();
-		suffixURL.append("/" + book.getBookNo());
+		suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
 		
 		PubDdv ddv = ddvDao.find(res.getFormat().toString());
 		if (ddv != null) {
