@@ -327,7 +327,7 @@ function commitBook() {
 	}
 	
 	if (ids.length == 0) {
-		alert("请选择已经上传图书文件的图书进行提交！");
+		alert("请先上传图书文件后，再提交审核！");
 		chkItems = null;
 		return;
 	}
