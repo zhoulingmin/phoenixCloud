@@ -298,7 +298,24 @@ function savePurCfg() {
 }
 
 jQuery(document).ready(function() {
-	zAgencyTreeObj = $.fn.zTree.init($("#agencyTree"), agencySetting, zAgencyTreeNodes);
+	jQuery.ajax({
+		type:"get",
+		url: "<%=ctx%>/agency/agencyMgmt!getUpperTree.do",
+		async: "true",
+		timeout: 30000,
+		dataType: "json",
+		success: function(data) {
+			if (data == null) {
+				alert("加载数据出错！");
+				return;
+			}
+			zTreeObj = $.fn.zTree.init($("#agencyTree"), agencySetting, data);
+		},
+		error: function() {
+			alert("加载数据出错！");
+		}
+	});
+	
 	zPurTreeObj = $.fn.zTree.init($("#purTree"), purSetting, zPurTreeNodes);
 	
 });

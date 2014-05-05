@@ -108,7 +108,7 @@ public class SysServiceImpl implements ISysService{
 		return staffDao.find(id);
 	}
 	
-	public boolean isOrgAdmin(SysStaff staff) {
+	public boolean isAdmin(SysStaff staff) {
 		if (staff == null) {
 			return false;
 		}
@@ -116,10 +116,10 @@ public class SysServiceImpl implements ISysService{
 		if (ddv == null) {
 			return false;
 		}
-		if (!"机构管理员".equals(ddv.getValue())) {
-			return false;
+		if ("机构管理员".equals(ddv.getValue()) || "超级管理员".equals(ddv.getValue())) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override

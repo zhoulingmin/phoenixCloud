@@ -21,7 +21,8 @@
 			<result name="success">/sq_info.jsp</result>
 		</action>
 		<action name="register" class="com.phoenixcloud.user.action.LoginAction" method="register">
-			<result name="success">/index.jsp</result>
+			<result name="success" type="redirect">/register.jsp?reason=success</result>
+			<result name="existed" type="redirect">/register.jsp?reason=existed</result>
 		</action>
 		
 		<action name="getAllUser" class="systemMgmtAction" method="getAllUserJson"></action>

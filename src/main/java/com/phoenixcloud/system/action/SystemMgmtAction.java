@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import com.phoenixcloud.bean.PubDdv;
 import com.phoenixcloud.bean.PubHw;
 import com.phoenixcloud.bean.PubHwNum;
 import com.phoenixcloud.bean.PubOrg;
+import com.phoenixcloud.bean.PubOrgCata;
 import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
@@ -35,6 +37,7 @@ import com.phoenixcloud.bean.SysStaffRegCode;
 import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.PubHwDao;
 import com.phoenixcloud.dao.ctrl.PubHwNumDao;
+import com.phoenixcloud.dao.ctrl.PubOrgCataDao;
 import com.phoenixcloud.dao.ctrl.PubOrgDao;
 import com.phoenixcloud.dao.ctrl.SysPurviewDao;
 import com.phoenixcloud.dao.ctrl.SysStaffDao;
@@ -95,6 +98,9 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	
 	@Autowired
 	private PubOrgDao orgDao;
+	
+	@Autowired
+	private PubOrgCataDao cataDao;
 	
 	@Autowired PubDdvDao ddvDao;
 	
@@ -217,13 +223,63 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		request.put("staffList", staffList);
 		return "success";
 	}
+	
+	private List<SysStaff> getSubStaffByCataId(BigInteger cataId) {
+		List<SysStaff> staffList = new ArrayList<SysStaff>();
+		List<PubOrg> orgList = orgDao.findByOrgCataId(cataId.toString());
+		// 获取子结构中的用户
+		for (PubOrg org : orgList) {
+			List<SysStaff> tmpList = staffDao.findByOrgId(new BigInteger(org.getOrgId()));
+			if (tmpList == null || tmpList.size() == 0) {
+				continue;
+			}
+			staffList.addAll(tmpList);
+		}
+		List<PubOrgCata> childrenCata = cataDao.findAllByParentId(cataId);
+		// 获取子机构目录中机构中的用户
+		for (PubOrgCata cata : childrenCata) {
+			List<SysStaff> tmpList = getSubStaffByCataId(new BigInteger(cata.getId()));
+			if (tmpList == null || tmpList.size() == 0){
+				continue;
+			}
+			staffList.addAll(tmpList);
+		}
+		
+		return staffList;
+	}
+	
+	
+	private List<SysStaff> getSubStaff(BigInteger orgId) {
+		List<SysStaff> staffList = new ArrayList<SysStaff>();
+		PubOrg org = orgDao.find(orgId.toString());
+		if (org == null) {
+			return staffList;
+		}
+		// 1.获取同级的cata节点
+		List<PubOrgCata> cataList = cataDao.findAllByParentId(new BigInteger(org.getPubOrgCata().getId()));
+		for (PubOrgCata cata : cataList) {
+			// 2.递归获取下级的所有staff
+			List<SysStaff> tmpList = getSubStaffByCataId(new BigInteger(cata.getId()));
+			if (tmpList.size() == 0) {
+				continue;
+			}
+			staffList.addAll(tmpList);
+		}
+		return staffList;
+	}
 
 	public String getAllUserJson(){
 		List<SysStaff> staffList = null;
 		if (selfId == null) {
 			SysStaff staff = (SysStaff)session.get("user");
-			if (staff != null && iSysService.isOrgAdmin(staff)) {
+			if (staff != null && iSysService.isAdmin(staff)) {
+				// 1.获取本机构中使用的用户
 				staffList = staffDao.findByOrgId(staff.getOrgId());
+				// 获取子结构目录下机构中的用户
+				List<SysStaff> subList = getSubStaff(staff.getOrgId());
+				if (subList.size() > 0) {
+					staffList.addAll(subList);
+				}
 			} else {
 				staffList = staffDao.getAll();
 			}

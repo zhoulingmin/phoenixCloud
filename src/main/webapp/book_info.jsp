@@ -80,7 +80,7 @@ if (audit == (byte)-1) {
 	isAudit = "已下架";
 }
 
-String beatifySize = new java.text.DecimalFormat(",###").formart((Integer)vs.findValue("book.bookSize"));
+String beatifySize = new java.text.DecimalFormat(",###").format((Integer)vs.findValue("book.bookSize"));
 
 %>
 

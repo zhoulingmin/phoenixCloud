@@ -6,7 +6,7 @@
 <%
 SysStaff staff = (SysStaff)session.getAttribute("user");
 PubOrgDao orgDao = (PubOrgDao)SpringUtils.getBean(PubOrgDao.class);
-PubOrg org = orgDao.find(staff.getStaffId().toString());
+PubOrg org = orgDao.find(staff.getOrgId().toString());
 String ctx = request.getContextPath();
 
 %>
@@ -481,13 +481,29 @@ function searchAgency() {
 		setting.async.enable = true;
 		zTreeObj.destroy();
 		jQuery("#agencyTree").empty();
-		zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, zTreeNodes);
+		jQuery.ajax({
+			type:"get",
+			url: "<%=ctx%>/agency/agencyMgmt!getUpperTree.do",
+			async: "true",
+			timeout: 30000,
+			dataType: "json",
+			success: function(data) {
+				if (data == null) {
+					alert("加载数据出错！");
+					return;
+				}
+				zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, data);
+			},
+			error: function() {
+				alert("加载数据出错！");
+			}
+		});
 		return;
 	}
 	
 	jQuery.ajax({
 		type: "POST",
-		url: "<%=ctx%>/agency/agencyMgmt!searchAgency.do",
+		url: "<%=ctx%>/agency/agencyMgmt!searchAgencyNew.do",
 		async: "true",
 		timeout: 30000,
 		data: jQuery("#searchAgency").serialize(),
@@ -513,7 +529,24 @@ function searchAgency() {
 
 $(document).ready(function(){
 	<security:phoenixSec purviewCode="ORG_MGMT_MENU">
-	zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, zTreeNodes);
+	jQuery.ajax({
+		type:"get",
+		url: "<%=ctx%>/agency/agencyMgmt!getUpperTree.do",
+		async: "true",
+		timeout: 30000,
+		dataType: "json",
+		success: function(data) {
+			if (data == null) {
+				alert("加载数据出错！");
+				return;
+			}
+			zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, data);
+		},
+		error: function() {
+			alert("加载数据出错！");
+		}
+	});
+	
 	</security:phoenixSec>
 });
 </script>

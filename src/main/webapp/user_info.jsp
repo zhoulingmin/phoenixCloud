@@ -170,8 +170,40 @@ $(function() {
 	jQuery("select").each(function(idx) {
 		jQuery(this).val(this.getAttribute("value"));
 	});
-	
-	zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, zTreeNodes);
+	jQuery.ajax({
+		type:"get",
+		url: "<%=ctx%>/agency/agencyMgmt!getUpperTree.do",
+		async: "true",
+		timeout: 30000,
+		dataType: "json",
+		success: function(data) {
+			if (data == null) {
+				alert("加载数据出错！");
+				return;
+			}
+			zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, data);
+		},
+		error: function() {
+			alert("加载数据出错！");
+		}
+	});
+	jQuery.ajax({
+		type:"get",
+		url: "<%=ctx%>/agency/agencyMgmt!getUpperTree.do",
+		async: "true",
+		timeout: 30000,
+		dataType: "json",
+		success: function(data) {
+			if (data == null) {
+				alert("加载数据出错！");
+				return;
+			}
+			zTreeObj = $.fn.zTree.init($("#agencyTree"), setting, data);
+		},
+		error: function() {
+			alert("加载数据出错！");
+		}
+	});
 	jQuery("#agencyTree").on("blur", function(event) {
 		jQuery(this).css("display", "none");
 	});

@@ -40,8 +40,7 @@ public class LoginAction extends ActionSupport implements RequestAware,
 	private SysStaffDao staffDao;
 	@Resource
 	private PubDdvDao ddvDao;
-	
-	
+
 	public void setDdvDao(PubDdvDao ddvDao) {
 		this.ddvDao = ddvDao;
 	}
@@ -108,7 +107,6 @@ public class LoginAction extends ActionSupport implements RequestAware,
 	}
 	
 	public String register() {
-		String ret = "success";
 		// check exist or not
 		SysStaff user = staffDao.findByCode(staff.getCode());
 		if (user != null) {
@@ -119,6 +117,7 @@ public class LoginAction extends ActionSupport implements RequestAware,
 		staff.setUpdateTime(date);
 		date.setYear(date.getYear() + 10);
 		staff.setValidDate(date);
+		staffDao.persist(staff);
 		return "success";
 	}
 }

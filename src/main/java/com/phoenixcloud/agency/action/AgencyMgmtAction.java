@@ -33,6 +33,7 @@ import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.PubOrgCataDao;
 import com.phoenixcloud.dao.ctrl.PubOrgDao;
 import com.phoenixcloud.dao.ctrl.SysStaffDao;
+import com.phoenixcloud.system.service.ISysService;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
@@ -55,7 +56,23 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 	private BigInteger selfId;
 	
 	private String checkedNodes;
+	private boolean orgAsCata;
 	
+	@Resource(name="sysServiceImpl")
+	private ISysService iSysService;
+	
+	public void setiSysService(ISysService iSysService) {
+		this.iSysService = iSysService;
+	}
+	
+	public boolean isOrgAsCata() {
+		return orgAsCata;
+	}
+
+	public void setOrgAsCata(boolean orgAsCata) {
+		this.orgAsCata = orgAsCata;
+	}
+
 	com.phoenixcloud.agency.vo.Criteria criteria;
 	
 	@Autowired
@@ -254,6 +271,87 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		
 		return jsonObj;
 	}
+	
+	public String searchAgencyNew() {
+		SysStaff curUser = (SysStaff)session.get("user");
+		if (!iSysService.isAdmin(curUser)) {
+			return searchAgency();
+		}
+		if (criteria.getCataName().isEmpty() && criteria.getOrgName().isEmpty() && criteria.getNotes().isEmpty()) {
+			return getUpperTree();
+		}
+		
+		String notes = criteria.getNotes();
+		String orgName = criteria.getOrgName();
+		
+		// 1.搜索本机构及平级机构目录
+		JSONArray children = new JSONArray();
+		PubOrg org = orgDao.find(curUser.getOrgId().toString());
+		if (org == null) {
+			return null;
+		}
+		if ((!orgName.isEmpty() && org.getOrgName().indexOf(orgName) != -1) 
+			|| (!notes.isEmpty() && org.getNotes().indexOf(notes) != -1)) {
+			JSONObject orgJson = new JSONObject();
+			orgJson.put("type", "org");
+			orgJson.put("selfId", org.getId());
+			//jsonObj.put("id", "org-" + org.getId());
+			//jsonObj.put("pid", "cata-" + cata.getId());
+			orgJson.put("name", org.getOrgName());
+			orgJson.put("isParent", false);
+			children.add(orgJson);
+		}
+		
+		// 2.搜索平级机构目录下机构及机构目录
+		JSONObject tree = new JSONObject();
+		PubOrgCata cata = org.getPubOrgCata();
+		tree.put("type", "cata");
+		tree.put("selfId", cata.getId());
+		tree.put("name", cata.getCataName());
+		tree.put("isParent", true);
+		
+		// Brother cata
+		JSONObject child = null;
+		List<PubOrgCata> cataList = cataDao.findAllByParentId(new BigInteger(org.getPubOrgCata().getId()));
+		for (PubOrgCata cataTmp : cataList) {
+			JSONObject childTmp = searchCata(cataTmp);
+			if (childTmp != null) {
+				children.add(childTmp);
+			}
+		}
+		if (children.size() > 0) {
+			tree.put("children", children);
+		}
+		
+		// 3.获取父级及祖先级节点
+		cata = cataDao.find(cata.getParentCataId().toString());
+		while (cata != null) {
+			child = tree;
+			tree = new JSONObject();
+			tree.put("type", "cata");
+			tree.put("selfId", cata.getId());
+			tree.put("name", cata.getCataName());
+			tree.put("isParent", true);
+			children = new JSONArray();
+			children.add(child);
+			tree.put("children", children);
+			cata = cataDao.find(cata.getParentCataId().toString());
+		}
+		
+		response.setCharacterEncoding("utf-8"); 
+        response.setContentType("html/text");
+        
+        try {
+        	PrintWriter out = response.getWriter();
+        	out.print(tree.toString());
+        	out.flush();
+        	out.close();
+        } catch (Exception e) {
+        	MiscUtils.getLogger().info(e.toString());
+        }
+        
+		return null;
+	}
 
 	public String searchAgency(){
 		JSONArray jsonArr = new JSONArray();
@@ -285,11 +383,33 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		return null;
 	}
 	
-	private JSONObject getParentTreeOfAgency(SysStaff staff, boolean allCata) {
+	public String getUpperTree() {
+		SysStaff curUser = (SysStaff)session.get("user");
+		if (!iSysService.isAdmin(curUser)) {
+			return getAgency();
+		}
+		JSONObject tree = getParentTreeOfAgency(curUser, orgAsCata);
+		if (tree == null) {
+			return null;
+		}
+		response.setContentType("text/html");
+		response.setCharacterEncoding("utf-8");
+		
+		try {
+			PrintWriter out = response.getWriter();
+			out.print(tree.toString());
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
+		return null;
+	}
+	
+	private JSONObject getParentTreeOfAgency(SysStaff staff, boolean isOrgAsCata) {
 		if (staff == null) {
 			return null;
 		}
-		JSONObject tree = null;
 		PubOrg org = orgDao.find(staff.getOrgId().toString());
 		if (org == null) {
 			return null;
@@ -298,22 +418,36 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		if (cata == null) {
 			return null;
 		}
-		tree = new JSONObject();
-		
+		JSONObject tree = new JSONObject();
 		tree.put("type", "cata");
 		tree.put("selfId", cata.getId());
 		tree.put("name", cata.getCataName());
 		tree.put("isParent", true);
 		
 		JSONObject child = null;
-		if (!allCata) {
+		JSONArray children = null;
+		
+		// self org
+		child = new JSONObject();
+		child.put("type", "org");
+		child.put("selfId", org.getId());
+		child.put("name", org.getOrgName());
+		child.put("isParent", isOrgAsCata);
+		children = new JSONArray();
+		children.add(child);
+		
+		// Brother cata
+		List<PubOrgCata> cataList = cataDao.findAllByParentId(new BigInteger(org.getPubOrgCata().getId()));
+		for (PubOrgCata cataTmp : cataList) {
 			child = new JSONObject();
-			child.put("type", "org");
-			child.put("selfId", org.getId());
-			child.put("name", org.getOrgName());
-			child.put("isParent", false);
-			tree.put("child", child);
+			child.put("type", "cata");
+			child.put("selfId", cataTmp.getId());
+			child.put("name", cataTmp.getCataName());
+			child.put("isParent", true);
+			children.add(child);
 		}
+		tree.put("children", children);
+			
 		cata = cataDao.find(cata.getParentCataId().toString());
 		while (cata != null) {
 			child = tree;
@@ -322,7 +456,9 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 			tree.put("selfId", cata.getId());
 			tree.put("name", cata.getCataName());
 			tree.put("isParent", true);
-			tree.put("child", child);
+			children = new JSONArray();
+			children.add(child);
+			tree.put("children", children);
 			cata = cataDao.find(cata.getParentCataId().toString());
 		}
 
@@ -416,12 +552,6 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 
 	public void setIsClient(String[] isClient) {
 		this.isClient = isClient;
-	}
-	
-	public String getAgencyTree() {
-		SysStaff curUser = (SysStaff)session.get("user");
-		//if ()
-		return null;
 	}
 	
 	public String getAgency() {
