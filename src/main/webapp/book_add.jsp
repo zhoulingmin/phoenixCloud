@@ -188,6 +188,7 @@ function checkBookNoExist(){
 	}
 	
 	jQuery.ajax({
+		type: "POST",
 		url: "<%=ctx%>/book/book_checkBookNo.do",
 		data: {"bookInfo.bookNo": bookNo.value},
 		dataType: "JSON",

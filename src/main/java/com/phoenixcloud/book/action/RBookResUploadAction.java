@@ -266,7 +266,7 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 		}
 		WebResource webRes = client.resource(url);
 		webRes.accept(MediaType.APPLICATION_JSON);
-		client.setChunkedEncodingSize(1024 * 16);
+		client.setChunkedEncodingSize(1024);
 		String contentDisposition = "attachment; filename=\"" + resFileFileName + "\"";
 		String responseObj = webRes.type(MediaType.APPLICATION_OCTET_STREAM)
 			.header("Content-Disposition", contentDisposition)

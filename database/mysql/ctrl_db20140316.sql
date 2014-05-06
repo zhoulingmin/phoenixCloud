@@ -32,7 +32,7 @@ CREATE TABLE `pub_ddv` (
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`DDV_ID`),
   KEY `IND_PDV_DDV_CODE` (`DDV_CODE`,`DELETE_STATE`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `pub_ddv` */
 
@@ -97,7 +97,7 @@ CREATE TABLE `pub_hardware` (
   PRIMARY KEY (`HW_ID`),
   KEY `IND_PHW_STAFF_ID` (`STAFF_ID`,`DELETE_STATE`),
   KEY `IND_PHW_DELTE_STATE` (`DELETE_STATE`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `pub_hardware` */
 
@@ -117,7 +117,7 @@ CREATE TABLE `pub_hardware_num` (
   PRIMARY KEY (`HW_ID`),
   KEY `IND_PHW_STAFF_ID` (`STAFF_ID`,`DELETE_STATE`),
   KEY `IND_PHW_DELTE_STATE` (`DELETE_STATE`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `pub_hardware_num` */
 
@@ -137,7 +137,7 @@ CREATE TABLE `pub_org` (
   PRIMARY KEY (`ORG_ID`),
   KEY `FK_PUB_ORG_CATA_ID` (`ORG_CATA_ID`),
   CONSTRAINT `FK_PUB_ORG_CATA_ID` FOREIGN KEY (`ORG_CATA_ID`) REFERENCES `pub_org_cata` (`ORG_CATA_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `pub_org` */
 INSERT INTO pub_org values(null, '机构1', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, '');
@@ -155,7 +155,7 @@ CREATE TABLE `pub_org_cata` (
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ORG_CATA_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `pub_org_cata` */
 INSERT INTO pub_org_cata values(NULL, '机构目录1', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, '');
@@ -173,7 +173,7 @@ CREATE TABLE `pub_press` (
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`PRESS_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `pub_press` */
 
@@ -204,7 +204,7 @@ CREATE TABLE `pub_server_addr` (
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`SADDR_ID`),
   UNIQUE KEY `IND_PSA_ORG_ID` (`ORG_ID`,`DELETE_STATE`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `pub_server_addr` */
 
@@ -227,7 +227,7 @@ CREATE TABLE `sys_log` (
   PRIMARY KEY (`LOG_ID`),
   KEY `FK_FK_SYS_LOG_STAFF_ID` (`STAFF_ID`),
   CONSTRAINT `FK_FK_SYS_LOG_STAFF_ID` FOREIGN KEY (`STAFF_ID`) REFERENCES `sys_staff` (`STAFF_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `sys_log` */
 
@@ -246,7 +246,7 @@ CREATE TABLE `sys_purview` (
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`PURVIEW_ID`),
   KEY `IND_SYS_PUR_DEL_STA` (`DELETE_STATE`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `sys_purview` */
 INSERT  INTO `sys_purview`(`PURVIEW_ID`,`NAME`,`CODE`,`PARENT_ID`,`CREATE_TIME`,`UPDATE_TIME`,`DELETE_STATE`,`NOTES`) VALUES 
@@ -333,7 +333,7 @@ CREATE TABLE `sys_staff` (
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`STAFF_ID`),
   UNIQUE KEY `IND_SYS_STAFF_CODE` (`CODE`,`DELETE_STATE`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `sys_staff` */
 
@@ -354,7 +354,7 @@ CREATE TABLE `sys_staff_purview` (
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`STA_PUR_ID`),
   KEY `IND_SSP_STAFF_ID` (`STAFF_ID`,`DELETE_STATE`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `sys_staff_purview` */
 
@@ -378,7 +378,7 @@ CREATE TABLE `sys_staff_reg_code` (
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`SSRC_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `sys_staff_reg_code` */
 

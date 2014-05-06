@@ -57,7 +57,16 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 	
 	private String checkedNodes;
 	private boolean orgAsCata;
+	private boolean noCheckbox;
 	
+	public boolean isNoCheckbox() {
+		return noCheckbox;
+	}
+
+	public void setNoCheckbox(boolean noCheckbox) {
+		this.noCheckbox = noCheckbox;
+	}
+
 	@Resource(name="sysServiceImpl")
 	private ISysService iSysService;
 	
@@ -388,7 +397,7 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		if (!iSysService.isAdmin(curUser)) {
 			return getAgency();
 		}
-		JSONObject tree = getParentTreeOfAgency(curUser, orgAsCata);
+		JSONObject tree = getParentTreeOfAgency(curUser, orgAsCata, noCheckbox);
 		if (tree == null) {
 			return null;
 		}
@@ -406,7 +415,7 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		return null;
 	}
 	
-	private JSONObject getParentTreeOfAgency(SysStaff staff, boolean isOrgAsCata) {
+	private JSONObject getParentTreeOfAgency(SysStaff staff, boolean isOrgAsCata, boolean noChk) {
 		if (staff == null) {
 			return null;
 		}
@@ -423,6 +432,7 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		tree.put("selfId", cata.getId());
 		tree.put("name", cata.getCataName());
 		tree.put("isParent", true);
+		tree.put("nocheck", noChk);
 		
 		JSONObject child = null;
 		JSONArray children = null;
@@ -433,6 +443,7 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 		child.put("selfId", org.getId());
 		child.put("name", org.getOrgName());
 		child.put("isParent", isOrgAsCata);
+		child.put("nocheck", noChk);
 		children = new JSONArray();
 		children.add(child);
 		
@@ -444,6 +455,7 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 			child.put("selfId", cataTmp.getId());
 			child.put("name", cataTmp.getCataName());
 			child.put("isParent", true);
+			child.put("nocheck", noChk);
 			children.add(child);
 		}
 		tree.put("children", children);
@@ -456,6 +468,7 @@ public class AgencyMgmtAction extends ActionSupport implements RequestAware, Ser
 			tree.put("selfId", cata.getId());
 			tree.put("name", cata.getCataName());
 			tree.put("isParent", true);
+			tree.put("nocheck", noChk);
 			children = new JSONArray();
 			children.add(child);
 			tree.put("children", children);

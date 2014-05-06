@@ -300,7 +300,7 @@ function savePurCfg() {
 jQuery(document).ready(function() {
 	jQuery.ajax({
 		type:"get",
-		url: "<%=ctx%>/agency/agencyMgmt!getUpperTree.do",
+		url: "<%=ctx%>/agency/agencyMgmt!getUpperTree.do?orgAsCata=true&noCheckbox=true",
 		async: "true",
 		timeout: 30000,
 		dataType: "json",
@@ -309,7 +309,7 @@ jQuery(document).ready(function() {
 				alert("加载数据出错！");
 				return;
 			}
-			zTreeObj = $.fn.zTree.init($("#agencyTree"), agencySetting, data);
+			zAgencyTreeObj = $.fn.zTree.init($("#agencyTree"), agencySetting, data);
 		},
 		error: function() {
 			alert("加载数据出错！");

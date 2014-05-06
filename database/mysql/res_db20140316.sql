@@ -45,7 +45,7 @@ CREATE TABLE `r_book` (
   `COVER_CONT_TYPE` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`BOOK_ID`),
   UNIQUE KEY `IND_BOOK_NO` (`BOOK_NO`, `DELETE_STATE`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `r_book` */
 
@@ -69,7 +69,7 @@ CREATE TABLE `r_book_dire` (
   PRIMARY KEY (`DIRE_ID`),
   KEY `FK_FK_BOOK_DIRE_BOOK_ID` (`BOOK_ID`),
   CONSTRAINT `FK_FK_BOOK_DIRE_BOOK_ID` FOREIGN KEY (`BOOK_ID`) REFERENCES `r_book` (`BOOK_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `r_book_dire` */
 
@@ -89,7 +89,7 @@ CREATE TABLE `r_book_log` (
   `DELETE_STATE` tinyint(1) NOT NULL COMMENT '1表示删除，0标识正常',
   `NOTES` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`LOG_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `r_book_log` */
 
@@ -112,7 +112,7 @@ CREATE TABLE `r_book_page_res` (
   KEY `FK_FK_BPR_RES_ID` (`RES_ID`),
   CONSTRAINT `FK_FK_BPR_RES_ID` FOREIGN KEY (`RES_ID`) REFERENCES `r_book_res` (`RES_ID`),
   CONSTRAINT `FK_FK_BPR_BOOK_ID` FOREIGN KEY (`BOOK_ID`) REFERENCES `r_book` (`BOOK_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `r_book_page_res` */
 
@@ -140,7 +140,7 @@ CREATE TABLE `r_book_res` (
   PRIMARY KEY (`RES_ID`),
   KEY `FK_FK_BOOK_RES_BOOK_ID` (`BOOK_ID`),
   CONSTRAINT `FK_FK_BOOK_RES_BOOK_ID` FOREIGN KEY (`BOOK_ID`) REFERENCES `r_book` (`BOOK_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `r_book_res` */
 
@@ -162,7 +162,7 @@ CREATE TABLE `r_reg_code` (
   PRIMARY KEY (`REG_CODE_ID`),
   KEY `FK_FK_REG_CODE_BOOK_ID` (`BOOK_ID`),
   CONSTRAINT `FK_FK_REG_CODE_BOOK_ID` FOREIGN KEY (`BOOK_ID`) REFERENCES `r_book` (`BOOK_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `r_reg_code` */
 
