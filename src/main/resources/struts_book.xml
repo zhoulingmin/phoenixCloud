@@ -47,10 +47,12 @@
 		
 		<action name="uploadBookNew" class="bookUploadAction" method="uploadBook">
 			<result name="success" type="redirect">/book/modifyBook.do?bookInfo.bookId=${bookId}</result>
+			<result name="error">/upload_error.jsp</result>
 		</action>
 		
 		<action name="uploadBookResNew" class="bookResUploadAction" method="uploadRes">
 			<result name="success" type="redirect">/book/modifyBookRes.do?mode=${bookInfo.isAudit}&amp;bookRes.resId=${bookRes.resId}</result>
+			<result name="error">/upload_error.jsp</result>
 		</action>
 		
 		<action name="viewBook" class="bookMgmtAction" method="viewBook">

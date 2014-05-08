@@ -40,6 +40,7 @@ import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
 import com.phoenixcloud.dao.res.RBookDao;
+import com.phoenixcloud.system.service.ISysService;
 import com.phoenixcloud.util.ClientHelper;
 import com.phoenixcloud.util.MiscUtils;
 import com.sun.jersey.api.client.Client;
@@ -67,10 +68,26 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	private String coverFileFileName;
 
 	private String bookId;
+	private String errInfo = "上传出错";
 	
+	public String getErrInfo() {
+		return errInfo;
+	}
+
+	public void setErrInfo(String errInfo) {
+		this.errInfo = errInfo;
+	}
+
 	@Resource(name="bookMgmtServiceImpl")
 	private IRBookMgmtService iBookService;
 	
+	@Resource(name="sysServiceImpl")
+	private ISysService iSysService;
+
+	public void setiSysService(ISysService iSysService) {
+		this.iSysService = iSysService;
+	}
+
 	@Autowired
 	private PubServerAddrDao serAddrDao;
 	
@@ -143,23 +160,47 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	public String uploadBook() throws Exception {
 		
 		if (bookFile == null) {
-			throw new Exception("上传文件出错！");
+			errInfo = "上传文件出错！";
+			return "error";
+			//throw new Exception("上传文件出错！");
 		}
 		
 		SysStaff staff = (SysStaff)session.get("user");
 		if (staff == null) {
-			throw new Exception("没有合适用户！");
-		}
-		
-		PubServerAddr addr = serAddrDao.findByOrgId(staff.getOrgId());
-		
-		if (addr == null) {
-			throw new Exception("没有找到对应的资源服务器！");
+			errInfo = "没有合适用户！";
+			return "error";
+			//throw new Exception("没有合适用户！");
 		}
 		
 		RBook book = iBookService.findBook(bookId);
 		if (book == null) {
-			throw new Exception("数据库中无法找到目标书籍！");
+			errInfo = "数据库中无法找到目标书籍！";
+			return "error";
+		//	throw new Exception("数据库中无法找到目标书籍！");
+		}
+		
+		PubServerAddr addr = null;
+		do {
+			// 1.先根据书籍的orgId查找
+			addr = serAddrDao.findByOrgId(book.getOrgId());
+			// 2.查不到则查上层机构是否有addr
+			if (addr == null) {
+				addr = iSysService.findParentAddrByOrgId(book.getOrgId());
+			}
+			// 3.查不到则用当前账号的orgId查找
+			if (addr == null) {
+				addr = serAddrDao.findByOrgId(staff.getOrgId());
+			}
+			// 4.查不到则查上层机构是否有addr
+			if (addr == null) {
+				addr = iSysService.findParentAddrByOrgId(staff.getOrgId());
+			}
+		} while (false);
+		
+		if (addr == null) {
+			//throw new Exception("没有找到对应的资源服务器！");
+			errInfo = "没有找到对应的资源服务器！";
+			return "error";
 		}
 		
 		StringBuffer baseURL = new StringBuffer();
@@ -171,11 +212,19 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 		StringBuffer suffixURL = new StringBuffer();
 		suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
 		suffixURL.append("/" + URLEncoder.encode(bookFileFileName, "utf-8"));
-		JSONObject retObj = upoadBookToResServer(baseURL.toString() + "uploadFile" + suffixURL);
-		if ((Integer)retObj.get("ret") == 1) {
-			MiscUtils.getLogger().info(retObj.get("error"));
-			return "success";
+		try {
+			JSONObject retObj = upoadBookToResServer(baseURL.toString() + "uploadFile" + suffixURL);
+			if ((Integer)retObj.get("ret") == 1) {
+				MiscUtils.getLogger().info(retObj.get("error"));
+				errInfo = "上传失败！";
+				return "error";
+			}
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+			errInfo = "无法连接资源服务器！";
+			return "error";
 		}
+		
 		HttpServletRequest req = ServletActionContext.getRequest();
 		String scheme = phoenixProp.getProperty("protocol_file_transfer") + "://";
 		String host = req.getServerName();

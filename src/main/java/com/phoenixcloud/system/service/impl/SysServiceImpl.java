@@ -5,13 +5,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.phoenixcloud.bean.PubDdv;
 import com.phoenixcloud.bean.PubHw;
+import com.phoenixcloud.bean.PubOrg;
+import com.phoenixcloud.bean.PubOrgCata;
 import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
@@ -19,6 +22,8 @@ import com.phoenixcloud.bean.SysStaffPurview;
 import com.phoenixcloud.bean.SysStaffRegCode;
 import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.PubHwDao;
+import com.phoenixcloud.dao.ctrl.PubOrgCataDao;
+import com.phoenixcloud.dao.ctrl.PubOrgDao;
 import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
 import com.phoenixcloud.dao.ctrl.SysPurviewDao;
 import com.phoenixcloud.dao.ctrl.SysStaffDao;
@@ -49,6 +54,15 @@ public class SysServiceImpl implements ISysService{
 	
 	@Autowired
 	private PubDdvDao ddvDao;
+	
+	@Autowired
+	private PubOrgDao orgDao;
+	
+	@Autowired
+	private PubOrgCataDao cataDao;
+	
+	@PersistenceContext(unitName="ctrlDbUnit")
+	private EntityManager entityManager;
 	
 	public void setPurviewDao(SysPurviewDao purviewDao) {
 		this.purviewDao = purviewDao;
@@ -261,5 +275,35 @@ public class SysServiceImpl implements ISysService{
 	
 	public PubServerAddr findServerAddrByOrgId(BigInteger orgId) {
 		return serverAddrDao.findByOrgId(orgId);
+	}
+	
+	public PubServerAddr findParentAddrByOrgId(BigInteger orgId) {
+		// 1. find parent cata
+		// 2. find all org and get addr
+		
+		PubServerAddr addr = null;
+		PubOrg org = orgDao.find(orgId.toString());
+		if (org == null) {
+			return null;
+		}
+		PubOrgCata cata = org.getPubOrgCata();
+		while (cata != null) {
+			cata = entityManager.merge(cata);
+			List<PubOrg> orgList = cata.getPubOrgs();
+			if (orgList != null) {
+				for (PubOrg orgTmp : orgList) {
+					addr = serverAddrDao.findByOrgId(new BigInteger(orgTmp.getId()));
+					if (addr != null) {
+						break;
+					}
+				}
+			}
+			if (addr != null) {
+				break;
+			}
+			cata = cataDao.find(cata.getParentCataId().toString());
+		}
+		
+		return addr;
 	}
 }

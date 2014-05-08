@@ -38,5 +38,6 @@ public interface ISysService {
 	SysStaffRegCode findStaffRegCodeById(String id);
 	
 	PubServerAddr findServerAddrByOrgId(BigInteger orgId);
+	PubServerAddr findParentAddrByOrgId(BigInteger orgId);
 	
 }
