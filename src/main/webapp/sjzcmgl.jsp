@@ -365,6 +365,7 @@ function searchBook() {
 				trElm += "<td>" + this.orgName + "</td>";
 				trElm += "<td>" + this.stu + "</td>";
 				trElm += "<td>" + this.cls + "</td>";
+				trElm += "<td>" + this.sub + "</td>";
 				trElm += "<td>" + this.kind + "</td>";
 				trElm += "<td>" + this.press + "</td>";
 				trElm += "<td>" + this.notes + "</td>";

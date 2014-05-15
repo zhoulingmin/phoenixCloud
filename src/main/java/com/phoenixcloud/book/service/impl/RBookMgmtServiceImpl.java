@@ -15,12 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.phoenixcloud.bean.PubDdv;
+import com.phoenixcloud.bean.PubPress;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookDire;
 import com.phoenixcloud.bean.RBookPageRes;
 import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.bean.RRegCode;
 import com.phoenixcloud.book.service.IRBookMgmtService;
+import com.phoenixcloud.dao.ctrl.PubDdvDao;
+import com.phoenixcloud.dao.ctrl.PubPressDao;
 import com.phoenixcloud.dao.res.RBookDao;
 import com.phoenixcloud.dao.res.RBookDireDao;
 import com.phoenixcloud.dao.res.RBookLogDao;
@@ -45,6 +49,12 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 	
 	@Autowired
 	private RRegCodeDao regCodeDao;
+	
+	@Autowired
+	private PubDdvDao ddvDao;
+	
+	@Autowired
+	private PubPressDao pressDao;
 	
 	@PersistenceContext(unitName="resDbUnit")
 	protected EntityManager resEm = null;
@@ -101,11 +111,58 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 		return bookList;
 	}
 	
+	public String genBookNo(RBook book, String yearOfRls, String quarter, String kindSeqNo) {
+		if (book == null) {
+			return "";
+		}
+		String bookNoStr = "";
+		do {
+			StringBuffer bookNo = new StringBuffer();
+			PubDdv stuSegDdv = ddvDao.find(book.getStuSegId().toString());
+			if (stuSegDdv == null){
+				break;
+			}
+			bookNo.append(stuSegDdv.getDdvCode());
+			PubDdv ddv = ddvDao.find(book.getSubjectId().toString());
+			if (ddv == null){
+				break;
+			}
+			bookNo.append(ddv.getDdvCode());
+			PubPress press = pressDao.find(book.getPressId().toString());
+			if (press == null) {
+				break;
+			}
+			bookNo.append(press.getCode());
+			
+			ddv = ddvDao.find(book.getClassId().toString());
+			if (ddv == null){
+				break;
+			}
+			bookNo.append(ddv.getDdvCode());
+			ddv = ddvDao.find(book.getKindId().toString());
+			if (ddv == null) {
+				break;
+			}
+			bookNo.append(ddv.getDdvCode());
+			if ("高中".equals(stuSegDdv.getValue()) && !kindSeqNo.isEmpty()) {
+				bookNo.append(kindSeqNo);
+			} else {
+				bookNo.append("z");
+			}
+			bookNo.append(yearOfRls);
+			bookNo.append(quarter);
+			bookNo.append("0000");
+			bookNoStr = bookNo.toString();
+		} while (false);
+		
+		return bookNoStr;
+	}
+	
 	public boolean checkBookNoExist(String bookNo) {
 		List<RBook> bookList = bookDao.findByBookNo(bookNo);
 		return (bookList != null && bookList.size() > 0);
 	}
-		
+	
 	public List<RBookDire> getBookDires(BigInteger bookId, BigInteger parentId) {
 		List<RBookDire> bdList = bookDireDao.findSubDires(bookId, parentId);
 		if (bdList == null) {

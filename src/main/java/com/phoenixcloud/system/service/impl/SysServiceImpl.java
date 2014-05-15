@@ -1,6 +1,12 @@
 package com.phoenixcloud.system.service.impl;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +36,7 @@ import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.dao.ctrl.SysStaffPurviewDao;
 import com.phoenixcloud.dao.ctrl.SysStaffRegCodeDao;
 import com.phoenixcloud.system.service.ISysService;
+import com.phoenixcloud.util.MiscUtils;
 
 @Service
 public class SysServiceImpl implements ISysService{
@@ -273,11 +280,11 @@ public class SysServiceImpl implements ISysService{
 		return staffRegCodeDao.find(id);
 	}
 	
-	public PubServerAddr findServerAddrByOrgId(BigInteger orgId) {
-		return serverAddrDao.findByOrgId(orgId);
+	public PubServerAddr findServerAddrByOrgId(BigInteger orgId, String netType) {
+		return serverAddrDao.findByOrgId(orgId, netType);
 	}
 	
-	public PubServerAddr findParentAddrByOrgId(BigInteger orgId) {
+	public PubServerAddr findParentAddrByOrgId(BigInteger orgId, String netType) {
 		// 1. find parent cata
 		// 2. find all org and get addr
 		
@@ -292,7 +299,7 @@ public class SysServiceImpl implements ISysService{
 			List<PubOrg> orgList = cata.getPubOrgs();
 			if (orgList != null) {
 				for (PubOrg orgTmp : orgList) {
-					addr = serverAddrDao.findByOrgId(new BigInteger(orgTmp.getId()));
+					addr = serverAddrDao.findByOrgId(new BigInteger(orgTmp.getId()), netType);
 					if (addr != null) {
 						break;
 					}
@@ -305,5 +312,84 @@ public class SysServiceImpl implements ISysService{
 		}
 		
 		return addr;
+	}
+	
+	public PubServerAddr getProperAddr(PubServerAddr inAddr, PubServerAddr outAddr) {
+		if (inAddr == null && outAddr == null) {
+			return null;
+		}
+		InetAddress local = null;
+		InetAddress inInetAddr = null;
+		InetAddress outInetAddr = null;
+
+		try {
+			local = InetAddress.getLocalHost();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			MiscUtils.getLogger().info(e.toString());
+			return null;
+		}
+		
+		PubServerAddr addr = null;
+		if (inAddr != null) {
+			try {
+				inInetAddr = InetAddress.getByName(inAddr.getBookSerIp());
+				if (inInetAddr != null && isReachable(local, inInetAddr, inAddr.getBookSerPort(), 3000)) {
+					addr = inAddr;
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				MiscUtils.getLogger().info(e.toString());
+			}
+		}
+		
+		if (addr == null && outAddr != null) {
+			try {
+				outInetAddr = InetAddress.getByName(outAddr.getBookSerIp());
+				if (outInetAddr != null && isReachable(local, outInetAddr, outAddr.getBookSerPort(), 3000)) {
+					addr = outAddr;
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				MiscUtils.getLogger().info(e.toString());
+			}
+		}
+		
+		return addr;
+	}
+	
+	private boolean isReachable(InetAddress localInetAddr, 
+			InetAddress remoteInetAddr, int port, int timeout) {
+
+		boolean isReachable = false;
+		Socket socket = null;
+		try {
+			socket = new Socket();
+			// 端口号设置为 0 表示在本地挑选一个可用端口进行连接
+			SocketAddress localSocketAddr = new InetSocketAddress(
+					localInetAddr, 0);
+			socket.bind(localSocketAddr);
+			InetSocketAddress endpointSocketAddr = new InetSocketAddress(
+					remoteInetAddr, port);
+			socket.connect(endpointSocketAddr, timeout);
+			MiscUtils.getLogger().info("SUCCESS - connection established! Local: "
+					+ localInetAddr.getHostAddress() + " remote: "
+					+ remoteInetAddr.getHostAddress() + " port" + port);
+			isReachable = true;
+		} catch (Exception e) {
+			MiscUtils.getLogger().info("FAILRE - CAN not connect! Local: "
+					+ localInetAddr.getHostAddress() + " remote: "
+					+ remoteInetAddr.getHostAddress() + " port" + port);
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (Exception e) {
+					MiscUtils.getLogger().info("Error occurred while closing socket..");
+				}
+			}
+		}
+		
+		return isReachable;
 	}
 }

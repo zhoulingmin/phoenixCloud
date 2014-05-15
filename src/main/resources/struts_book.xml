@@ -9,6 +9,17 @@
 
 		<action name="uploadBookCoverPic" class="bookUploadAction" method="uploadBookCover">
 			<result name="success">/book_cover_image.jsp?bookId=${bookId}</result>
+			<result name="error">/upload_error.jsp</result>
+		</action>
+		
+		<action name="downloadBook" class="bookMgmtAction" method="downloadBook">
+			<result name="success" type="redirect">${downloadUrl}</result>
+			<result name="error">/download_error.jsp</result>	
+		</action>
+		
+		<action name="downloadRes" class="bookResMgmtAction" method="downloadRes">
+			<result name="success" type="redirect">${downloadUrl}</result>
+			<result name="error">/download_error.jsp</result>	
 		</action>
 		
 		<action name="showBookConver" class="bookMgmtAction" method="showCover"></action>

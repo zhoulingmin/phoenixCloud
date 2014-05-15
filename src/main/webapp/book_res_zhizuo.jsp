@@ -165,7 +165,7 @@ white-space:nowrap;
 	
 								<%if (res.getIsUpload() == (byte)1) {%>
 								<security:phoenixSec purviewCode="RES_DOWNLOAD">
-								<a class="tip-top" title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+								<a class="tip-top" title="下载" href="<%=ctx%>/book/downloadRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-download-alt"></i></a>
 								</security:phoenixSec>
 								<%} %>
 								
@@ -179,7 +179,7 @@ white-space:nowrap;
 							<% }else { %>
 								<%if (res.getIsUpload() == (byte)1) {%>
 								<security:phoenixSec purviewCode="RES_DOWNLOAD">
-								<a class="tip-top" title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+								<a class="tip-top" title="下载" href="<%=ctx%>/book/downloadRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-download-alt"></i></a>
 								</security:phoenixSec>
 								<%} %>
 							<%} %>

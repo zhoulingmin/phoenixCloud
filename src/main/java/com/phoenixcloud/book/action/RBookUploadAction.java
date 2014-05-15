@@ -37,6 +37,7 @@ import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
+import com.phoenixcloud.common.Constants;
 import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
 import com.phoenixcloud.dao.res.RBookDao;
@@ -179,7 +180,7 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 		//	throw new Exception("数据库中无法找到目标书籍！");
 		}
 		
-		PubServerAddr addr = null;
+		/*PubServerAddr addr = null;
 		do {
 			// 1.先根据书籍的orgId查找
 			addr = serAddrDao.findByOrgId(book.getOrgId());
@@ -195,11 +196,13 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 			if (addr == null) {
 				addr = iSysService.findParentAddrByOrgId(staff.getOrgId());
 			}
-		} while (false);
-		
+		} while (false);*/
+		PubServerAddr inAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.IN_NET);
+		PubServerAddr outAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.OUT_NET);
+		PubServerAddr addr = iSysService.getProperAddr(inAddr, outAddr);
 		if (addr == null) {
 			//throw new Exception("没有找到对应的资源服务器！");
-			errInfo = "没有找到对应的资源服务器！";
+			errInfo = "没有合适的资源服务器！";
 			return "error";
 		}
 		
@@ -225,18 +228,85 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 			return "error";
 		}
 		
-		HttpServletRequest req = ServletActionContext.getRequest();
+		//HttpServletRequest req = ServletActionContext.getRequest();
 		String scheme = phoenixProp.getProperty("protocol_file_transfer") + "://";
-		String host = req.getServerName();
-		int port = addr.getBookSerPort();
+		//String host = req.getServerName();
+		//int port = addr.getBookSerPort();
 		String ctxName = phoenixProp.getProperty("res_server_appname");
 		
-		book.setAllAddr(scheme + host + ":" + port + "/" + ctxName +  "/rest/book/downloadFile" + suffixURL);
+		//book.setAllAddr(scheme + host + ":" + port + "/" + ctxName +  "/rest/book/downloadFile" + suffixURL);
+		
+		if (inAddr != null){
+			book.setAllAddrInNet(scheme + inAddr.getBookSerIp() + ":" + inAddr.getBookSerPort() + "/" + ctxName +  "/rest/book/downloadFile" + suffixURL);
+		}
+		
+		if (outAddr != null){
+			book.setAllAddrOutNet(scheme + outAddr.getBookSerIp() + ":" + outAddr.getBookSerPort() + "/" + ctxName +  "/rest/book/downloadFile" + suffixURL);
+		}
+		
 		book.setUpdateTime(new Date());
 		book.setIsUpload((byte)1);
 		book.setBookSize((int)bookFile.length());
 		iBookService.saveBook(book);
 		
+		return "success";
+	}
+	
+	private String uploadCoverToResServer(RBook book, byte[] img) throws Exception{
+		if (book == null || img == null || img.length == 0) {
+			errInfo = "传入参数错误！";
+			return "error";
+		}
+		
+		PubServerAddr inAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.IN_NET);
+		PubServerAddr outAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.OUT_NET);
+		PubServerAddr addr = iSysService.getProperAddr(inAddr, outAddr);
+		if (addr == null) {
+			//throw new Exception("没有找到对应的资源服务器！");
+			errInfo = "没有合适的资源服务器！";
+			return "error";
+		}
+		
+		StringBuffer baseURL = new StringBuffer();
+		baseURL.append(phoenixProp.getProperty("protocol_file_transfer") + "://");
+		baseURL.append(addr.getBookSerIp() + ":" + addr.getBookSerPort() + "/");
+		baseURL.append(phoenixProp.getProperty("res_server_appname"));
+		baseURL.append("/rest/book/");
+
+		StringBuffer suffixURL = new StringBuffer();
+		suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
+		suffixURL.append("/cover/" + URLEncoder.encode(coverFileFileName, "utf-8"));
+		try {
+			JSONObject retObj = uploadCoverImg(baseURL.toString() + "uploadFile" + suffixURL);
+			if ((Integer)retObj.get("ret") == 1) {
+				MiscUtils.getLogger().info(retObj.get("error"));
+				errInfo = "上传失败！";
+				return "error";
+			}
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+			errInfo = "无法连接资源服务器！";
+			return "error";
+		}
+		
+		//HttpServletRequest req = ServletActionContext.getRequest();
+		String scheme = phoenixProp.getProperty("protocol_file_transfer") + "://";
+		//String host = req.getServerName();
+		//int port = addr.getBookSerPort();
+		String ctxName = phoenixProp.getProperty("res_server_appname");
+		
+		//book.setAllAddr(scheme + host + ":" + port + "/" + ctxName +  "/rest/book/downloadFile" + suffixURL);
+		
+		if (inAddr != null){
+			book.setCoverUrlInNet(scheme + inAddr.getBookSerIp() + ":" + inAddr.getBookSerPort() + "/" + ctxName +  "/rest/book/downloadFile" + suffixURL);
+		}
+		
+		if (outAddr != null){
+			book.setCoverUrlOutNet(scheme + outAddr.getBookSerIp() + ":" + outAddr.getBookSerPort() + "/" + ctxName +  "/rest/book/downloadFile" + suffixURL);
+		}
+		
+		book.setUpdateTime(new Date());
+		iBookService.saveBook(book);
 		return "success";
 	}
 	
@@ -320,6 +390,27 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 //		return responseObj;
 	}
 	
+	private JSONObject uploadCoverImg(String url) throws Exception {
+		MiscUtils.getLogger().info("URL: " + url);
+		Client client = null;
+		
+		if (url.startsWith("https")) {
+			client = ClientHelper.createClient();
+		} else {
+			client = new Client();
+		}
+		
+		WebResource webRes = client.resource(url);
+		webRes.accept(MediaType.APPLICATION_JSON);
+		client.setChunkedEncodingSize(1024);
+		String contentDisposition = "attachment; filename=\"" + coverFileFileName + "\"";
+		String responseObj = webRes.type(MediaType.APPLICATION_OCTET_STREAM)
+			.header("Content-Disposition", contentDisposition)
+			.post(String.class, new FileInputStream(coverFile));
+		
+		return JSONObject.fromObject(responseObj);
+	}
+	
 	private void uploadByForm(String url) {
 		url = "http://localhost:8080/resserver/rest/book/test/";
 		Client client = new Client();
@@ -371,13 +462,18 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	}
 	
 	public String uploadBookCover() {
+		String ret = "success";
 		try {
 			do {
 				if (bookId == null || StringUtils.isBlank(bookId)) {
+					ret = "error";
+					errInfo = "传入参数错误！";
 					break;
 				}
 				RBook book = bookDao.find(bookId);
 				if (book == null) {
+					ret = "error";
+					errInfo = "无法获取书籍信息！";
 					break;
 				}
 				book.setCoverContType(coverFileContentType);
@@ -390,10 +486,16 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 					book.setCoverImg(img);
 				}
 				bookDao.merge(book);
+				
+				// save cover into book folder
+				ret = uploadCoverToResServer(book, img);
+				
 			} while(false);
 		} catch (Exception e) {
 			MiscUtils.getLogger().info(e.toString());
+			ret = "error";
+			errInfo = "上传失败！";
 		}
-		return "success";
+		return ret;
 	}
 }

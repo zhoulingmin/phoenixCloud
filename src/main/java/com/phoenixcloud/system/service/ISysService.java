@@ -37,7 +37,9 @@ public interface ISysService {
 	void saveStaffRegCode(SysStaffRegCode staffRegCode);
 	SysStaffRegCode findStaffRegCodeById(String id);
 	
-	PubServerAddr findServerAddrByOrgId(BigInteger orgId);
-	PubServerAddr findParentAddrByOrgId(BigInteger orgId);
+	PubServerAddr findServerAddrByOrgId(BigInteger orgId, String netType);
+	PubServerAddr findParentAddrByOrgId(BigInteger orgId, String netType);
+	
+	PubServerAddr getProperAddr(PubServerAddr inAddr, PubServerAddr outAddr);
 	
 }

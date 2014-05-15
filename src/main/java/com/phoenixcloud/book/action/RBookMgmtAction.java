@@ -42,6 +42,7 @@ import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.PubOrgDao;
 import com.phoenixcloud.dao.ctrl.PubPressDao;
+import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
 import com.phoenixcloud.dao.res.RBookDao;
 import com.phoenixcloud.system.service.ISysService;
 import com.phoenixcloud.util.MiscUtils;
@@ -64,13 +65,52 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 	@Autowired
 	private RBookDao bookDao;
 	
+	@Autowired
+	private PubServerAddrDao serAddrDao;
+	
 	private byte flag;
-	
 	private RBook bookInfo;
-	
 	private String bookIdArr; // used to remove book
-	
 	private String dataType;
+	private String downloadUrl;
+	
+	private String errInfo = "";
+	
+	public String getErrInfo() {
+		return errInfo;
+	}
+
+	public void setErrInfo(String errInfo) {
+		this.errInfo = errInfo;
+	}
+
+	private String kindSeqNo;
+	public String getKindSeqNo() {
+		return kindSeqNo;
+	}
+
+	public void setKindSeqNo(String kindSeqNo) {
+		this.kindSeqNo = kindSeqNo;
+	}
+
+	public String getQuarter() {
+		return quarter;
+	}
+
+	public void setQuarter(String quarter) {
+		this.quarter = quarter;
+	}
+
+	public String getYearOfRls() {
+		return yearOfRls;
+	}
+
+	public void setYearOfRls(String yearOfRls) {
+		this.yearOfRls = yearOfRls;
+	}
+
+	private String quarter;
+	private String yearOfRls;
 	
 	private PhoenixProperties prop = PhoenixProperties.getInstance();
 
@@ -144,24 +184,63 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 		this.flag = flag;
 	}
 
+	
+	
+	public String getDownloadUrl() {
+		return downloadUrl;
+	}
+
+	public void setDownloadUrl(String downloadUrl) {
+		this.downloadUrl = downloadUrl;
+	}
+
 	public String addBook() {
-		Date date = new Date();
-		bookInfo.setCreateTime(date);
-		bookInfo.setUpdateTime(date);
+		JSONObject ret = new JSONObject();
 		
-		SysStaff curStaff = (SysStaff)session.get("user");
-		if (curStaff != null) {
-			bookInfo.setStaffId(new BigInteger(curStaff.getStaffId()));
-			PubServerAddr serAddr = iSysService.findServerAddrByOrgId(curStaff.getOrgId());
-			if (serAddr != null) {
-				bookInfo.setIpAddr(serAddr.getBookSerIp());
-			}
-			bookInfo.setOrgId(curStaff.getOrgId());
+		String bookNo = iBookService.genBookNo(bookInfo, yearOfRls, quarter, kindSeqNo);
+		boolean isExist = iBookService.checkBookNoExist(bookNo);
+		if (isExist) {
+			ret.put("ret", 1);
+			ret.put("reason", "书籍编码重复或书籍已存在！");
 		} else {
-			bookInfo.setStaffId(BigInteger.ZERO);
+			bookInfo.setBookNo(bookNo);
+			Date date = new Date();
+			bookInfo.setCreateTime(date);
+			bookInfo.setUpdateTime(date);
+			
+			SysStaff curStaff = (SysStaff)session.get("user");
+			if (curStaff != null) {
+				bookInfo.setStaffId(new BigInteger(curStaff.getStaffId()));
+				PubServerAddr serAddr = iSysService.findServerAddrByOrgId(curStaff.getOrgId(), Constants.OUT_NET);
+				if (serAddr != null) {
+					bookInfo.setIpAddr(serAddr.getBookSerIp());
+				}
+				bookInfo.setOrgId(curStaff.getOrgId());
+			} else {
+				bookInfo.setStaffId(BigInteger.ZERO);
+			}
+			try {
+				iBookService.saveBook(bookInfo);
+				ret.put("ret", 0);
+			} catch (Exception e) {
+				MiscUtils.getLogger().info(e.toString());
+				ret.put("ret", 1);
+				ret.put("reason", "保存书籍出错！");
+			}
 		}
 		
-		iBookService.saveBook(bookInfo);
+		response.setCharacterEncoding("utf-8");
+		response.setContentType("text/html");
+		
+		try {
+			PrintWriter out = response.getWriter();
+			out.print(ret.toString());
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
+		
 		return null;
 	}
 	
@@ -179,23 +258,57 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 			if (bookInfo == null) {
 				throw new Exception("没有找到相应的书籍！");
 			}
+			request.put("kindSeqNo", bookInfo.getKindSeqNo());
+			request.put("quarter", bookInfo.getQuarter());
+			request.put("yearOfRls", bookInfo.getYearOfRls());
 		} else {
-			RBook book = iBookService.findBook(bookInfo.getBookId());
-			if (book != null) {
-				book.setClassId(bookInfo.getClassId());
-				book.setKindId(bookInfo.getKindId());
-				book.setName(bookInfo.getName());
-				book.setNotes(bookInfo.getNotes());
-				//book.setOrgId(bookInfo.getOrgId());
-				book.setPageNum(bookInfo.getPageNum());
-				book.setPressId(bookInfo.getPressId());
-				book.setStuSegId(bookInfo.getStuSegId());
-				book.setSubjectId(bookInfo.getSubjectId());
-				book.setBookNo(bookInfo.getBookNo());
-				book.setUpdateTime(new Date());
-				iBookService.saveBook(book);
+			JSONObject ret = new JSONObject();
+					
+			String bookNo = iBookService.genBookNo(bookInfo, yearOfRls, quarter, kindSeqNo);
+			boolean isExist = iBookService.checkBookNoExist(bookNo);
+			if (isExist) {
+				ret.put("ret", 1);
+				ret.put("reason", "书籍编码重复或书籍已存在！");
+			} else {
+				RBook book = iBookService.findBook(bookInfo.getBookId());
+				if (book != null) {
+					book.setClassId(bookInfo.getClassId());
+					book.setKindId(bookInfo.getKindId());
+					book.setName(bookInfo.getName());
+					book.setNotes(bookInfo.getNotes());
+					//book.setOrgId(bookInfo.getOrgId());
+					book.setPageNum(bookInfo.getPageNum());
+					book.setPressId(bookInfo.getPressId());
+					book.setStuSegId(bookInfo.getStuSegId());
+					book.setSubjectId(bookInfo.getSubjectId());
+					book.setBookNo(bookNo);
+					book.setUpdateTime(new Date());
+					try {
+						iBookService.saveBook(book);
+						ret.put("ret", 0);
+					} catch (Exception e) {
+						MiscUtils.getLogger().info(e.toString());
+						ret.put("ret", "1");
+						ret.put("reason", "保存书籍出错！");
+					}
+				} else {
+					ret.put("ret", 1);
+					ret.put("reason", "无法找到相应书籍！");
+				}
 			}
 			
+			response.setCharacterEncoding("utf-8");
+			response.setContentType("text/html");
+			
+			try {
+				PrintWriter out = response.getWriter();
+				out.print(ret.toString());
+				out.flush();
+				out.close();
+			} catch (Exception e) {
+				MiscUtils.getLogger().info(e.toString());
+			}
+
 			return null;
 		}
 		return "success";
@@ -263,6 +376,7 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 							<th>学段</th>
 							<th>年级</th>
 							<th>学科</th>
+							<th>册别</th>
 							<th>出版社</th>
 							<th>备注</th>
 					 * */
@@ -281,6 +395,10 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 					if (cls == null) {
 						return new JSONObject(true);
 					}
+					PubDdv sub = ddvDao.find(book.getSubjectId().toString());
+					if (sub == null) {
+						return new JSONObject(true);
+					}
 					PubDdv kind = ddvDao.find(book.getKindId().toString());
 					if (kind == null) {
 						return new JSONObject(true);
@@ -297,6 +415,7 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 					obj.element("orgName", org.getOrgName());
 					obj.element("stu", stu.getValue());
 					obj.element("cls", cls.getValue());
+					obj.element("sub", sub.getValue());
 					obj.element("kind", kind.getValue());
 					obj.element("press", press.getName());
 					obj.element("notes", book.getNotes());
@@ -483,5 +602,33 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 			MiscUtils.getLogger().info(e.toString());
 		}
 		return null;
+	}
+	
+	public String downloadBook() {
+		RBook book = bookDao.find(bookInfo.getBookId());
+		if (book == null) {
+			errInfo = "数据库中无法找到目标书籍！";
+			return "error";
+		}
+		
+		PubServerAddr outAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.OUT_NET);
+		PubServerAddr addr = iSysService.getProperAddr(null, outAddr);
+		if (addr != null) {
+			downloadUrl = book.getAllAddrOutNet();
+		} else {
+			PubServerAddr inAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.IN_NET);
+			addr = iSysService.getProperAddr(inAddr, null);
+			if (addr != null) {
+				downloadUrl = book.getAllAddrInNet();
+			}
+		}
+		
+		if (addr == null) {
+			//throw new Exception("没有找到对应的资源服务器！");
+			errInfo = "没有合适的资源服务器！";
+			return "error";
+		}
+		
+		return "success";
 	}
 }

@@ -40,6 +40,7 @@ import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
+import com.phoenixcloud.common.Constants;
 import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
@@ -197,7 +198,7 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 			return "error";
 		}
 		
-		PubServerAddr addr = null;
+		/*PubServerAddr addr = null;
 		do {
 			// 1.先根据书籍的orgId查找
 			addr = serAddrDao.findByOrgId(book.getOrgId());
@@ -213,14 +214,15 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 			if (addr == null) {
 				addr = iSysService.findParentAddrByOrgId(staff.getOrgId());
 			}
-		} while (false);
-		
+		} while (false);*/
+		PubServerAddr inAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.IN_NET);
+		PubServerAddr outAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.OUT_NET);
+		PubServerAddr addr = iSysService.getProperAddr(inAddr, outAddr);
 		if (addr == null) {
 			//throw new Exception("没有找到对应的资源服务器！");
-			errInfo = "没有找到对应的资源服务器！";
+			errInfo = "没有合适的资源服务器！";
 			return "error";
 		}
-		
 		StringBuffer baseURL = new StringBuffer();
 		baseURL.append(phoenixProp.getProperty("protocol_file_transfer") + "://");
 		baseURL.append(addr.getBookSerIp() + ":" + addr.getBookSerPort() + "/");
@@ -249,13 +251,21 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 			return "error";
 		}
 		
-		HttpServletRequest req = ServletActionContext.getRequest();
+		//HttpServletRequest req = ServletActionContext.getRequest();
 		String scheme = phoenixProp.getProperty("protocol_file_transfer") + "://";
-		String host = req.getServerName();
-		int port = addr.getBookSerPort();
+		//String host = req.getServerName();
+		//int port = addr.getBookSerPort();
 		String ctxName = phoenixProp.getProperty("res_server_appname");
 		
-		res.setAllAddr(scheme + host + ":" + port + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
+		//res.setAllAddr(scheme + host + ":" + port + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
+		
+		if (inAddr != null){
+			res.setAllAddrInNet(scheme + inAddr.getBookSerIp() + ":" + inAddr.getBookSerPort() + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
+		}
+		
+		if (outAddr != null){
+			res.setAllAddrOutNet(scheme + outAddr.getBookSerIp() + ":" + outAddr.getBookSerPort() + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
+		}
 		
 		res.setUpdateTime(new Date());
 		res.setIsUpload((byte)1);

@@ -75,20 +75,38 @@ List<PubPress> pressList = pressDao.getAll();
 						</div>
 					</div>
 					
-					<div class="control-group">
+					<div class="control-group" style="display:none">
 						<label class="control-label">书籍编码</label>
 						<div class="controls">
-							<input type="text" name="bookInfo.bookNo" onchange="checkBookNoExist()">
+							<input type="text" name="bookInfo.bookNo">
 						</div>
 					</div>
 					
 					<div class="control-group">
 						<label class="control-label">出版社名称</label>
-						<div class="controls">
+						<div class="controls" style="float: left; margin-left: 20px;">
 							<select name="bookInfo.pressId">
 								<%for (PubPress press : pressList) { %>
 								<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
 								<%} %>
+							</select>
+						</div>
+						<label class="control-label" style="width: 60px;">出版年份</label>
+						<div class="controls" style="float: left; margin-left: 5px;">
+							<select name="yearOfRls" style="width: 86px;">
+							<%
+							int curYear = new Date().getYear() + 1900;
+							for (int y = curYear; y > 2005; y--) {
+							%>
+								<option value="<%=y%>"><%=y%></option>
+							<%} %>
+							</select>
+						</div>
+						<label class="control-label" style="width: 34px;">季度</label>
+						<div class="controls" style="float: left; margin-left: 5px;">
+							<select name="quarter" style="width: 86px;">
+								<option value="02">春季</option>
+								<option value="09">秋季</option>
 							</select>
 						</div>
 					</div>
@@ -107,7 +125,7 @@ List<PubPress> pressList = pressDao.getAll();
 					<div class="control-group">
 						<label class="control-label">学段</label>
 						<div class="controls">
-							<select name="bookInfo.stuSegId">
+							<select id="stuSegSel" name="bookInfo.stuSegId" onchange="changeStuSeg();">
 								<%for (PubDdv stu : stuSegList) { %>
 								<option value="<%=stu.getDdvId()%>"><%=stu.getValue() %></option>
 								<%} %>
@@ -118,9 +136,9 @@ List<PubPress> pressList = pressDao.getAll();
 					<div class="control-group">
 						<label class="control-label">年级</label>
 						<div class="controls">
-							<select name="bookInfo.classId">
+							<select id="cls" name="bookInfo.classId">
 							<%for (PubDdv cls : classList) { %>
-								<option value="<%=cls.getDdvId() %>"><%=cls.getValue() %></option>
+								<option value="<%=cls.getDdvId() %>" flag="<%=cls.getNotes()%>"><%=cls.getValue() %></option>
 							<%} %>
 							</select>
 						</div>
@@ -128,12 +146,16 @@ List<PubPress> pressList = pressDao.getAll();
 					
 					<div class="control-group">
 						<label class="control-label">册别</label>
-						<div class="controls">
-							<select name="bookInfo.kindId">
+						<div class="controls" style="float: left; margin-left: 20px;">
+							<select id="kind" name="bookInfo.kindId">
 							<%for (PubDdv kind : kindList) { %>
-								<option value="<%=kind.getDdvId() %>"><%=kind.getValue() %></option>
+								<option value="<%=kind.getDdvId() %>" flag="<%=kind.getNotes()%>"><%=kind.getValue() %></option>
 							<%} %>
 							</select>
+						</div>
+						<label id="kindSeqLbl" style="display: none; width: 99px;" class="control-label">本学科科目序号</label>
+						<div class="controls" id="kindSeqDiv" style="display: none; float: left; margin-left: 0px;">
+							<input type="text" name="kindSeqNo" value="a"/>
 						</div>
 					</div>
 					
@@ -152,9 +174,16 @@ List<PubPress> pressList = pressDao.getAll();
 					</div>
 					
 					<div class="control-group" style="display:none">
-						<label class="control-label">书全地址</label>
+						<label class="control-label">书内网全地址</label>
 						<div class="controls">
-							<input type="text" name="bookInfo.allAddr">
+							<input type="text" name="bookInfo.allAddrInNet">
+						</div>
+					</div>
+					
+					<div class="control-group" style="display:none">
+						<label class="control-label">书外网全地址</label>
+						<div class="controls">
+							<input type="text" name="bookInfo.allAddrOutNet">
 						</div>
 					</div>
 					
@@ -243,8 +272,17 @@ function addBook() {
 		type: "POST",
 		async: "false",
 		timeout: 30000,
+		dataType: "JSON",
 		data: jQuery("#bookForm").serialize(),
-		success: function() {
+		success: function(ret) {
+			if (ret == null) {
+				alert("创建书籍失败！");
+				return;
+			}
+			if (ret.ret == 1) {
+				alert(ret.reason);
+				return;
+			}
 			alert("创建书籍成功！");
 			location.href = "<%=ctx%>/book_zhizuo.jsp";
 		},
@@ -252,6 +290,42 @@ function addBook() {
 			alert("创建书籍失败！");
 		}
 	});
+}
+
+function changeStuSeg() {
+	if ("高中" == jQuery("#stuSegSel option:selected").html()) {
+		jQuery("#kindSeqLbl").css("display","inline");
+		jQuery("#kindSeqDiv").css("display","block");
+		jQuery("#kind option[flag='高中']").css("display","block");
+		jQuery("#kind option[flag!='高中']").css("display","none");
+		var selFirst = jQuery("#kind option[flag='高中']:eq(0)").val();
+		jQuery("#kind").val(selFirst);
+		
+		jQuery("#cls option[flag='高中']").css("display","block");
+		jQuery("#cls option[flag!='高中']").css("display","none");
+		selFirst = jQuery("#cls option[flag='高中']:eq(0)").val();
+		jQuery("#cls").val(selFirst);
+	} else {
+		jQuery("#kindSeqLbl").css("display","none");
+		jQuery("#kindSeqDiv").css("display","none");
+		jQuery("#kind option[flag!='高中']").css("display","block");
+		jQuery("#kind option[flag='高中']").css("display","none");
+		var selFirst = jQuery("#kind option[flag!='高中']:eq(0)").val();
+		jQuery("#kind").val(selFirst);
+		
+		jQuery("#cls option[flag!='高中']").css("display","block");
+		jQuery("#cls option[flag='高中']").css("display","none");
+		selFirst = jQuery("#cls option[flag!='高中']:eq(0)").val();
+		jQuery("#cls").val(selFirst);
+	}
+}
+
+jQuery(document).ready(function(){
+	changeStuSeg();
+});
+
+function constructBookNo() {
+	
 }
 
 </script>

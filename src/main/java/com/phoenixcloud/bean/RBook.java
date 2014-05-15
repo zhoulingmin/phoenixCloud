@@ -2,7 +2,6 @@ package com.phoenixcloud.bean;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.sql.Blob;
 import java.text.DecimalFormat;
 import java.util.Date;
 
@@ -31,8 +30,17 @@ public class RBook extends AbstractModel<String> implements Serializable {
 	@Column(name="BOOK_ID", unique=true, nullable=false)
 	private String bookId;
 
-	@Column(name="ALL_ADDR", length=60)
-	private String allAddr;
+	@Column(name="ALL_ADDR_IN_NET")
+	private String allAddrInNet;
+	
+	@Column(name="ALL_ADDR_OUT_NET")
+	private String allAddrOutNet;
+	
+	@Column(name="COVER_URL_IN_NET")
+	private String coverUrlInNet;
+	
+	@Column(name="COVER_URL_OUT_NET")
+	private String coverUrlOutNet;
 
 	@Column(name="CLASS_ID", nullable=false)
 	private BigInteger classId;
@@ -108,12 +116,36 @@ public class RBook extends AbstractModel<String> implements Serializable {
 		this.bookId = bookId;
 	}
 
-	public String getAllAddr() {
-		return this.allAddr;
+	public String getAllAddrInNet() {
+		return allAddrInNet;
 	}
 
-	public void setAllAddr(String allAddr) {
-		this.allAddr = allAddr;
+	public void setAllAddrInNet(String allAddrInNet) {
+		this.allAddrInNet = allAddrInNet;
+	}
+
+	public String getAllAddrOutNet() {
+		return allAddrOutNet;
+	}
+
+	public void setAllAddrOutNet(String allAddrOutNet) {
+		this.allAddrOutNet = allAddrOutNet;
+	}
+
+	public String getCoverUrlInNet() {
+		return coverUrlInNet;
+	}
+
+	public void setCoverUrlInNet(String coverUrlInNet) {
+		this.coverUrlInNet = coverUrlInNet;
+	}
+
+	public String getCoverUrlOutNet() {
+		return coverUrlOutNet;
+	}
+
+	public void setCoverUrlOutNet(String coverUrlOutNet) {
+		this.coverUrlOutNet = coverUrlOutNet;
 	}
 
 	public BigInteger getClassId() {
@@ -265,39 +297,39 @@ public class RBook extends AbstractModel<String> implements Serializable {
 			return localPath;
 		}
 		
-		int startIdx = this.allAddr.indexOf(":");
+		int startIdx = this.allAddrInNet.indexOf(":");
 		if (startIdx == -1){
 			return localPath;
 		}
 		
-		startIdx = this.allAddr.indexOf(":", startIdx + 1);
+		startIdx = this.allAddrInNet.indexOf(":", startIdx + 1);
 		if (startIdx == -1){
 			return localPath;
 		}
 		
-		startIdx = this.allAddr.indexOf("/", startIdx);
+		startIdx = this.allAddrInNet.indexOf("/", startIdx);
 		if (startIdx == -1) {
 			return localPath;
 		}
 		if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) {
-			localPath = this.allAddr.substring(startIdx + 1);
+			localPath = this.allAddrInNet.substring(startIdx + 1);
 		} else {
-			localPath = this.allAddr.substring(startIdx);
+			localPath = this.allAddrInNet.substring(startIdx);
 		}
 		
 		return localPath;
 	}
 	
 	public String getBookFileName() {
-		if (isUpload == (byte)0 || allAddr == null || allAddr.trim().length() == 0) {
+		if (isUpload == (byte)0 || allAddrInNet == null || allAddrInNet.trim().length() == 0) {
 			return "";
 		}
-		int lastIdx = allAddr.lastIndexOf("/");
-		if (lastIdx == (allAddr.length() - 1)) {
+		int lastIdx = allAddrInNet.lastIndexOf("/");
+		if (lastIdx == (allAddrInNet.length() - 1)) {
 			return "";
 		}
 
-		return allAddr.substring(lastIdx + 1);
+		return allAddrInNet.substring(lastIdx + 1);
 	}
 
 	public String getCoverContType() {
@@ -326,5 +358,26 @@ public class RBook extends AbstractModel<String> implements Serializable {
 
 	public void setBookSize(int bookSize) {
 		this.bookSize = bookSize;
+	}
+	
+	public String getYearOfRls() {
+		if (bookNo == null || bookNo.length() != 18) {
+			return "";
+		}
+		return bookNo.substring(8, 12);
+	}
+	
+	public String getQuarter() {
+		if (bookNo == null || bookNo.length() != 18) {
+			return "";
+		}
+		return bookNo.substring(12, 14);
+	}
+	
+	public String getKindSeqNo() {
+		if (bookNo == null || bookNo.length() != 18) {
+			return "";
+		}
+		return bookNo.substring(7, 8);
 	}
 }

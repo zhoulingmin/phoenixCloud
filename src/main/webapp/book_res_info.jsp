@@ -112,8 +112,12 @@ if (ddvFmt != null) {
 					<font color="black"><%=cataAddr %></font>
 				</div>
 				<div class="margin_top_line_info margin_top_55">
-					<font class="blue">资源全地址: </font>
-					<font color="black"><s:property value="bookRes.allAddr"/></font>
+					<font class="blue">资源内网全地址: </font>
+					<font color="black"><s:property value="bookRes.allAddrInNet"/></font>
+				</div>
+				<div class="margin_top_line_info margin_top_55">
+					<font class="blue">资源外网全地址: </font>
+					<font color="black"><s:property value="bookRes.allAddrOutNet"/></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">是否上传: </font>

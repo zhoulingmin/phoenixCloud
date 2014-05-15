@@ -35,6 +35,20 @@ if (staffTmp != null) {
 }
 String beautifySize = new java.text.DecimalFormat(",###").format((Integer)vs.findValue("bookInfo.bookSize"));
 
+String kindSeqNo = (String)request.getAttribute("kindSeqNo");
+if (kindSeqNo == null){
+	kindSeqNo = "";
+}
+
+String yearOfRls = (String)request.getAttribute("yearOfRls");
+if (yearOfRls == null){
+	yearOfRls = "";
+}
+
+String quarter = (String)request.getAttribute("quarter");
+if (quarter == null){
+	quarter = "";
+}
 
 %>
 
@@ -105,7 +119,7 @@ String beautifySize = new java.text.DecimalFormat(",###").format((Integer)vs.fin
 					<div class="control-group">
 						<label class="control-label">书籍编码</label>
 						<div class="controls">
-							<input type="text" name="bookInfo.bookNo" value="<s:property value="bookInfo.bookNo"/>" onchange="checkBookNoExist();">
+							<input type="text" name="bookInfo.bookNo" value="<s:property value="bookInfo.bookNo"/>" readonly="readonly">
 						</div>
 					</div>
 					
@@ -121,11 +135,29 @@ String beautifySize = new java.text.DecimalFormat(",###").format((Integer)vs.fin
 					
 					<div class="control-group">
 						<label class="control-label">出版社名称</label>
-						<div class="controls">
+						<div class="controls" style="float: left; margin-left: 20px;" >
 							<select name="bookInfo.pressId" value="<s:property value="bookInfo.pressId"/>">
 								<%for (PubPress press : pressList) { %>
 								<option value="<%=press.getPressId() %>"><%=press.getName() %></option>
 								<%} %>
+							</select>
+						</div>
+						<label class="control-label" style="width: 60px;">出版年份</label>
+						<div class="controls" style="float: left; margin-left: 5px;">
+							<select name="yearOfRls" style="width: 86px;" value="<%=yearOfRls %>">
+							<%
+							int curYear = new Date().getYear() + 1900;
+							for (int y = curYear; y > 2005; y--) {
+							%>
+								<option value="<%=y%>"><%=y%></option>
+							<%} %>
+							</select>
+						</div>
+						<label class="control-label" style="width: 34px;">季度</label>
+						<div class="controls" style="float: left; margin-left: 5px;">
+							<select name="quarter" style="width: 86px;" value="<%=quarter %>">
+								<option value="02">春季</option>
+								<option value="09">秋季</option>
 							</select>
 						</div>
 					</div>
@@ -144,7 +176,7 @@ String beautifySize = new java.text.DecimalFormat(",###").format((Integer)vs.fin
 					<div class="control-group">
 						<label class="control-label">学段</label>
 						<div class="controls">
-							<select name="bookInfo.stuSegId" value="<s:property value="bookInfo.stuSegId"/>">
+							<select id="stuSegSel" name="bookInfo.stuSegId" value="<s:property value="bookInfo.stuSegId"/>" onchange="changeStuSeg();">
 								<%for (PubDdv stu : stuSegList) { %>
 								<option value="<%=stu.getDdvId()%>"><%=stu.getValue() %></option>
 								<%} %>
@@ -155,9 +187,9 @@ String beautifySize = new java.text.DecimalFormat(",###").format((Integer)vs.fin
 					<div class="control-group">
 						<label class="control-label">年级</label>
 						<div class="controls">
-							<select name="bookInfo.classId" value="<s:property value="bookInfo.classId"/>">
+							<select id="cls" name="bookInfo.classId" value="<s:property value="bookInfo.classId"/>">
 							<%for (PubDdv cls : classList) { %>
-								<option value="<%=cls.getDdvId() %>"><%=cls.getValue() %></option>
+								<option value="<%=cls.getDdvId() %>" flag="<%=cls.getNotes()%>"><%=cls.getValue() %></option>
 							<%} %>
 							</select>
 						</div>
@@ -165,12 +197,16 @@ String beautifySize = new java.text.DecimalFormat(",###").format((Integer)vs.fin
 					
 					<div class="control-group">
 						<label class="control-label">册别</label>
-						<div class="controls">
-							<select name="bookInfo.kindId" value="<s:property value="bookInfo.kindId"/>">
+						<div class="controls" style="float: left; margin-left: 20px;">
+							<select id="kind" name="bookInfo.kindId" value="<s:property value="bookInfo.kindId"/>">
 							<%for (PubDdv kind : kindList) { %>
-								<option value="<%=kind.getDdvId() %>"><%=kind.getValue() %></option>
+								<option value="<%=kind.getDdvId() %>" flag="<%=kind.getNotes()%>"><%=kind.getValue() %></option>
 							<%} %>
 							</select>
+						</div>
+						<label id="kindSeqLbl" style="display: none; width: 99px;" class="control-label">本学科科目序号</label>
+						<div class="controls" id="kindSeqDiv" style="display: none; float: left; margin-left: 0px;">
+							<input type="text" name="kindSeqNo" value="<%=kindSeqNo%>"/>
 						</div>
 					</div>
 					
@@ -197,9 +233,16 @@ String beautifySize = new java.text.DecimalFormat(",###").format((Integer)vs.fin
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label">书籍全路径</label>
+						<label class="control-label">书内网全路径</label>
 						<div class="controls">
-							<input type="text" name="bookInfo.allAddr" value="<s:property value="bookInfo.allAddr"/>" readonly="readonly">
+							<input type="text" name="bookInfo.allAddrInNet" value="<s:property value="bookInfo.allAddrInNet"/>" readonly="readonly">
+						</div>
+					</div>
+					
+					<div class="control-group">
+						<label class="control-label">书外网全路径</label>
+						<div class="controls">
+							<input type="text" name="bookInfo.allAddrOutNet" value="<s:property value="bookInfo.allAddrOutNet"/>" readonly="readonly">
 						</div>
 					</div>
 					
@@ -310,7 +353,15 @@ function saveBook() {
 		async: "false",
 		timeout: 30000,
 		data: jQuery("#bookForm").serialize(),
-		success: function() {
+		success: function(ret) {
+			if (ret == null) {
+				alert("修改书籍失败！");
+				return;
+			}
+			if (ret.ret == 1) {
+				alert(ret.reason);
+				return;
+			}
 			alert("修改书籍成功！");
 			location.href = "<%=ctx%>/book_zhizuo.jsp";
 		},
@@ -324,6 +375,8 @@ jQuery(function() {
 	jQuery("select").each(function(idx) {
 		jQuery(this).val(this.getAttribute("value"));
 	});
+	changeStuSeg();
+	
 	<security:phoenixSec purviewCode="BOOK_UPLOAD">
 	var isUpload = jQuery("input[name='isUpload']")[0].value;
 	if (isUpload != null && isUpload == 1) {
@@ -331,6 +384,34 @@ jQuery(function() {
 	}
 	</security:phoenixSec>
 });
+
+function changeStuSeg() {
+	if ("高中" == jQuery("#stuSegSel option:selected").html()) {
+		jQuery("#kindSeqLbl").css("display","inline");
+		jQuery("#kindSeqDiv").css("display","block");
+		jQuery("#kind option[flag='高中']").css("display","block");
+		jQuery("#kind option[flag!='高中']").css("display","none");
+		var selFirst = jQuery("#kind option[flag='高中']:eq(0)").val();
+		jQuery("#kind").val(selFirst);
+		
+		jQuery("#cls option[flag='高中']").css("display","block");
+		jQuery("#cls option[flag!='高中']").css("display","none");
+		selFirst = jQuery("#cls option[flag='高中']:eq(0)").val();
+		jQuery("#cls").val(selFirst);
+	} else {
+		jQuery("#kindSeqLbl").css("display","none");
+		jQuery("#kindSeqDiv").css("display","none");
+		jQuery("#kind option[flag!='高中']").css("display","block");
+		jQuery("#kind option[flag='高中']").css("display","none");
+		var selFirst = jQuery("#kind option[flag!='高中']:eq(0)").val();
+		jQuery("#kind").val(selFirst);
+		
+		jQuery("#cls option[flag!='高中']").css("display","block");
+		jQuery("#cls option[flag='高中']").css("display","none");
+		selFirst = jQuery("#cls option[flag!='高中']:eq(0)").val();
+		jQuery("#cls").val(selFirst);
+	}
+}
 
 </script>
 </html>

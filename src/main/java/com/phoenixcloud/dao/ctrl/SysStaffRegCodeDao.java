@@ -1,5 +1,6 @@
 package com.phoenixcloud.dao.ctrl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -24,5 +25,12 @@ public class SysStaffRegCodeDao extends AbstractCtrlDao<SysStaffRegCode> {
 		Query query = entityManager.createQuery("select regcode from SysStaffRegCode regcode where regcode.deleteState = 0 and regcode.ssrcId = ?1");
 		query.setParameter(1, id);
 		return getSingleResultOrNull(query);
-	}	
+	}
+	
+	public SysStaffRegCode fingByBookIdAndCodeId(BigInteger bookId, BigInteger codeId) {
+		Query query = entityManager.createQuery("select reg from SysStaffRegCode reg where reg.deleteState = 0 and reg.bookId = ?1 and reg.regCodeId = ?2");
+		query.setParameter(1, bookId);
+		query.setParameter(2, codeId);
+		return getSingleResultOrNull(query);
+	}
 }

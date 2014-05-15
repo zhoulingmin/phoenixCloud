@@ -32,8 +32,8 @@ public class PubDdv extends AbstractModel<String> implements Serializable {
 	@Column(name="CREATE_TIME", nullable=false)
 	private Date createTime;
 
-	@Column(name="DDV_CODE", nullable=false)
-	private BigInteger ddvCode;
+	@Column(name="DDV_CODE", nullable=false, length=12)
+	private String ddvCode;
 
 	@Column(name="DELETE_STATE", nullable=false)
 	private byte deleteState;
@@ -73,11 +73,11 @@ public class PubDdv extends AbstractModel<String> implements Serializable {
 		this.createTime = createTime;
 	}
 
-	public BigInteger getDdvCode() {
+	public String getDdvCode() {
 		return this.ddvCode;
 	}
 
-	public void setDdvCode(BigInteger ddvCode) {
+	public void setDdvCode(String ddvCode) {
 		this.ddvCode = ddvCode;
 	}
 

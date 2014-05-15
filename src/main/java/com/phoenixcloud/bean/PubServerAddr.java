@@ -71,6 +71,9 @@ public class PubServerAddr extends AbstractModel<String> implements Serializable
 	@Column(name="ORG_ID", nullable=false)
 	private BigInteger orgId;
 
+	@Column(name="NET_TYPE", nullable=false)
+	private String netType;
+	
 	@Column(nullable=false, length=15)
 	private String password;
 
@@ -198,6 +201,14 @@ public class PubServerAddr extends AbstractModel<String> implements Serializable
 
 	public String getPassword() {
 		return this.password;
+	}
+
+	public String getNetType() {
+		return netType;
+	}
+
+	public void setNetType(String netType) {
+		this.netType = netType;
 	}
 
 	public void setPassword(String password) {

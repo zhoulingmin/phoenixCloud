@@ -13,4 +13,7 @@ public class Constants {
 	public static final int REJECTED = 3;
 
 	public static final String CLASS_PATH_KEY = "ClassPath";
+	
+	public static final String IN_NET = "IN_NET";
+	public static final String OUT_NET = "OUT_NET";
 }

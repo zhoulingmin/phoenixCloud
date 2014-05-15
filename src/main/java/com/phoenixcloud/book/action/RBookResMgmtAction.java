@@ -43,9 +43,12 @@ import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.book.vo.BookResNode;
+import com.phoenixcloud.common.Constants;
 import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
+import com.phoenixcloud.dao.res.RBookDao;
 import com.phoenixcloud.dao.res.RBookPageResDao;
 import com.phoenixcloud.dao.res.RBookReDao;
+import com.phoenixcloud.system.service.ISysService;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
@@ -76,13 +79,26 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	private String start;
 	private String end;
 	
+	private String errInfo = "";
+	private String downloadUrl;
+	
 	@Autowired
 	private RBookReDao resDao;
 	
 	@Autowired
 	private RBookPageResDao pgRsDao;
 	
+	@Autowired
+	private RBookDao bookDao;
 	
+	
+	@Resource(name="sysServiceImpl")
+	private ISysService iSysService;
+	
+	public void setiSysService(ISysService iSysService) {
+		this.iSysService = iSysService;
+	}
+
 	public String getResIdArr() {
 		return resIdArr;
 	}
@@ -251,6 +267,22 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		this.flag = flag;
 	}
 
+	public String getErrInfo() {
+		return errInfo;
+	}
+
+	public void setErrInfo(String errInfo) {
+		this.errInfo = errInfo;
+	}
+
+	public String getDownloadUrl() {
+		return downloadUrl;
+	}
+
+	public void setDownloadUrl(String downloadUrl) {
+		this.downloadUrl = downloadUrl;
+	}
+
 	public String queryAll() {
 		List<RBookRe> resList = iBookService.getAllRes();
 		request.put("resList", resList);
@@ -344,7 +376,7 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		}
 		
 		SysStaff curStaff = (SysStaff)session.get("user");
-		PubServerAddr addr = serAddrDao.findByOrgId(curStaff.getOrgId());
+		PubServerAddr addr = serAddrDao.findByOrgId(curStaff.getOrgId(), Constants.OUT_NET);
 		String ipAddr = "";
 		if (addr != null) {
 			ipAddr = addr.getBookSerIp();
@@ -583,4 +615,36 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 		
 		return "success";
     }
+    
+    public String downloadRes() {
+		RBookRe res = resDao.find(bookRes.getResId());
+		if (res == null) {
+			errInfo = "数据库中无法找到目标资源！";
+			return "error";
+		}
+		RBook book = bookDao.find(res.getBookId().toString());
+		if (book == null) {
+			errInfo = "数据库中无法找到目标书籍！";
+			return "error";
+		}
+		
+		PubServerAddr inAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.IN_NET);
+		PubServerAddr outAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.OUT_NET);
+		PubServerAddr addr = iSysService.getProperAddr(null, outAddr);
+		if (addr != null) {
+			downloadUrl = res.getAllAddrOutNet();
+		} else {
+			addr = iSysService.getProperAddr(inAddr, null);
+			if (addr != null) {
+				downloadUrl = res.getAllAddrInNet();
+			}
+		}
+		if (addr == null) {
+			//throw new Exception("没有找到对应的资源服务器！");
+			errInfo = "没有合适的资源服务器！";
+			return "error";
+		}
+
+		return "success";
+	}
 }

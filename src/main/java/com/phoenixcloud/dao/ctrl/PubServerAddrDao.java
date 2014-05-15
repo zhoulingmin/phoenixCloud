@@ -16,9 +16,10 @@ public class PubServerAddrDao extends AbstractCtrlDao<PubServerAddr> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public PubServerAddr findByOrgId(BigInteger orgId) {
-		Query query = entityManager.createQuery("select psa from PubServerAddr psa where psa.deleteState = 0 and psa.orgId = ?1 order by psa.updateTime desc");
+	public PubServerAddr findByOrgId(BigInteger orgId, String netType) {
+		Query query = entityManager.createQuery("select psa from PubServerAddr psa where psa.deleteState = 0 and psa.orgId = ?1 and psa.netType = ?2 order by psa.updateTime desc");
 		query.setParameter(1, orgId);
+		query.setParameter(2, netType);
 		return getSingleResultOrNull(query);
 	}
 }

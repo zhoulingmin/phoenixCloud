@@ -26,8 +26,10 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RRegCode;
 import com.phoenixcloud.bean.SysStaff;
+import com.phoenixcloud.bean.SysStaffRegCode;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.dao.ctrl.SysStaffDao;
+import com.phoenixcloud.dao.ctrl.SysStaffRegCodeDao;
 import com.phoenixcloud.dao.res.RBookDao;
 import com.phoenixcloud.dao.res.RRegCodeDao;
 import com.phoenixcloud.util.MiscUtils;
@@ -54,6 +56,9 @@ public class RBookRegCodeMgmtAction extends ActionSupport implements RequestAwar
 	
 	@Autowired
 	private RRegCodeDao regCodeDao;
+	
+	@Autowired
+	private SysStaffRegCodeDao staffRegCodeDao;
 	
 	public void setiBookService(IRBookMgmtService iBookService) {
 		this.iBookService = iBookService;
@@ -173,7 +178,8 @@ public class RBookRegCodeMgmtAction extends ActionSupport implements RequestAwar
 				regCode.setUpdateTime(date);
 				regCode.setValidDate(cal.getTime());
 				
-				String code = book.getBookNo() + new Date().getTime() + MiscUtils.getRandomString(6);
+				String code = book.getBookNo() + new Date().getTime() + MiscUtils.getRandomString(8);
+				//String code = book.getBookNo() + MiscUtils.getRandomString(8);
 				regCode.setCode(code);
 				regCode.setStaffId(BigInteger.ZERO);
 				
@@ -260,10 +266,13 @@ public class RBookRegCodeMgmtAction extends ActionSupport implements RequestAwar
 				obj.put("bookName", book.getName());
 				obj.put("validDate", new SimpleDateFormat("yyyy/MM/dd").format(regCode.getValidDate()));
 				
-				SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 				SysStaff staff = null;
-				if (regCode.getStaffId() != null && regCode.getStaffId().compareTo(BigInteger.ZERO) == 1) {
-					staff = staffDao.find(regCode.getStaffId().toString());
+				SysStaffRegCode staffReg = staffRegCodeDao.fingByBookIdAndCodeId(new BigInteger(book.getId()), new BigInteger(regCode.getId()));
+				if (staffReg != null) {
+					SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
+					if (staffReg.getStaffId() != null && staffReg.getStaffId().compareTo(BigInteger.ZERO) == 1) {
+						staff = staffDao.find(regCode.getStaffId().toString());
+					}
 				}
 				
 				if (staff != null) {

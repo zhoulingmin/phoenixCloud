@@ -28,8 +28,11 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	@Column(name="RES_ID", unique=true, nullable=false)
 	private String resId;
 
-	@Column(name="ALL_ADDR", length=60)
-	private String allAddr = "";
+	@Column(name="ALL_ADDR_IN_NET")
+	private String allAddrInNet = "";
+	
+	@Column(name="ALL_ADDR_OUT_NET")
+	private String allAddrOutNet = "";
 
 	@Column(name="AUDIT_STAFF_ID")
 	private BigInteger auditStaffId = BigInteger.ZERO;
@@ -86,12 +89,20 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 		this.resId = resId;
 	}
 
-	public String getAllAddr() {
-		return this.allAddr;
+	public String getAllAddrInNet() {
+		return allAddrInNet;
 	}
 
-	public void setAllAddr(String allAddr) {
-		this.allAddr = allAddr;
+	public void setAllAddrInNet(String allAddrInNet) {
+		this.allAddrInNet = allAddrInNet;
+	}
+
+	public String getAllAddrOutNet() {
+		return allAddrOutNet;
+	}
+
+	public void setAllAddrOutNet(String allAddrOutNet) {
+		this.allAddrOutNet = allAddrOutNet;
 	}
 
 	public BigInteger getAuditStaffId() {
@@ -219,25 +230,34 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 			return localPath;
 		}
 		
-		int startIdx = this.allAddr.indexOf(":");
+		String allAddr = "";
+		if (this.allAddrInNet != null && !this.allAddrInNet.isEmpty()) {
+			allAddr = this.allAddrInNet;
+		} else if (this.allAddrOutNet != null && !this.allAddrOutNet.isEmpty()) {
+			allAddr = this.allAddrOutNet;
+		} else {
+			return "";
+		}
+		
+		int startIdx = allAddr.indexOf(":");
 		if (startIdx == -1){
 			return localPath;
 		}
 		
-		startIdx = this.allAddr.indexOf(":", startIdx + 1);
+		startIdx = allAddr.indexOf(":", startIdx + 1);
 		if (startIdx == -1){
 			return localPath;
 		}
 		
-		startIdx = this.allAddr.indexOf("/", startIdx);
+		startIdx = allAddr.indexOf("/", startIdx);
 		if (startIdx == -1) {
 			return localPath;
 		}
 		
 		if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) {
-			localPath = this.allAddr.substring(startIdx + 1);
+			localPath = allAddr.substring(startIdx + 1);
 		} else {
-			localPath = this.allAddr.substring(startIdx);
+			localPath = allAddr.substring(startIdx);
 		}
 		
 		return localPath;

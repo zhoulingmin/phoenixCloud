@@ -167,7 +167,7 @@ select{
 						<td>
 							<a cla1ss="tip-top" title="详情" href="<%=ctx%>/book/viewRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-eye-open"></i></a>
 							<%if (res.getIsUpload() == (byte)1) {%>
-							<a class="tip-top" title="下载" href="<%=res.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							<a class="tip-top" title="下载" href="<%=ctx%>/book/downloadRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-download-alt"></i></a>
 							<%} %>
 						</td>
 					</tr>

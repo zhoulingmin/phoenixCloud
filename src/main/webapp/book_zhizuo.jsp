@@ -211,7 +211,7 @@ white-space:nowrap;
 							
 							<%if (book.getIsUpload() == (byte)1) {%>
 							<security:phoenixSec purviewCode="BOOK_DOWNLOAD">
-							<a class="tip-top" title="下载" href="<%=book.getAllAddr()%>"><i class="icon-download-alt"></i></a>
+							<a class="tip-top" title="下载" href="<%=ctx%>/book/downloadBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-download-alt"></i></a>
 							</security:phoenixSec>
 							<%} %>
 							

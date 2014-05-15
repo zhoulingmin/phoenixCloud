@@ -158,8 +158,12 @@ String beatifySize = new java.text.DecimalFormat(",###").format((Integer)vs.find
 					<font color="black"><s:property value="bookInfo.ipAddr"/></font>
 				</div>
 				<div class="line_info margin_top_5">
-					<font class="blue">书全地址: </font>
-					<font color="black"><s:property value="bookInfo.allAddr"/></font>
+					<font class="blue">书内网全地址: </font>
+					<font color="black"><s:property value="bookInfo.allAddrInNet"/></font>
+				</div>
+				<div class="line_info margin_top_5">
+					<font class="blue">书外网全地址: </font>
+					<font color="black"><s:property value="bookInfo.allAddrOutNet"/></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">是否上传: </font>
