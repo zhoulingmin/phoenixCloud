@@ -392,4 +392,8 @@ public class SysServiceImpl implements ISysService{
 		
 		return isReachable;
 	}
+	
+	public List<SysStaff> getAllClientUsersByOrgId(BigInteger orgId) {
+		return null;
+	}
 }

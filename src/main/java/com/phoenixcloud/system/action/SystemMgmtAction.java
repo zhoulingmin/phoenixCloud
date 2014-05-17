@@ -771,8 +771,14 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	}
 
 	public String searchHw() {
-		List<PubHwNum> hwNumList = hwNumDao.search(criteria);
-		List<PubHw> hwList = hwDao.search(criteria);
+		SysStaff curStaff = (SysStaff)session.get("user");
+		List<PubHwNum> hwNumList = new ArrayList<PubHwNum>();
+		List<PubHw> hwList = new ArrayList<PubHw>();
+		// 1.找出本机构及下属机构中所有教师端用户
+		
+		// 2.组装出两个list对象
+		//List<PubHwNum> hwNumList = hwNumDao.search(criteria);
+		//List<PubHw> hwList = hwDao.search(criteria);
 		
 		request.put("hwList", hwList);
 		request.put("hwNumList", hwNumList);

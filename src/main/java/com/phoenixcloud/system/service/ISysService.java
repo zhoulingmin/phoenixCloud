@@ -16,6 +16,7 @@ public interface ISysService {
 	void saveStaff(SysStaff staff);
 	SysStaff findStaffById(String id);
 	boolean isAdmin(SysStaff staff);
+	List<SysStaff> getAllClientUsersByOrgId(BigInteger orgId);
 	
 	List<PubHw> getAllHw();
 	void removeHw(String id);
