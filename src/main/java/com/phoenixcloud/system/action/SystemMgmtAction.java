@@ -771,14 +771,31 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	}
 
 	public String searchHw() {
-		SysStaff curStaff = (SysStaff)session.get("user");
-		List<PubHwNum> hwNumList = new ArrayList<PubHwNum>();
-		List<PubHw> hwList = new ArrayList<PubHw>();
-		// 1.找出本机构及下属机构中所有教师端用户
-		
-		// 2.组装出两个list对象
-		//List<PubHwNum> hwNumList = hwNumDao.search(criteria);
-		//List<PubHw> hwList = hwDao.search(criteria);
+		List<PubHwNum> hwNumList = null;
+		List<PubHw> hwList = null;
+		if (criteria == null) {
+			SysStaff curStaff = (SysStaff)session.get("user");
+			hwNumList = new ArrayList<PubHwNum>();
+			hwList = new ArrayList<PubHw>();
+			// 1.找出本机构及下属机构中所有教师端用户
+			List<SysStaff> clientUserList = iSysService.getAllClientUsersByOrgId(curStaff.getOrgId());
+			if (clientUserList != null) {
+				criteria = new Criteria();
+				criteria.setHwType("-1");
+				// 2.组装hwList,hwNumList
+				for (SysStaff tmpStaff : clientUserList) {
+					criteria.setStaffId(tmpStaff.getStaffId());
+					List<PubHwNum> numTmpList = hwNumDao.search(criteria);
+					List<PubHw> hwTmpList = hwDao.search(criteria);
+					hwNumList.addAll(numTmpList);
+					hwList.addAll(hwTmpList);
+				}
+			}
+			
+		} else {
+			hwNumList = hwNumDao.search(criteria);
+			hwList = hwDao.search(criteria);
+		}
 		
 		request.put("hwList", hwList);
 		request.put("hwNumList", hwNumList);

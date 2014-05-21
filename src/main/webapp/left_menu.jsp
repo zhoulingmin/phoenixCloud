@@ -39,7 +39,7 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 			<li><a href="<%=ctx %>/system/modifyPass.do?staff.staffId=<%=staff.getStaffId() %>" target="f_r">修改密码</a></li>
 			</sec:phoenixSec>
 			<sec:phoenixSec purviewCode="AUTH_INFO_MENU">
-			<li><a href="<%=ctx %>/sq_info.jsp" target="f_r">授权信息</a></li>
+			<li><a href="<%=ctx%>/system/searchHw.do" target="f_r">授权信息</a></li>
 			</sec:phoenixSec>
 			<sec:phoenixSec purviewCode="ACNT_MGMT_MENU">
 			<li><a href="<%=ctx %>/zhgl.jsp" target="f_r">账号管理</a></li>

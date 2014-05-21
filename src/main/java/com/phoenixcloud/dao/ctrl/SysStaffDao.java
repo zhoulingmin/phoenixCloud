@@ -39,4 +39,12 @@ public class SysStaffDao extends AbstractCtrlDao<SysStaff> {
 		query.setParameter(1, orgId);
 		return query.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SysStaff> findByOrgIdAndType(BigInteger orgId, BigInteger type) {
+		Query query = entityManager.createQuery("select staff from SysStaff staff where staff.deleteState = 0 and staff.orgId = ?1 and staff.staffTypeId = ?2");
+		query.setParameter(1, orgId);
+		query.setParameter(2, type);
+		return query.getResultList();
+	}
 }

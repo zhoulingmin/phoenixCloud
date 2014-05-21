@@ -1,5 +1,6 @@
 package com.phoenixcloud.system.service.impl;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -13,7 +14,14 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.core.MediaType;
 
+import net.sf.json.JSONObject;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +34,7 @@ import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
 import com.phoenixcloud.bean.SysStaffRegCode;
+import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.PubHwDao;
 import com.phoenixcloud.dao.ctrl.PubOrgCataDao;
@@ -36,7 +45,10 @@ import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.dao.ctrl.SysStaffPurviewDao;
 import com.phoenixcloud.dao.ctrl.SysStaffRegCodeDao;
 import com.phoenixcloud.system.service.ISysService;
+import com.phoenixcloud.util.ClientHelper;
 import com.phoenixcloud.util.MiscUtils;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
 
 @Service
 public class SysServiceImpl implements ISysService{
@@ -70,6 +82,8 @@ public class SysServiceImpl implements ISysService{
 	
 	@PersistenceContext(unitName="ctrlDbUnit")
 	private EntityManager entityManager;
+	
+	private PhoenixProperties phoenixProp = PhoenixProperties.getInstance();
 	
 	public void setPurviewDao(SysPurviewDao purviewDao) {
 		this.purviewDao = purviewDao;
@@ -318,46 +332,49 @@ public class SysServiceImpl implements ISysService{
 		if (inAddr == null && outAddr == null) {
 			return null;
 		}
-		InetAddress local = null;
-		InetAddress inInetAddr = null;
-		InetAddress outInetAddr = null;
-
-		try {
-			local = InetAddress.getLocalHost();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			MiscUtils.getLogger().info(e.toString());
-			return null;
-		}
 		
 		PubServerAddr addr = null;
-		if (inAddr != null) {
-			try {
-				inInetAddr = InetAddress.getByName(inAddr.getBookSerIp());
-				if (inInetAddr != null && isReachable(local, inInetAddr, inAddr.getBookSerPort(), 3000)) {
-					addr = inAddr;
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				MiscUtils.getLogger().info(e.toString());
+		boolean isAvailable = false;
+		
+		if (outAddr != null) {
+			isAvailable = isResServerAvailable(phoenixProp.getProperty("protocol_file_transfer")
+					, outAddr.getBookSerIp(), outAddr.getBookSerPort(), phoenixProp.getProperty("res_server_appname"));
+			if (isAvailable) {
+				addr = outAddr;
 			}
 		}
 		
-		if (addr == null && outAddr != null) {
-			try {
-				outInetAddr = InetAddress.getByName(outAddr.getBookSerIp());
-				if (outInetAddr != null && isReachable(local, outInetAddr, outAddr.getBookSerPort(), 3000)) {
-					addr = outAddr;
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				MiscUtils.getLogger().info(e.toString());
+		if (addr == null && inAddr != null) {
+			isAvailable = isResServerAvailable(phoenixProp.getProperty("protocol_file_transfer")
+					, inAddr.getBookSerIp(), inAddr.getBookSerPort(), phoenixProp.getProperty("res_server_appname"));
+			if (isAvailable) {
+				addr = inAddr;
 			}
 		}
 		
 		return addr;
 	}
 	
+	private boolean isResServerAvailable(String schema, String host, int port, String cxtName){
+		String uri = schema + "://" + host + ":" + port + "/" + cxtName;
+		MiscUtils.getLogger().info("URL: " + uri);
+		boolean isAvailable = false;
+
+		try {
+			HttpGet httpGet = new HttpGet(uri);
+			HttpClient client = new DefaultHttpClient();
+			HttpResponse resp = client.execute(httpGet);
+			if (resp.getStatusLine().getStatusCode() == 200) {
+				isAvailable = true;
+			}
+		} catch (Exception e) {
+			MiscUtils.getLogger().info(e.toString());
+		}
+		
+		return isAvailable;
+	}
+	
+	@SuppressWarnings("unused")
 	private boolean isReachable(InetAddress localInetAddr, 
 			InetAddress remoteInetAddr, int port, int timeout) {
 
@@ -393,7 +410,58 @@ public class SysServiceImpl implements ISysService{
 		return isReachable;
 	}
 	
+	private void getSubClientUsers(BigInteger clientTypeId, BigInteger cataId, List<SysStaff> staffList) {
+		if (staffList == null) {
+			return;
+		}
+		
+		// 1.获取本机构目录下机构中教师端用户
+		List<PubOrg> orgList = orgDao.findByOrgCataId(cataId.toString());
+		if (orgList != null) {
+			for (PubOrg org : orgList) {
+				List<SysStaff> tmpList = staffDao.findByOrgIdAndType(new BigInteger(org.getId()),
+						clientTypeId);
+				if (tmpList != null) {
+					staffList.addAll(tmpList);
+				}
+			}
+		}
+		// 2.获取本机构目录下教师端用户
+		List<PubOrgCata> cataList = cataDao.findAllByParentId(cataId);
+		if (cataList != null) {
+			for (PubOrgCata cata : cataList) {
+				getSubClientUsers(clientTypeId, new BigInteger(cata.getId()), staffList);
+			}
+		}
+	}
+	
 	public List<SysStaff> getAllClientUsersByOrgId(BigInteger orgId) {
-		return null;
+		List<SysStaff> staffList = new ArrayList<SysStaff>();
+		do {
+			PubOrg org = orgDao.find(orgId.toString());
+			if (org == null) {
+				break;
+			}
+			PubDdv ddv = ddvDao.findClientUserDdv();
+			if (ddv == null) {
+				break;
+			}
+			// 1.本机构中教师端用户
+			List<SysStaff> tmpList = staffDao.findByOrgIdAndType(orgId, new BigInteger(ddv.getDdvId()));
+			if (tmpList != null) {
+				staffList.addAll(tmpList);
+			}
+			// 2.获取下机构中教师端用户
+			List<PubOrgCata> cataList = cataDao.findAllByParentId(new BigInteger(org.getPubOrgCata().getId()));
+			if (cataList == null) {
+				break;
+			}
+			for (PubOrgCata cata : cataList) {
+				getSubClientUsers(new BigInteger(ddv.getDdvId()), new BigInteger(cata.getId()), staffList);
+			}
+			
+		} while(false);
+		
+		return staffList;
 	}
 }

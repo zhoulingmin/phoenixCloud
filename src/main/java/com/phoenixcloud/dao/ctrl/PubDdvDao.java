@@ -33,7 +33,7 @@ public class PubDdvDao extends AbstractCtrlDao<PubDdv> {
 	
 	@SuppressWarnings("unchecked")
 	public List<PubDdv> findByTblAndField(String tblName, String fieldName) {
-		Query query = entityManager.createQuery("select pd from PubDdv pd where pd.tableName = ?1 and pd.fieldName = ?2");
+		Query query = entityManager.createQuery("select pd from PubDdv pd where pd.deleteState = '0' and pd.tableName = ?1 and pd.fieldName = ?2");
 		query.setParameter(1, tblName);
 		query.setParameter(2, fieldName);
 		List<PubDdv> ddvList = query.getResultList();

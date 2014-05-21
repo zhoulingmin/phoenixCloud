@@ -375,7 +375,20 @@ jQuery(function() {
 	jQuery("select").each(function(idx) {
 		jQuery(this).val(this.getAttribute("value"));
 	});
-	changeStuSeg();
+	
+	if ("高中" == jQuery("#stuSegSel option:selected").html()) {
+		jQuery("#kindSeqLbl").css("display","inline");
+		jQuery("#kindSeqDiv").css("display","block");
+		jQuery("#kind option[flag='高中']").css("display","block");
+		jQuery("#kind option[flag!='高中']").css("display","none");
+		var selFirst = jQuery("#kind option[flag='高中']:eq(0)").val();
+		jQuery("#kind").val(selFirst);
+		
+		jQuery("#cls option[flag='高中']").css("display","block");
+		jQuery("#cls option[flag!='高中']").css("display","none");
+		selFirst = jQuery("#cls option[flag='高中']:eq(0)").val();
+		jQuery("#cls").val(selFirst);
+	}
 	
 	<security:phoenixSec purviewCode="BOOK_UPLOAD">
 	var isUpload = jQuery("input[name='isUpload']")[0].value;

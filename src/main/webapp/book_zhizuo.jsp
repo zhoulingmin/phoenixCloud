@@ -4,7 +4,7 @@
 <%@page import="com.phoenixcloud.dao.ctrl.*"%>
 <%@page import="com.phoenixcloud.util.SpringUtils"%>
 <%@page import="java.util.*" %>
-
+<%@page import="com.phoenixcloud.common.*" %>
 <%
 String ctx = request.getContextPath();
 
@@ -23,6 +23,32 @@ List<PubDdv> stuSegList = ddvDao.findByTblAndField("r_book", "STU_SEG_ID");
 List<PubDdv> classList = ddvDao.findByTblAndField("r_book", "CLASS_ID");
 PubPressDao pressDao = (PubPressDao)SpringUtils.getBean(PubPressDao.class);
 List<PubPress> pressList = pressDao.getAll();
+
+PhoenixProperties prop = PhoenixProperties.getInstance();
+String schema = prop.getProperty("protocol_file_transfer");
+if (schema == null || schema.isEmpty()) {
+	schema = "http";
+}
+String resCtx = prop.getProperty("res_server_appname");
+if (resCtx == null || resCtx.isEmpty()) {
+	resCtx = "resserver";
+}
+PubServerAddrDao addrDao = (PubServerAddrDao)SpringUtils.getBean(PubServerAddrDao.class);
+PubServerAddr inAddr = addrDao.findByOrgId(staff.getOrgId(), Constants.IN_NET);
+String inHost = "";
+int inHostPort = 0;
+if (inAddr != null) {
+	inHost = inAddr.getBookSerIp();
+	inHostPort = inAddr.getBookSerPort();
+}
+
+PubServerAddr outAddr = addrDao.findByOrgId(staff.getOrgId(), Constants.OUT_NET);
+String outHost = "";
+int outHostPort = 0;
+if (outAddr != null) {
+	outHost = outAddr.getBookSerIp();
+	outHostPort = outAddr.getBookSerPort();
+}
 
 %>
 <!doctype html>
@@ -211,7 +237,7 @@ white-space:nowrap;
 							
 							<%if (book.getIsUpload() == (byte)1) {%>
 							<security:phoenixSec purviewCode="BOOK_DOWNLOAD">
-							<a class="tip-top" title="下载" href="<%=ctx%>/book/downloadBook.do?bookInfo.bookId=<%=book.getId()%>"><i class="icon-download-alt"></i></a>
+							<a class="tip-top" title="下载" href="#" onclick="return downloadBook('<%=book.getAllAddrInNet()%>','<%=book.getAllAddrOutNet()%>','<%=schema%>','<%=inHost%>','<%=inHostPort%>','<%=outHost%>','<%=outHostPort%>','<%=resCtx%>')"><i class="icon-download-alt"></i></a>
 							</security:phoenixSec>
 							<%} %>
 							
@@ -455,6 +481,72 @@ jQuery(document).ready(function() {
 	});
 	</security:phoenixSec>
 });
+
+/*var xhr = null;
+function handler(evtXHR) {
+	if (xhr.readyState == 4) {   
+		if (xhr.status == 200) {
+			window.location.href=xhr.downloadAddr;
+		}
+	}
+}*/
+function downloadBook(inAddr,outAddr,schema,inHost,inHostPort,outHost,outHostPort,resCtx) {
+/*	if (outAddr != null) {
+		xhr = new XMLHttpRequest();
+		if (xhr != null) {
+			xhr.downloadAddr = outAddr;
+			var outURI = schema + "://" + outHost + ":" + outHostPort + "/" + resCtx;
+			xhr.open("GET", outURI, false);
+			xhr.onreadystatechange = handler;
+			xhr.send();
+		}
+	}
+	
+	if (inAddr != null){
+		xhr = new XMLHttpRequest();
+		if (xhr != null) {
+			xhr.downloadAddr = inAddr;
+			var outURI = schema + "://" + inHost + ":" + inHostPort + "/" + resCtx;
+			xhr.open("GET", inURI, false);
+			xhr.onreadystatechange = handler;
+			xhr.send();
+		}
+	}
+	*/
+	var isAvailable = false;
+	if (outAddr != null) {
+		var outURI = schema + "://" + outHost + ":" + outHostPort + "/" + resCtx + "/"; // "/" 后缀必须加上
+		jQuery.ajax({
+			url: outURI,
+			type: "GET",
+			timeout: 3000,
+			async: false,
+			headers: {Origin:"*"}, // used for cross domain access
+			statusCode: {
+				200: function() {
+					isAvailable = true;
+					window.location.href = outAddr;
+				}
+			}
+		});
+	}
+	if (!isAvailable && inAddr != null) {
+		var inURI = schema + "://" + inHost + ":" + inHostPort + "/" + resCtx + "/"; // "/" 后缀必须加上
+		jQuery.ajax({
+			url: inURI,
+			type: "GET",
+			timeout: 3000,
+			async: false,
+			headers: {Origin:"*"}, // used for cross domain access
+			statusCode: {
+				200: function() {
+					window.location.href = inAddr;
+				}
+			}
+		});
+	}
+	return false;
+}
 
 </script>
 

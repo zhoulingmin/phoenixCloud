@@ -5,6 +5,7 @@
 <%@page import="com.phoenixcloud.dao.res.*"%>
 <%@page import="com.phoenixcloud.util.SpringUtils"%>
 <%@page import="java.util.*" %>
+<%@page import="com.phoenixcloud.common.*" %>
 
 <%
 String ctx = request.getContextPath();
@@ -20,6 +21,33 @@ if (resList == null) {
 }
 RBookDao bookDao = (RBookDao)SpringUtils.getBean("RBookDao");
 PubDdvDao ddvDao = (PubDdvDao)SpringUtils.getBean(PubDdvDao.class);
+
+
+PhoenixProperties prop = PhoenixProperties.getInstance();
+String schema = prop.getProperty("protocol_file_transfer");
+if (schema == null || schema.isEmpty()) {
+	schema = "http";
+}
+String resCtx = prop.getProperty("res_server_appname");
+if (resCtx == null || resCtx.isEmpty()) {
+	resCtx = "resserver";
+}
+PubServerAddrDao addrDao = (PubServerAddrDao)SpringUtils.getBean(PubServerAddrDao.class);
+PubServerAddr inAddr = addrDao.findByOrgId(staff.getOrgId(), Constants.IN_NET);
+String inHost = "";
+int inHostPort = 0;
+if (inAddr != null) {
+	inHost = inAddr.getBookSerIp();
+	inHostPort = inAddr.getBookSerPort();
+}
+
+PubServerAddr outAddr = addrDao.findByOrgId(staff.getOrgId(), Constants.OUT_NET);
+String outHost = "";
+int outHostPort = 0;
+if (outAddr != null) {
+	outHost = outAddr.getBookSerIp();
+	outHostPort = outAddr.getBookSerPort();
+}
 
 %>
 <!doctype html>
@@ -165,7 +193,7 @@ white-space:nowrap;
 	
 								<%if (res.getIsUpload() == (byte)1) {%>
 								<security:phoenixSec purviewCode="RES_DOWNLOAD">
-								<a class="tip-top" title="下载" href="<%=ctx%>/book/downloadRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-download-alt"></i></a>
+								<a class="tip-top" title="下载" href="#" onclick="return downloadRes('<%=res.getAllAddrInNet()%>','<%=res.getAllAddrOutNet()%>','<%=schema%>','<%=inHost%>','<%=inHostPort%>','<%=outHost%>','<%=outHostPort%>','<%=resCtx%>')"><i class="icon-download-alt"></i></a>
 								</security:phoenixSec>
 								<%} %>
 								
@@ -179,7 +207,7 @@ white-space:nowrap;
 							<% }else { %>
 								<%if (res.getIsUpload() == (byte)1) {%>
 								<security:phoenixSec purviewCode="RES_DOWNLOAD">
-								<a class="tip-top" title="下载" href="<%=ctx%>/book/downloadRes.do?bookRes.resId=<%=res.getId()%>"><i class="icon-download-alt"></i></a>
+								<a class="tip-top" title="下载" href="#" onclick="return downloadRes('<%=res.getAllAddrInNet()%>','<%=res.getAllAddrOutNet()%>','<%=schema%>','<%=inHost%>','<%=inHostPort%>','<%=outHost%>','<%=outHostPort%>','<%=resCtx%>')"><i class="icon-download-alt"></i></a>
 								</security:phoenixSec>
 								<%} %>
 							<%} %>
@@ -457,6 +485,42 @@ jQuery(document).ready(function() {
 		jQuery("input[name='end']").val("");
 	});
 });
+
+function downloadRes(inAddr,outAddr,schema,inHost,inHostPort,outHost,outHostPort,resCtx) {
+	var isAvailable = false;
+	if (outAddr != null) {
+		var outURI = schema + "://" + outHost + ":" + outHostPort + "/" + resCtx + "/"; // "/" 后缀必须加上
+		jQuery.ajax({
+			url: outURI,
+			type: "GET",
+			timeout: 3000,
+			async: false,
+			headers: {Origin:"*"}, // used for cross domain access
+			statusCode: {
+				200: function() {
+					isAvailable = true;
+					window.location.href = outAddr;
+				}
+			}
+		});
+	}
+	if (!isAvailable && inAddr != null) {
+		var inURI = schema + "://" + inHost + ":" + inHostPort + "/" + resCtx + "/"; // "/" 后缀必须加上
+		jQuery.ajax({
+			url: inURI,
+			type: "GET",
+			timeout: 3000,
+			async: false,
+			headers: {Origin:"*"}, // used for cross domain access
+			statusCode: {
+				200: function() {
+					window.location.href = inAddr;
+				}
+			}
+		});
+	}
+	return false;
+}
 
 
 </script>
