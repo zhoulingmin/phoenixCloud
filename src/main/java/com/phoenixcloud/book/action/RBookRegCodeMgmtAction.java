@@ -271,7 +271,7 @@ public class RBookRegCodeMgmtAction extends ActionSupport implements RequestAwar
 				if (staffReg != null) {
 					SysStaffDao staffDao = (SysStaffDao)SpringUtils.getBean(SysStaffDao.class);
 					if (staffReg.getStaffId() != null && staffReg.getStaffId().compareTo(BigInteger.ZERO) == 1) {
-						staff = staffDao.find(regCode.getStaffId().toString());
+						staff = staffDao.find(staffReg.getStaffId().toString());
 					}
 				}
 				

@@ -113,7 +113,7 @@ insert  into `pub_ddv`(`DDV_ID`,`DDV_CODE`,`TABLE_NAME`,`FIELD_NAME`,`VALUE`,`CR
 (null,'38','r_book_res','FORMAT','音频','2014-03-15 22:43:38','2014-03-15 22:43:38',0,''),
 (null,'39','r_book_res','FORMAT','视频','2014-03-15 22:43:38','2014-03-15 22:43:38',0,''),
 (null,'40','pub_hardware','HW_TYPE','硬盘','2014-03-15 22:43:39','2014-03-15 22:43:39',0,''),
-(null,'41','pub_hardware','HW_TYPE','网卡','2014-03-15 22:43:39','2014-03-15 22:43:39',1,''),
+(null,'41','pub_hardware','HW_TYPE','网卡','2014-03-15 22:43:39','2014-03-15 22:43:39',0,''),
 (null,'42','pub_hardware','HW_TYPE','CPU','2014-03-15 22:43:39','2014-03-15 22:43:39',0,''),
 (null,'43','sys_staff','STAFF_TYPE_ID','教师备课用户','2014-03-15 22:43:38','2014-03-15 22:43:38',0,'');
 
@@ -388,7 +388,7 @@ CREATE TABLE `sys_staff` (
 
 /*Data for the table `sys_staff` */
 
-insert  into `sys_staff`(`STAFF_ID`,`ORG_ID`,`STAFF_TYPE_ID`,`NAME`,`CODE`,`PASSWORD`,`VALID_DATE`,`CREATE_TIME`,`UPDATE_TIME`,`DELETE_STATE`,`NOTES`) values ('1','1','32','超级管理员','sysAdmin','1','9999-01-01','2014-03-15 22:43:39','2014-03-15 22:43:39',0,'');
+insert  into `sys_staff`(`STAFF_ID`,`ORG_ID`,`STAFF_TYPE_ID`,`NAME`,`CODE`,`PASSWORD`,`VALID_DATE`,`CREATE_TIME`,`UPDATE_TIME`,`DELETE_STATE`,`NOTES`) values ('1','1','62','超级管理员','sysAdmin','1','9999-01-01','2014-03-15 22:43:39','2014-03-15 22:43:39',0,'');
 
 /*Table structure for table `sys_staff_purview` */
 
