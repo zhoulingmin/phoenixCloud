@@ -388,7 +388,7 @@ CREATE TABLE `sys_staff` (
 
 /*Data for the table `sys_staff` */
 
-insert  into `sys_staff`(`STAFF_ID`,`ORG_ID`,`STAFF_TYPE_ID`,`NAME`,`CODE`,`PASSWORD`,`VALID_DATE`,`CREATE_TIME`,`UPDATE_TIME`,`DELETE_STATE`,`NOTES`) values ('1','1','32','超级管理员','sysAdmin','1','9999-01-01','2014-03-15 22:43:39','2014-03-15 22:43:39',0,'');
+insert  into `sys_staff`(`STAFF_ID`,`ORG_ID`,`STAFF_TYPE_ID`,`NAME`,`CODE`,`PASSWORD`,`VALID_DATE`,`CREATE_TIME`,`UPDATE_TIME`,`DELETE_STATE`,`NOTES`) values ('1','1','62','超级管理员','sysAdmin','1','9999-01-01','2014-03-15 22:43:39','2014-03-15 22:43:39',0,'');
 
 /*Table structure for table `sys_staff_purview` */
 
