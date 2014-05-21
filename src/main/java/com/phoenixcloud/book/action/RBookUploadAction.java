@@ -214,7 +214,7 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 
 		StringBuffer suffixURL = new StringBuffer();
 		suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
-		suffixURL.append("/" + URLEncoder.encode(bookFileFileName, "utf-8"));
+		suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
 		try {
 			JSONObject retObj = upoadBookToResServer(baseURL.toString() + "uploadFile" + suffixURL);
 			if ((Integer)retObj.get("ret") == 1) {
