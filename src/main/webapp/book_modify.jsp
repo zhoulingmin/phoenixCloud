@@ -353,6 +353,7 @@ function saveBook() {
 		async: "false",
 		timeout: 30000,
 		data: jQuery("#bookForm").serialize(),
+		dataType: "json",
 		success: function(ret) {
 			if (ret == null) {
 				alert("修改书籍失败！");
@@ -371,6 +372,8 @@ function saveBook() {
 	});
 }
 
+var oldStuSeg = null;
+
 jQuery(function() {
 	jQuery("select").each(function(idx) {
 		jQuery(this).val(this.getAttribute("value"));
@@ -379,16 +382,16 @@ jQuery(function() {
 	if ("高中" == jQuery("#stuSegSel option:selected").html()) {
 		jQuery("#kindSeqLbl").css("display","inline");
 		jQuery("#kindSeqDiv").css("display","block");
-		jQuery("#kind option[flag='高中']").css("display","block");
 		jQuery("#kind option[flag!='高中']").css("display","none");
-		var selFirst = jQuery("#kind option[flag='高中']:eq(0)").val();
-		jQuery("#kind").val(selFirst);
-		
-		jQuery("#cls option[flag='高中']").css("display","block");
 		jQuery("#cls option[flag!='高中']").css("display","none");
-		selFirst = jQuery("#cls option[flag='高中']:eq(0)").val();
-		jQuery("#cls").val(selFirst);
+	} else {
+		jQuery("#kindSeqLbl").css("display","none");
+		jQuery("#kindSeqDiv").css("display","none");
+		jQuery("#kind option[flag='高中']").css("display","none");
+		jQuery("#cls option[flag='高中']").css("display","none");
 	}
+	
+	oldStuSeg = jQuery("#stuSegSel option:selected").html();
 	
 	<security:phoenixSec purviewCode="BOOK_UPLOAD">
 	var isUpload = jQuery("input[name='isUpload']")[0].value;
@@ -411,7 +414,7 @@ function changeStuSeg() {
 		jQuery("#cls option[flag!='高中']").css("display","none");
 		selFirst = jQuery("#cls option[flag='高中']:eq(0)").val();
 		jQuery("#cls").val(selFirst);
-	} else {
+	} else if (oldStuSeg == "高中") {
 		jQuery("#kindSeqLbl").css("display","none");
 		jQuery("#kindSeqDiv").css("display","none");
 		jQuery("#kind option[flag!='高中']").css("display","block");
@@ -424,6 +427,7 @@ function changeStuSeg() {
 		selFirst = jQuery("#cls option[flag!='高中']:eq(0)").val();
 		jQuery("#cls").val(selFirst);
 	}
+	oldStuSeg = jQuery("#stuSegSel option:selected").html();
 }
 
 </script>

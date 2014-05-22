@@ -5,14 +5,10 @@ import java.util.ArrayList;
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.util.MiscUtils;

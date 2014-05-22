@@ -3,26 +3,16 @@ package com.phoenixcloud.book.action;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URLEncoder;
-import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.security.cert.CertificateException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
@@ -46,9 +36,6 @@ import com.phoenixcloud.util.ClientHelper;
 import com.phoenixcloud.util.MiscUtils;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.client.urlconnection.HTTPSProperties;
 import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;
 
@@ -95,7 +82,7 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	@Autowired
 	private RBookDao bookDao;
 	
-	PhoenixProperties phoenixProp = PhoenixProperties.getInstance();
+	private PhoenixProperties phoenixProp = PhoenixProperties.getInstance();
 	
 	public void setiBookService(IRBookMgmtService iBookService) {
 		this.iBookService = iBookService;
@@ -108,7 +95,6 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	public void setBookFile(File bookFile) {
 		this.bookFile = bookFile;
 	}
-
 
 	public String getBookFileContentType() {
 		return bookFileContentType;
@@ -214,7 +200,7 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 
 		StringBuffer suffixURL = new StringBuffer();
 		suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
-		suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
+		suffixURL.append("/" + URLEncoder.encode(book.getBookNo() + ".pkg", "utf-8"));
 		try {
 			JSONObject retObj = upoadBookToResServer(baseURL.toString() + "uploadFile" + suffixURL);
 			if ((Integer)retObj.get("ret") == 1) {
@@ -275,7 +261,12 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 
 		StringBuffer suffixURL = new StringBuffer();
 		suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
-		suffixURL.append("/cover/" + URLEncoder.encode(coverFileFileName, "utf-8"));
+		String suffixName = "";
+		int idx = coverFileFileName.lastIndexOf(".");
+		if (idx != -1 && idx < coverFileFileName.length() -1) {
+			suffixName = coverFileFileName.substring(idx);
+		}
+		suffixURL.append("/cover/cover" + suffixName);
 		try {
 			JSONObject retObj = uploadCoverImg(baseURL.toString() + "uploadFile" + suffixURL);
 			if ((Integer)retObj.get("ret") == 1) {

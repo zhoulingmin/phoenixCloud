@@ -8,7 +8,6 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import com.phoenixcloud.bean.RBookRe;
-import com.phoenixcloud.dao.ctrl.AbstractCtrlDao;
 
 @Repository("rBookReDao")
 public class RBookReDao extends AbstractResDao<RBookRe>{
@@ -26,6 +25,14 @@ public class RBookReDao extends AbstractResDao<RBookRe>{
 	public List<RBookRe> getAllResByBookId(BigInteger bookId) {
 		Query query = entityManager.createQuery("select rr from RBookRe rr where rr.bookId = ?1 and rr.deleteState = 0");
 		query.setParameter(1, bookId);
+		return query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RBookRe> getAllResByBookId(BigInteger bookId, byte isUpload) {
+		Query query = entityManager.createQuery("select rr from RBookRe rr where rr.bookId = ?1 and rr.deleteState = 0 and rr.isUpload = ?2");
+		query.setParameter(1, bookId);
+		query.setParameter(2, isUpload);
 		return query.getResultList();
 	}
 	

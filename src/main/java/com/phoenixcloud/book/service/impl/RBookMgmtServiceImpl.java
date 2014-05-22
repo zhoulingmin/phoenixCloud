@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -19,7 +18,6 @@ import com.phoenixcloud.bean.PubDdv;
 import com.phoenixcloud.bean.PubPress;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookDire;
-import com.phoenixcloud.bean.RBookPageRes;
 import com.phoenixcloud.bean.RBookRe;
 import com.phoenixcloud.bean.RRegCode;
 import com.phoenixcloud.book.service.IRBookMgmtService;
@@ -28,7 +26,6 @@ import com.phoenixcloud.dao.ctrl.PubPressDao;
 import com.phoenixcloud.dao.res.RBookDao;
 import com.phoenixcloud.dao.res.RBookDireDao;
 import com.phoenixcloud.dao.res.RBookLogDao;
-import com.phoenixcloud.dao.res.RBookPageResDao;
 import com.phoenixcloud.dao.res.RBookReDao;
 import com.phoenixcloud.dao.res.RRegCodeDao;
 
@@ -362,4 +359,14 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 		return query.getResultList();
 	}
 
+	public void changeResPathInfo(BigInteger bookId, String oldBookNo, String newBookNo) {
+		List<RBookRe> resList = bookReDao.getAllResByBookId(bookId, (byte)1);
+		if (resList != null) {
+			for (RBookRe res : resList) {
+				res.setAllAddrInNet(res.getAllAddrInNet().replaceAll(oldBookNo, newBookNo));
+				res.setAllAddrOutNet(res.getAllAddrOutNet().replaceAll(oldBookNo, newBookNo));
+				bookReDao.merge(res);
+			}
+		}
+	}
 }

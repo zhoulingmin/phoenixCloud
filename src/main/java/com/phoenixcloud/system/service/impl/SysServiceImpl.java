@@ -1,22 +1,16 @@
 package com.phoenixcloud.system.service.impl;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.core.MediaType;
-
-import net.sf.json.JSONObject;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -45,10 +39,7 @@ import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.dao.ctrl.SysStaffPurviewDao;
 import com.phoenixcloud.dao.ctrl.SysStaffRegCodeDao;
 import com.phoenixcloud.system.service.ISysService;
-import com.phoenixcloud.util.ClientHelper;
 import com.phoenixcloud.util.MiscUtils;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 
 @Service
 public class SysServiceImpl implements ISysService{

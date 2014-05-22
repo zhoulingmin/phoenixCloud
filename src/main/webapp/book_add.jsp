@@ -292,6 +292,7 @@ function addBook() {
 	});
 }
 
+var oldStuSeg = "";
 function changeStuSeg() {
 	if ("高中" == jQuery("#stuSegSel option:selected").html()) {
 		jQuery("#kindSeqLbl").css("display","inline");
@@ -305,7 +306,7 @@ function changeStuSeg() {
 		jQuery("#cls option[flag!='高中']").css("display","none");
 		selFirst = jQuery("#cls option[flag='高中']:eq(0)").val();
 		jQuery("#cls").val(selFirst);
-	} else {
+	} else if (oldStuSeg == "" || oldStuSeg == "高中"){
 		jQuery("#kindSeqLbl").css("display","none");
 		jQuery("#kindSeqDiv").css("display","none");
 		jQuery("#kind option[flag!='高中']").css("display","block");
@@ -318,6 +319,7 @@ function changeStuSeg() {
 		selFirst = jQuery("#cls option[flag!='高中']:eq(0)").val();
 		jQuery("#cls").val(selFirst);
 	}
+	oldStuSeg = jQuery("#stuSegSel option:selected").html();
 }
 
 jQuery(document).ready(function(){

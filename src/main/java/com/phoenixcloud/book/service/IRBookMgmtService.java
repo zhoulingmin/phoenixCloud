@@ -34,4 +34,6 @@ public interface IRBookMgmtService {
 	List<RRegCode> getAllRegCodes();
 	void saveRegCode(RRegCode code);
 	void removeRegCode(String id);
+	
+	void changeResPathInfo(BigInteger bookId, String oldBookNo, String newBookNo);
 }
