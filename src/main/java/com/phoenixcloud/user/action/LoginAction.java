@@ -1,6 +1,8 @@
 package com.phoenixcloud.user.action;
 
+import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -11,13 +13,16 @@ import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.interceptor.SessionAware;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.PubDdv;
+import com.phoenixcloud.bean.PubHwNum;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.dao.ctrl.PubDdvDao;
+import com.phoenixcloud.dao.ctrl.PubHwNumDao;
 import com.phoenixcloud.dao.ctrl.SysStaffDao;
 
 @Scope("prototype")
@@ -38,6 +43,8 @@ public class LoginAction extends ActionSupport implements RequestAware,
 	private SysStaffDao staffDao;
 	@Resource
 	private PubDdvDao ddvDao;
+	@Autowired
+	private PubHwNumDao hwNumDao;
 
 	public void setDdvDao(PubDdvDao ddvDao) {
 		this.ddvDao = ddvDao;
@@ -116,6 +123,19 @@ public class LoginAction extends ActionSupport implements RequestAware,
 		date.setYear(date.getYear() + 10);
 		staff.setValidDate(date);
 		staffDao.persist(staff);
+		
+		List<PubDdv> ddvList = ddvDao.findByTblAndField("pub_hardware", "HW_TYPE");
+		for (PubDdv ddv : ddvList) {
+			PubHwNum num = new PubHwNum();
+			num.setHwType(new BigInteger(ddv.getId()));
+			num.setNum(0);
+			num.setNotes("");
+			num.setStaffId(new BigInteger(staff.getId()));
+			num.setCreateTime(date);
+			num.setUpdateTime(date);
+			hwNumDao.persist(num);
+		}
+		
 		return "success";
 	}
 }
