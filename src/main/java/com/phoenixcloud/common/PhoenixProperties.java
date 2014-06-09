@@ -44,6 +44,17 @@ public class PhoenixProperties extends Properties {
 		}
 		return tmp.trim();
 	}
+	
+	public String getProperty(String key, String def) {
+		String tmp = super.getProperty(key);
+		if (null == tmp) {
+			if (def != null) {
+				return def;
+			}
+			return "";
+		}
+		return tmp.trim();
+	}
 
 	public int getIntProperty(String key) {
 		try {

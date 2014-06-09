@@ -6,6 +6,7 @@
 <%@page import="java.util.*" %>
 <%@page import="java.text.*" %>
 <%@page import="com.opensymphony.xwork2.util.*"%>
+<%@page import="com.phoenixcloud.common.PhoenixProperties" %>
 <%@taglib uri="/struts-tags" prefix="s" %>
 <%
 SysStaff staff = (SysStaff)session.getAttribute("user");
@@ -50,6 +51,8 @@ if (quarter == null){
 	quarter = "";
 }
 
+PhoenixProperties phoenixProp = PhoenixProperties.getInstance();
+String suffixName = phoenixProp.getProperty("book_suffix_name", "eth");
 %>
 
 <!doctype html>
@@ -296,7 +299,7 @@ function checkfile() {
 		return false;
 	}
 	
-	if (jQuery("#bookFile").val().lastIndexOf(".pkg") == -1) {
+	if (jQuery("#bookFile").val().lastIndexOf("<%=suffixName%>") == -1) {
 		alert("请选择pkg格式的文件！");
 		return false;
 	}
