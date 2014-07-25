@@ -150,7 +150,27 @@ font: 13px '宋体',Arial,sans-serif;
 </body>
 <script type="text/javascript">
 
+function check() {
+	if (jQuery("input[name='staff.code']")[0].value.trim().length == 0) {
+		alert("登录名不能为空！");
+		return false;
+	} 
+	if (jQuery("input[name='staff.password']")[0].value.trim().length == 0) {
+		alert("密码不能为空！");
+		return false;
+	}
+	if (jQuery("input[name='staff.orgId']")[0].value.trim().length == 0) {
+		alert("机构不能为空！");
+		return false;
+	}
+	return true;
+}
+
+
 function saveUser() {
+	if (!check()) {
+		return;
+	}
 	jQuery.ajax({
 		url: "<%=ctx%>/system/system_saveUser.do",
 		data: jQuery("#editUser").serialize(),

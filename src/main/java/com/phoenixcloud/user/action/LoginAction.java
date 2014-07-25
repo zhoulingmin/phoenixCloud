@@ -20,9 +20,11 @@ import org.springframework.stereotype.Component;
 import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.PubDdv;
 import com.phoenixcloud.bean.PubHwNum;
+import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.PubHwNumDao;
+import com.phoenixcloud.dao.ctrl.PubOrgDao;
 import com.phoenixcloud.dao.ctrl.SysStaffDao;
 
 @Scope("prototype")
@@ -45,6 +47,8 @@ public class LoginAction extends ActionSupport implements RequestAware,
 	private PubDdvDao ddvDao;
 	@Autowired
 	private PubHwNumDao hwNumDao;
+	@Autowired
+	private PubOrgDao orgDao;
 
 	public void setDdvDao(PubDdvDao ddvDao) {
 		this.ddvDao = ddvDao;
@@ -94,7 +98,13 @@ public class LoginAction extends ActionSupport implements RequestAware,
 		String ret = "NotFound";
 		
 		SysStaff user = staffDao.findByCode(staff.getCode());
-		if (user != null) {
+		
+		PubOrg userOrg = null;
+		if (user.getOrgId() != null) {
+			userOrg = orgDao.find(user.getOrgId().toString());
+		}
+		
+		if (user != null && userOrg != null) {
 			
 			PubDdv clientUserDdv = ddvDao.findClientUserDdv();
 			if (clientUserDdv != null && clientUserDdv.getId().equals(user.getStaffTypeId().toString())) {

@@ -1,0 +1,7 @@
+1.页面出现out of memory异常后，phoenixCloud无法启动，重启tomcat及电脑后，依然无法启动
+处理: 
+1) 停止tomcat服务
+2) 根据atomikos_log_base_dir，找到日志文件所在目录，删除所有日志
+3) 删除tomcat6/webapps目录下，phoenixCloud文件夹
+4) 删除tomcat6/work/Catalina/localhost/phoenixCloud文件夹
+5) 启动tomcat服务

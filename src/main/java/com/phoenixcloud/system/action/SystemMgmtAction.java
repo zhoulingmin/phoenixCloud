@@ -357,7 +357,14 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		this.hwNum = hwNum;
 	}
 
-	public String addUser() {
+	public String addUser() throws Exception{
+		
+		if (staff.getCode() == null || staff.getCode().trim().length() == 0
+				|| staff.getPassword() == null || staff.getPassword().length() == 0
+				|| staff.getOrgId() == null || staff.getOrgId().compareTo(BigInteger.ZERO) == 0) {
+			throw new Exception("注册信息不完整！");
+		}
+		
 		Date curDate = new Date();
 		staff.setCreateTime(curDate);
 		staff.setUpdateTime(curDate);

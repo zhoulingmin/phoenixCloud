@@ -300,7 +300,7 @@ function checkfile() {
 	}
 	
 	if (jQuery("#bookFile").val().lastIndexOf("<%=suffixName%>") == -1) {
-		alert("请选择pkg格式的文件！");
+		alert("请选择<%=suffixName%>格式的文件！");
 		return false;
 	}
 	

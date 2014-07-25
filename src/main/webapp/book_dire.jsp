@@ -129,7 +129,7 @@ td input{width:106px;}
 			<br />
 			<br />
 			<br />
-			<input style="float:right; margin-right:30px;" type="button" name="cancel" class="btn btn-primary" onclick="history.back();return false;" value="返回" />
+			<input style="float:right; margin-right:30px;" type="button" name="cancel" class="btn btn-primary" onclick="backToQueryBook();return false;" value="返回" />
 			<security:phoenixSec purviewCode="BOOK_EDIT_DIR">
 			<input style="float:right; margin-right:30px;" class="btn btn-primary" type="button" name="update" onclick="updateDire();return false;" value="保存" />
 			</security:phoenixSec>
@@ -144,6 +144,10 @@ var count = 0;
 var updatedCount = 0;
 var isAjax = false;
 var timerCheck;
+
+function backToQueryBook() {
+	window.location.href = "<%=ctx%>/book_zhizuo.jsp";
+}
 
 function updateDire() {
 	if (isAjax) {
