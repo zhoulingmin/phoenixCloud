@@ -1,5 +1,7 @@
 package com.phoenixcloud.listener;
 
+import java.io.File;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -13,7 +15,31 @@ public class Startup implements ServletContextListener {
 	private static Logger logger = MiscUtils.getLogger();
 	private PhoenixProperties p = PhoenixProperties.getInstance();
 
+	private void deleteSubFoldersAndfiles(File file) {
+		if (file == null) {
+			return;
+		}
+		if (file.isDirectory()) {
+			for (File tmp : file.listFiles()) {
+				deleteSubFoldersAndfiles(tmp);
+			}
+		} else {
+			file.delete();
+		}
+	}
+	
 	public void contextInitialized(ServletContextEvent sc) {
+		
+		// delete atomikos folders
+		File atomikosDir = new File(p.getProperty("atomikos_output_dir"));
+		if (atomikosDir != null && atomikosDir.exists()) {
+			deleteSubFoldersAndfiles(atomikosDir);
+		}
+		atomikosDir  = new File(p.getProperty("atomikos_log_base_dir"));
+		if (atomikosDir != null && atomikosDir.exists()) {
+			deleteSubFoldersAndfiles(atomikosDir);
+		}
+		
 		try {
 			logger.debug("contextInit");
 

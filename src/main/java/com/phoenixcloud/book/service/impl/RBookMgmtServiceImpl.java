@@ -144,7 +144,9 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 			if ("高中".equals(stuSegDdv.getValue()) && !kindSeqNo.isEmpty()) {
 				bookNo.append(kindSeqNo);
 			} else {
-				bookNo.append("z");
+				if (ddv.getDdvCode().length() == 1) {
+					bookNo.append("z");
+				}
 			}
 			bookNo.append(yearOfRls);
 			bookNo.append(quarter);
