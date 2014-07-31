@@ -23,9 +23,8 @@ public class Startup implements ServletContextListener {
 			for (File tmp : file.listFiles()) {
 				deleteSubFoldersAndfiles(tmp);
 			}
-		} else {
-			file.delete();
 		}
+		file.delete();
 	}
 	
 	public void contextInitialized(ServletContextEvent sc) {
@@ -42,7 +41,7 @@ public class Startup implements ServletContextListener {
 		
 		try {
 			logger.debug("contextInit");
-
+			
 			String contextPath = "";
 			String propFileName = "";
 
