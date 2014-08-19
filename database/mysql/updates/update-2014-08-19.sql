@@ -1,0 +1,5 @@
+ALTER TABLE r_book_dire ADD COLUMN `DIRE_TYPE` TINYINT(1) NOT NULL;
+
+UPDATE r_book_dire SET DIRE_TYPE=0 WHERE `NAME`='封面';
+UPDATE r_book_dire SET DIRE_TYPE=1 WHERE `NAME`='目录';
+UPDATE r_book_dire SET DIRE_TYPE=2 WHERE `NAME`!='封面' AND`NAME`!='目录';

@@ -19,6 +19,25 @@ String level = request.getParameter("level");
 if (level == null || "null".equalsIgnoreCase(level)) {
 	level = "0";
 }
+String type = request.getParameter("type");
+if (type == null) {
+	type = "0";
+}
+
+/*
+1: 新建正文
+3: 新建前目录
+4: 新建后目录
+5: 新建封底
+*/
+String direName = "书籍目录";
+if ("1".equals(type)) { // 前目录
+	direName = "前目录";
+} else if ("3".equals(type)) { // 后目录
+	direName = "后目录";
+} else if ("4".equals(type)) { // 封底
+	direName = "封底";
+}
 
 %>
 
@@ -58,11 +77,12 @@ if (level == null || "null".equalsIgnoreCase(level)) {
 				
 				<input type="hidden" name="bookDire.bookId" value="<%=bookId%>"/>
 				<input type="hidden" name="bookDire.parentDireId" value="<%=parentId%>"/>
+				<input type="hidden" name="bookDire.direType" value="<%=type%>"/>
 				
 				<div class="control-group" style="display:none">
 					<label class="control-label">目录名称</label>
 					<div class="controls">
-						<input type="text" name="bookDire.name" value="书籍目录">
+						<input type="text" name="bookDire.name" value="<%=direName%>">
 					</div>
 				</div>
 				

@@ -1,12 +1,14 @@
 <%@page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@page import="com.phoenixcloud.bean.*"%>
 <%@page import="com.phoenixcloud.dao.ctrl.*"%>
+<%@page import="com.phoenixcloud.dao.res.*"%>
 <%@page import="com.phoenixcloud.util.SpringUtils"%>
 <%@page import="com.opensymphony.xwork2.util.*"%>
 <%@taglib uri="/struts-tags" prefix="s"%>
 <%@page import="java.util.Date" %>
 <%@page import="net.sf.json.JSONArray" %>
 <%@page import="net.sf.json.JSONObject" %>
+<%@page import="java.math.*" %>
 <%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%
@@ -17,6 +19,19 @@ PubOrg org = orgDao.find(curStaff.getOrgId().toString());
 RBook book = (RBook)request.getAttribute("book");
 int maxLevel = (Integer)request.getAttribute("maxLevel");
 JSONArray direArr = (JSONArray)request.getAttribute("direArr");
+
+RBookDireDao direDao = (RBookDireDao)SpringUtils.getBean("RBookDireDao");
+String preDir = "inline", sufDir = "inline", sufCover = "inline";
+BigInteger bookId = new BigInteger(book.getBookId());
+if (direDao.existTypeOfDire(bookId, 1) != null) { // 前目录
+	preDir = "none";
+}
+if (direDao.existTypeOfDire(bookId, 3) != null) { // 后目录
+	sufDir = "none";
+}
+if (direDao.existTypeOfDire(bookId, 4) != null) { // 后封面
+	sufCover = "none";
+}
 
 String ctx = request.getContextPath();
 %>
@@ -61,8 +76,12 @@ td input{width:106px;}
 	<div id="contextMenu" class="dropdown clearfix">
 	    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:absolute;margin-bottom:5px;">
 	    	<security:phoenixSec purviewCode="BOOK_EDIT_DIR">
-	        <li><a tabindex="1" href="#">新建</a></li>
-	        <li><a tabindex="2" href="#">删除</a></li>
+	        <li style="display:<%=preDir%>"><a tabindex="1" href="#">新建前目录</a></li>
+	        <li><a tabindex="2" href="#">新建正文</a></li>
+	        <li style="display:<%=sufDir%>"><a tabindex="3" href="#">新建后目录</a></li>
+	        <li style="display:<%=sufDir%>"><a tabindex="4" href="#">新建封底</a></li>
+	        <li class="divider"></li> 
+	        <li><a tabindex="5" href="#">删除</a></li>
 	        </security:phoenixSec>
 	    </ul>
 	</div>
@@ -83,8 +102,8 @@ td input{width:106px;}
 						<th>描述</th>
 					</tr>
 				</thead>
-				<tbody>
-					<tr direId="0">
+				<tbody id="direBody">
+					<tr direId="0" type="-1">
 						<td><%=book.getName() %></td>
 						<%for (int i = 0; i < (maxLevel+1); i++) {%>
 						<td></td>
@@ -98,7 +117,8 @@ td input{width:106px;}
 						for (int i = 0; i < direArr.size(); i++) {
 							JSONObject obj = (JSONObject)direArr.get(i);
 							int level = (Integer)obj.get("level");
-							out.print("<tr direId=\"" + obj.get("direId") + "\" level=\"" + obj.get("level") + "\">");
+							out.print("<tr direId=\"" + obj.get("direId") + "\" level=\"" + obj.get("level") + "\" type=\"" + obj.get("type") + "\">");
+							
 							for (int j = 0; j < (level+1); j++) {
 								out.print("<td></td>");
 							}
@@ -212,15 +232,34 @@ var $curDire;
 $(document).ready(function(){
 	<security:phoenixSec purviewCode="BOOK_EDIT_DIR">
 	$("tbody tr").on("contextmenu", function(event) {
-		var index = jQuery(this).index();
-		if (index == 1 || index == 2) { // 封面及目录节点 不可以删除
+		var type = this.getAttribute("type");
+		$contextMenu.find("li").css("display","inline");
+		$contextMenu.find("li.divider")[0].style.display='';
+		if (type == -1) { // 在目录的第一行
+			if (jQuery("#direBody tr[type='1']").length == 1) { // 前目录存在
+				$contextMenu.find("li:eq(0)").css("display", "none");
+			}
+			if (jQuery("#direBody tr[type='3']").length == 1) { // 后目录存在
+				$contextMenu.find("li:eq(2)").css("display", "none");
+			}
+			if (jQuery("#direBody tr[type='4']").length == 1) { // 后封面存在
+				$contextMenu.find("li:eq(3)").css("display", "none");
+			}
+			$contextMenu.find("li.divider").css("display", "none");
+			$contextMenu.find("li:last").css("display", "none");
+		} else if (type == 0) { // 封面
+			return false;
+		} else if (type == 1 || type == 3 || type == 4) { // 前目录，后目录，后封面
+			$contextMenu.find("li").css("display", "none");
+			$contextMenu.find("li:last").css("display", "inline");
+		} else if (type == 2) { // 正文,context menu有 新建正文、删除
+			$contextMenu.find("li:eq(0)").css("display", "none"); // 前目录
+			$contextMenu.find("li:eq(2)").css("display", "none"); // 后目录
+			$contextMenu.find("li:eq(3)").css("display", "none"); // 后封面
+		} else {
 			return false;
 		}
-		if (index == 0) {
-			$contextMenu.find("li:eq(1)").css("display", "none");
-		} else {
-			$contextMenu.find("li:eq(1)").css("display", "inline");
-		}
+		
 		$contextMenu.css({
 			  display: "block",
 			  left: event.clientX,
@@ -236,9 +275,9 @@ $(document).ready(function(){
 	coverElm += "<a title=\"封面图片\" href=\"<%=ctx%>/book_cover_image.jsp?bookId=<%=book.getBookId()%>\"><i class=\"icon-picture\" style=\"margin-top: -2px;\"></i></a>";
 	$("tbody tr:eq(1) td:eq(1)").html(coverElm);
 	
-	var direElm = $("tbody tr:eq(2) td:eq(1) input:eq(0)").val();
-	direElm += "<input type='hidden' name='name' value='" + direElm + "' />";
-	$("tbody tr:eq(2) td:eq(1)").html(direElm);
+	//var direElm = $("tbody tr:eq(2) td:eq(1) input:eq(0)").val();
+	//direElm += "<input type='hidden' name='name' value='" + direElm + "' />";
+	//$("tbody tr:eq(2) td:eq(1)").html(direElm);
 	
 	$("tbody tr").on("mouseover", function(event) {
 		$(this).attr("bgcolor", "#E6E6FA");
@@ -264,17 +303,24 @@ $(document).ready(function(){
 	$("#contextMenu").on("click", "a", function(e) {
 		var tabIndex = e.target.getAttribute("tabindex");
 		switch (parseInt(tabIndex)) {
-		case 1: // 新建
+		case 1: // 新建前目录
 			window.location.href = "<%=ctx%>/book_dire_add.jsp?bookId=<%=book.getId()%>&parentId=" 
-					+ $curDire.getAttribute("direId") + "&level=" + $curDire.getAttribute("level");
-			//var title = "创建书籍目录";
-			//var params = "height=245,width=635,top=" 
-				//+ (window.screen.availHeight - 30 - 245) / 2 
-				//+ ",left=" + (window.screen.availWidth - 10 - 635) / 2;
-				//+ ",toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no";
-			//window.open(url, title, params);
+				+ $curDire.getAttribute("direId") + "&level=" + $curDire.getAttribute("level") + "&type=1";
 			break;
-		case 2: // 删除
+		case 2: // 新建正文
+			window.location.href = "<%=ctx%>/book_dire_add.jsp?bookId=<%=book.getId()%>&parentId=" 
+					+ $curDire.getAttribute("direId") + "&level=" + $curDire.getAttribute("level") + "&type=2";
+			break;
+		case 3: // 新建后目录
+			window.location.href = "<%=ctx%>/book_dire_add.jsp?bookId=<%=book.getId()%>&parentId=" 
+				+ $curDire.getAttribute("direId") + "&level=" + $curDire.getAttribute("level") + "&type=3";
+			break;
+		case 4: // 新建封底
+			window.location.href = "<%=ctx%>/book_dire_add.jsp?bookId=<%=book.getId()%>&parentId=" 
+				+ $curDire.getAttribute("direId") + "&level=" + $curDire.getAttribute("level") + "&type=4";
+			break;
+		
+		case 5: // 删除
 			jQuery.ajax({
 				url: "<%=ctx%>/book/bookDire_removeDire.do",
 				type: "post",

@@ -62,6 +62,9 @@ public class RBookDire extends AbstractModel<String> implements Serializable {
 	
 	@Column(name="PARENT_DIRE_ID")
 	private BigInteger parentDireId;
+	
+	@Column(name="DIRE_TYPE", length=1, nullable=false)
+	private int direType;
 
 	public RBookDire() {
 	}
@@ -166,6 +169,14 @@ public class RBookDire extends AbstractModel<String> implements Serializable {
 	public String getId() {
 		// TODO Auto-generated method stub
 		return direId;
+	}
+
+	public int getDireType() {
+		return direType;
+	}
+
+	public void setDireType(int direType) {
+		this.direType = direType;
 	}
 
 }

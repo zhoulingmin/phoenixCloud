@@ -15,6 +15,7 @@ import net.sf.json.JSONObject;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.RBookDire;
 import com.phoenixcloud.book.service.IRBookMgmtService;
+import com.phoenixcloud.dao.res.RBookDireDao;
 import com.phoenixcloud.util.MiscUtils;
 
 @Scope("prototype")
@@ -41,8 +43,10 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 	private BigInteger direId;
 	private RBookDire bookDire;
 	private boolean isView;
-	
 	private int num;
+	
+	@Autowired
+	private RBookDireDao direDao;
 	
 	
 	public IRBookMgmtService getiBookService() {
@@ -129,10 +133,11 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 			bookDire.setCreateTime(curDate);
 			bookDire.setUpdateTime(curDate);
 			bookDire.setParentDireId(BigInteger.ZERO);
+			bookDire.setDireType(0);
 			iBookService.saveBookDire(bookDire);
 			
 			// 创建默认目录
-			bookDire = new RBookDire();
+			/*bookDire = new RBookDire();
 			bookDire.setBPageNum(BigInteger.ONE);
 			bookDire.setEPageNum(BigInteger.ONE);
 			try {
@@ -147,7 +152,7 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 			bookDire.setCreateTime(curDate);
 			bookDire.setUpdateTime(curDate);
 			bookDire.setParentDireId(BigInteger.ZERO);
-			iBookService.saveBookDire(bookDire);
+			iBookService.saveBookDire(bookDire);*/
 		}
 		
 		int maxLevel = 0;
@@ -161,6 +166,7 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 			jsonObj.put("bPageNum", bookDire.getBPageNum());
 			jsonObj.put("ePageNum", bookDire.getEPageNum());
 			jsonObj.put("notes", bookDire.getNotes());
+			jsonObj.put("type", bookDire.getDireType());
 			
 			JSONObject tmpJosn = getSubDire(bookDire.getBookId(), new BigInteger(bookDire.getDireId()), 0);
 			if (tmpJosn != null) {
@@ -223,6 +229,14 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 		if (bookDire == null) {
 			return null;
 		}
+		
+		if (bookDire.getDireType() != 2) { // 非正文目录
+			num = 1;
+			if (null != direDao.existTypeOfDire(bookDire.getBookId(), bookDire.getDireType())) {
+				return null; // exists
+			}
+		}
+		
 		Date date = new Date();
 		for (int i = 0; i < num; i++) {
 			RBookDire dire = new RBookDire();
@@ -235,6 +249,7 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 			dire.setParentDireId(bookDire.getParentDireId());
 			dire.setStaffId(new BigInteger("1"));
 			dire.setLevel((byte)((int)bookDire.getLevel() + 1));
+			dire.setDireType(bookDire.getDireType());
 			iBookService.saveBookDire(dire);
 		}
 		
