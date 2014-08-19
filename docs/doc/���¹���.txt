@@ -1,0 +1,8 @@
+更新过程:
+1.备份原有phonenixCloud.war包
+2.停止tomcat: servcie tomcat stop
+3.删除
+1)/usr/local/tomcat/webapps/目录下 phonenixCloud.war 及 phonenixCloud 目录
+2)/usr/local/tomcat/work/Catalina/localhost/phonenixCloud
+4.拷贝新的phonenixCloud.war至/usr/local/tomcat/webapps/
+5.启动tomcat service tomcat start

@@ -11,7 +11,7 @@ String ctx = request.getContextPath();
 
 SysStaff staff = (SysStaff)session.getAttribute("user");
 PubOrgDao orgDao = (PubOrgDao)SpringUtils.getBean(PubOrgDao.class);
-PubOrg org = orgDao.find(staff.getStaffId().toString());
+PubOrg org = orgDao.find(staff.getOrgId().toString());
 
 RBook book = (RBook)request.getAttribute("book");
 List<RBookRe> resList = (List<RBookRe>)request.getAttribute("resList");

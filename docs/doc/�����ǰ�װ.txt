@@ -1,0 +1,104 @@
+1.安装JDK
+1)卸载OPENJDK
+yum remove tzdata-java-2012j-1.el6.noarch
+2)下载JDK
+通过file /bin/ls查看是32位还是64机器，之后下载JDK7
+http://www.oracle.com/technetwork/java/javase/downloads/index.html
+3)安装JDK并配置环境
+rpm -ivh jdk-7u60-linux-x64.rpm
+vi /etc/profile
+在文件结尾输入:
+export JAVA_HOME=/usr/java/jdk1.7.0_60
+export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+export PATH=$PATH:$JAVA_HOME/bin
+
+source /etc/profile
+4)验证jdk版本
+java -version
+
+java version "1.7.0_60"
+Java(TM) SE Runtime Environment (build 1.7.0_60-b19)
+Java HotSpot(TM) 64-Bit Server VM (build 24.60-b09, mixed mode)
+
+
+2.安装tomcat7
+1)下载tomcat7
+http://tomcat.apache.org/download-70.cgi
+2)安装tomcat
+tar -xzvf apache-tomcat-7.0.54.tar.gz
+cp -R apache-tomcat-7.0.54 /usr/local/tomcat
+cd /usr/local/tomcat/bin
+vi daemon.sh
+在开头增加
+# chkconfig: 2345 20 80
+# description: simple example to start tomcat
+JAVA_HOME=/usr/java/jdk1.7.0_60
+CATALINA_HOME=/usr/local/tomcat
+CATALINA_OPTS="-Xms1024m -Xmx4096m -XX:PermSize=256m -XX:MaxPermSize=512m"
+
+yum install gcc
+useradd -s /sbin/nologin tomcat
+chown -R tomcat:tomcat /usr/local/tomcat
+
+tar -xzvf commons-daemon-native.tar.gz
+cd commons-daemon-1.0.15-native-src/unix 
+./configure
+make
+cp jsvc ../..
+cd ../..
+cp daemon.sh  /etc/init.d/tomcat
+chmod 755  /etc/init.d/tomcat
+chkconfig --add tomcat
+chkconfig tomcat on
+chkconfig --list tomcat
+
+service tomcat start
+
+vi /etc/sysconfig/iptables
+在允许ssh(--dport 22)的下面增加一条：
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 8080 -j ACCEPT 
+
+service iptables restart 
+
+3)启动并验证
+http://10.2.176.194:8080/
+
+4)拷贝配置文件至/home/tomcat/目录下
+
+5)如果是文件服务器，需要创建书籍及资源文件目录 
+mkdir /bookfile
+mkdir /resfile
+chown -R tomcat:tomcat /bookfile
+chown -R tomcat:tomcat /resfile
+
+
+3.安装mysql 
+1)删除mysql固有library
+yum remove mysql-libs-5.1.66-2.el6_3.x86_64
+2)增加mysql5.6
+vi /etc/yum.repos.d/mysql-community.repo 
+# Enable to use MySQL 5.6
+[mysql56-community]
+name=MySQL 5.6 Community Server
+baseurl=http://repo.mysql.com/yum/mysql-5.6-community/el/6/$basearch/
+enabled=1
+# set to 0 to avoid check gpg key
+gpgcheck=0
+gpgkey=file:/etc/pki/rpm-gpg/RPM-GPG-KEY-mysql 
+3)yum安装mysql5.6
+yum install mysql-community-server
+4)设置数据库编码为utf8
+vi /etc/my.cnf
+在[mysqld]下面增加
+character_set_server=utf8
+5)启动验证
+service mysqld start
+service mysqld status
+service msyqld stop
+6)配置mysql 
+service mysqld start
+mysql_secure_installation
+全部选y
+创建非root user
+grant all privileges on *.* to 'test'@'%' identified by '123' with grant option;
+flush privileges;

@@ -141,7 +141,7 @@ td {padding-top: 2px; padding-bottom: 2px;}
 						num++;
 						PubDdv ddv = ddvDao.find(hw.getHwType().toString());
 						SysStaff staffTmp = staffDao.find(hw.getStaffId().toString());
-            			PubOrg orgTmp = orgDao.find(staffTmp.getStaffId().toString());
+            			PubOrg orgTmp = orgDao.find(staffTmp.getOrgId().toString());
 					%>
 						<tr>
 							<td><%=num %></td>
