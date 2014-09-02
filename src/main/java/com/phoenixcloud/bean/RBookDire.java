@@ -65,6 +65,9 @@ public class RBookDire extends AbstractModel<String> implements Serializable {
 	
 	@Column(name="DIRE_TYPE", length=1, nullable=false)
 	private int direType;
+	
+	@Column(name="SEQ_NO", length=10, nullable=false)
+	private int seqNo;
 
 	public RBookDire() {
 	}
@@ -177,6 +180,14 @@ public class RBookDire extends AbstractModel<String> implements Serializable {
 
 	public void setDireType(int direType) {
 		this.direType = direType;
+	}
+
+	public int getSeqNo() {
+		return seqNo;
+	}
+
+	public void setSeqNo(int seqNo) {
+		this.seqNo = seqNo;
 	}
 
 }

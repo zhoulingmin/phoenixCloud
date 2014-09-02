@@ -165,6 +165,7 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 			jsonObj.put("direId", bookDire.getDireId());
 			jsonObj.put("bPageNum", bookDire.getBPageNum());
 			jsonObj.put("ePageNum", bookDire.getEPageNum());
+			jsonObj.put("seqNo", bookDire.getSeqNo());
 			jsonObj.put("notes", bookDire.getNotes());
 			jsonObj.put("type", bookDire.getDireType());
 			
@@ -205,7 +206,9 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 			dirObj.put("bookId", bookDire.getBookId());
 			dirObj.put("bPageNum", bookDire.getBPageNum());
 			dirObj.put("ePageNum", bookDire.getEPageNum());
+			dirObj.put("seqNo", bookDire.getSeqNo());
 			dirObj.put("notes", bookDire.getNotes());
+			dirObj.put("type", bookDire.getDireType());
 			dirObj.put("staffId", bookDire.getStaffId());
 			jsonArr.add(dirObj);
 		}
@@ -268,6 +271,7 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 		dire.setBPageNum(bookDire.getBPageNum());
 		dire.setEPageNum(bookDire.getEPageNum());
 		dire.setName(bookDire.getName());
+		dire.setSeqNo(bookDire.getSeqNo());
 		dire.setNotes(bookDire.getNotes());
 		dire.setUpdateTime(new Date());
 		iBookService.saveBookDire(dire);
@@ -314,7 +318,9 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 			jsonObj.put("direId", dire.getDireId());
 			jsonObj.put("bPageNum", dire.getBPageNum());
 			jsonObj.put("ePageNum", dire.getEPageNum());
+			jsonObj.put("seqNo", dire.getSeqNo());
 			jsonObj.put("notes", dire.getNotes());
+			jsonObj.put("type", dire.getDireType());
 			
 			JSONObject tmpJosn = getSubDire(dire.getBookId(), new BigInteger(dire.getDireId()), level);
 			if (tmpJosn != null) {

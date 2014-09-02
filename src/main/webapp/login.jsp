@@ -38,7 +38,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 <meta name="keywords" content="江苏凤凰数字出版传媒有限公司">
 <meta name="description" content="江苏凤凰数字出版传媒有限公司">
-<title></title>
+<title>凤凰书城-登陆</title>
 <link rel="stylesheet" href="<%=ctx%>/css/common.css" />
 <link rel="stylesheet" href="<%=ctx%>/css/login.css" />
 <script src="<%=ctx%>/js/jquery-1.7.1.min.js"></script>

@@ -19,7 +19,7 @@ public class RBookDireDao extends AbstractResDao<RBookDire>{
 	@SuppressWarnings("unchecked")
 	public List<RBookDire> findSubDires(BigInteger bookId, BigInteger parentId) {
 		Query query = entityManager.createQuery("select bd from RBookDire bd where bd.deleteState=0 and " +
-				" bd.bookId=?1 and bd.parentDireId=?2 order by bd.direType");
+				" bd.bookId=?1 and bd.parentDireId=?2 order by bd.direType, bd.seqNo");
 		query.setParameter(1, bookId);
 		query.setParameter(2, parentId);
 		return query.getResultList();
