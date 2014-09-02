@@ -100,6 +100,7 @@ td input{width:106px;}
 						<th>开始页面</th>
 						<th>结束页面</th>
 						<th>排序序号</th>
+						<th>页码偏移量</th>
 						<th>描述</th>
 					</tr>
 				</thead>
@@ -109,6 +110,7 @@ td input{width:106px;}
 						<%for (int i = 0; i < (maxLevel+1); i++) {%>
 						<td></td>
 						<%} %>
+						<td></td>
 						<td></td>
 						<td></td>
 						<td></td>
@@ -133,6 +135,7 @@ td input{width:106px;}
 							out.print("<td><input type='text' name='bPageNum' style='border:0;margin:0;padding:0' value='" + obj.get("bPageNum") + "'>" + "</td>");
 							out.print("<td><input type='text' name='ePageNum' style='border:0;margin:0;padding:0' value='" + obj.get("ePageNum") + "'>" + "</td>");
 							out.print("<td><input type='text' name='seqNo' style='border:0;margin:0;padding:0' value='" + obj.get("seqNo") + "'>" + "</td>");
+							out.print("<td><input type='text' name='pageOffset' style='border:0;margin:0;padding:0' value='" + obj.get("pageOffset") + "'>" + "</td>");
 							out.print("<td><input type='text' name='notes' style='border:0;margin:0;padding:0' value='" + obj.get("notes") + "'>" + "</td>");
 							out.print("</tr>");
 							
@@ -200,6 +203,7 @@ function updateDire() {
 		var bPageNum = jQuery(this).find("input[name='bPageNum']")[0].value;
 		var ePageNum = jQuery(this).find("input[name='ePageNum']")[0].value;
 		var seqNo = jQuery(this).find("input[name='seqNo']")[0].value;
+		var pageOffset = jQuery(this).find("input[name='pageOffset']")[0].value;
 		jQuery.ajax({
 			url: "<%=ctx%>/book/bookDire_saveDire.do",
 			type: "POST",
@@ -210,6 +214,7 @@ function updateDire() {
 				"bookDire.notes": notes,
 				"bookDire.bPageNum": bPageNum,
 				"bookDire.ePageNum": ePageNum,
+				"bookDire.pageOffset": pageOffset,
 				"bookDire.seqNo": seqNo
 			},
 			timeout: 30000,

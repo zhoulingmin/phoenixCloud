@@ -68,6 +68,9 @@ public class RBookDire extends AbstractModel<String> implements Serializable {
 	
 	@Column(name="SEQ_NO", length=10, nullable=false)
 	private int seqNo;
+	
+	@Column(name="PAGE_OFFSET", length=10, nullable=false)
+	private int pageOffset;
 
 	public RBookDire() {
 	}
@@ -182,10 +185,18 @@ public class RBookDire extends AbstractModel<String> implements Serializable {
 		this.direType = direType;
 	}
 
+	public int getPageOffset() {
+		return pageOffset;
+	}
+
+	public void setPageOffset(int pageOffset) {
+		this.pageOffset = pageOffset;
+	}
+
 	public int getSeqNo() {
 		return seqNo;
 	}
-
+	
 	public void setSeqNo(int seqNo) {
 		this.seqNo = seqNo;
 	}

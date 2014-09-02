@@ -166,6 +166,7 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 			jsonObj.put("bPageNum", bookDire.getBPageNum());
 			jsonObj.put("ePageNum", bookDire.getEPageNum());
 			jsonObj.put("seqNo", bookDire.getSeqNo());
+			jsonObj.put("pageOffset", bookDire.getPageOffset());
 			jsonObj.put("notes", bookDire.getNotes());
 			jsonObj.put("type", bookDire.getDireType());
 			
@@ -207,6 +208,7 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 			dirObj.put("bPageNum", bookDire.getBPageNum());
 			dirObj.put("ePageNum", bookDire.getEPageNum());
 			dirObj.put("seqNo", bookDire.getSeqNo());
+			dirObj.put("pageOffset", bookDire.getPageOffset());
 			dirObj.put("notes", bookDire.getNotes());
 			dirObj.put("type", bookDire.getDireType());
 			dirObj.put("staffId", bookDire.getStaffId());
@@ -272,6 +274,7 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 		dire.setEPageNum(bookDire.getEPageNum());
 		dire.setName(bookDire.getName());
 		dire.setSeqNo(bookDire.getSeqNo());
+		dire.setPageOffset(bookDire.getPageOffset());
 		dire.setNotes(bookDire.getNotes());
 		dire.setUpdateTime(new Date());
 		iBookService.saveBookDire(dire);
@@ -319,6 +322,7 @@ public class RBookDireMgmtAction extends ActionSupport implements RequestAware, 
 			jsonObj.put("bPageNum", dire.getBPageNum());
 			jsonObj.put("ePageNum", dire.getEPageNum());
 			jsonObj.put("seqNo", dire.getSeqNo());
+			jsonObj.put("pageOffset", dire.getPageOffset());
 			jsonObj.put("notes", dire.getNotes());
 			jsonObj.put("type", dire.getDireType());
 			
