@@ -12,7 +12,7 @@ public class MiscUtils {
 	private static SimpleDateFormat formatter = new SimpleDateFormat(
 			"yyyyMMddHHmmss");
 
-	private static String baseChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ~!@#$%^&*();':\"[]{},./<>?|\\-=_+";
+	private static String baseChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
 	public static Logger getLogger() {
 		StackTraceElement[] ste = Thread.currentThread().getStackTrace();
