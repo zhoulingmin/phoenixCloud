@@ -1,0 +1,5 @@
+1. °²×°crontab
+yum install -y vixie-cron
+2. crontab -l
+3. chkconfig --list crond
+4. service crond start

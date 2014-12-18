@@ -1,0 +1,10 @@
+1.从制作服务器导出书籍信息
+SELECT grade_level AS `年级`, title AS `书籍名`, `subject` AS `学科`, fascicule AS `册别`, `phase` AS `学段`, publicsher AS `出版社`,
+printedinfo AS `版本号`, def_page_index, content_start_index  AS `内容起始页`,  isbn, price AS `价格`, pagecount AS `页数` FROM t_d_book ORDER BY grade_level_id,subject_id,fascicule_id,publicsher_id,title INTO OUTFILE 'd:\\book.xls'
+
+导出到服务器的d:\book.xls中
+
+
+2. ucbook_org: 应用服务器
+
+3. phoenix_center: 制作服务器
