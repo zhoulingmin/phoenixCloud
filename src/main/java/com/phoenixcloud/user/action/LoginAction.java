@@ -98,6 +98,9 @@ public class LoginAction extends ActionSupport implements RequestAware,
 		String ret = "NotFound";
 		
 		SysStaff user = staffDao.findByCode(staff.getCode());
+		if (user == null) {
+			return ret;
+		}
 		
 		PubOrg userOrg = null;
 		if (user.getOrgId() != null) {
