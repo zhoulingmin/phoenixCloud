@@ -255,12 +255,6 @@ CREATE TABLE `pub_server_addr` (
   UNIQUE KEY `IND_PSA_ORG_ID` (`ORG_ID`,`NET_TYPE`,`DELETE_STATE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `pub_server_addr` */
-
-insert  into `pub_server_addr`(`SADDR_ID`,`ORG_ID`,`NET_TYPE`,`DB_SER_IP`,`DB_NAME`,`USER_NAME`,`PASSWORD`,`DB_STRING`,`BOOK_SER_IP`,`BOOK_SER_PORT`,`BOOK_DIR`,`RES_DIR`,`APP_SER_IP`,`APP_USER_NAME`,`APP_PASSWORD`,`CREATE_TIME`,`UPDATE_TIME`,`DELETE_STATE`,`NOTES`) values 
-(null,'1','OUT_NET','180.97.46.18','phoenixCloud','root','lySin@mANa84','','180.97.46.18','80','D:\\book\\','D:\\res\\','180.97.46.18','','','2014-03-15 22:43:38','2014-03-15 22:43:38',0,''),
-(null,'1','IN_NET','10.2.176.201','phoenixCloud','root','lySin@mANa84','','10.2.176.201','80','D:\\book\\','D:\\res\\','10.2.176.201','','','2014-03-15 22:43:38','2014-03-15 22:43:38',0,'');
-
 /*Table structure for table `sys_log` */
 
 DROP TABLE IF EXISTS `sys_log`;
