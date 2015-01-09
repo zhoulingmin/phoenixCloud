@@ -21,13 +21,13 @@
 
 	<repositories>
 		<repository>
-		    <id>snapshot-repository.java.net</id>
-		    <name>Java.net Snapshot Repository for Maven</name>
-		    <url>https://maven.java.net/content/repositories/snapshots/</url>
-		    <layout>default</layout>
+			<id>snapshot-repository.java.net</id>
+			<name>Java.net Snapshot Repository for Maven</name>
+			<url>https://maven.java.net/content/repositories/snapshots/</url>
+			<layout>default</layout>
 		</repository>
 	</repositories>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -63,9 +63,9 @@
 			<version>1.2.16</version>
 		</dependency>
 		<dependency>
-		  <groupId>org.apache.ant</groupId>
-		  <artifactId>ant</artifactId>
-		  <version>1.9.0</version>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.9.0</version>
 		</dependency>
 
 		<!-- JSON -->
@@ -80,8 +80,8 @@
 			<version>2.4</version>
 			<classifier>jdk15</classifier>
 		</dependency>
-	    
-	    <!-- struts -->
+
+		<!-- struts -->
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-core</artifactId>
@@ -130,19 +130,19 @@
 			<artifactId>ant</artifactId>
 			<version>1.9.1</version>
 		</dependency>
-		
+
 		<!-- HttpClient -->
 		<dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.0.1</version>
-        </dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.0.1</version>
+		</dependency>
 		<dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-		
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+
 		<!-- hibernate / sql -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -164,7 +164,7 @@
 			<artifactId>cglib-nodep</artifactId>
 			<version>2.2</version>
 		</dependency>
-		
+
 		<!-- atomikos -->
 
 		<dependency>
@@ -172,25 +172,25 @@
 			<artifactId>transactions-jta</artifactId>
 			<version>${atomikos.version}</version>
 		</dependency>
- 
+
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jdbc</artifactId>
 			<version>${atomikos.version}</version>
 		</dependency>
- 
+
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-hibernate3</artifactId>
 			<version>${atomikos.version}</version>
 			<exclusions>
 				<exclusion>
-				<artifactId>hibernate</artifactId>
-				<groupId>org.hibernate</groupId>
+					<artifactId>hibernate</artifactId>
+					<groupId>org.hibernate</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<!-- cxf -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -218,7 +218,7 @@
 			<artifactId>org.apache.commons.io</artifactId>
 			<version>2.4</version>
 		</dependency>
-		
+
 		<!-- spring dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -255,9 +255,9 @@
 			<artifactId>spring-web</artifactId>
 			<version>${org.springframework.version}</version>
 		</dependency>
-		
+
 		<!-- rest begin -->
-        <dependency>
+		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-server</artifactId>
 			<version>${version.jersey}</version>
@@ -292,36 +292,36 @@
 			<artifactId>jsr311-api</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-        <dependency>
-            <groupId>com.sun.jersey.contribs</groupId>
-            <artifactId>jersey-spring</artifactId>
-            <version>${version.jersey}</version>
-            <!-- 去除自带的spring版本 -->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-aop</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-beans</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-web</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- rest end -->
-		
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-spring</artifactId>
+			<version>${version.jersey}</version>
+			<!-- 去除自带的spring版本 -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-web</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- rest end -->
+
 	</dependencies>
 
 	<build>
@@ -357,17 +357,34 @@
 					</webResources>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>set_timestamp</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<tstamp>
+									<format property="build.dateTime.value" pattern="yyyy-MM-dd hh:mm aa" />
+								</tstamp>
+								<echo message="build time : ${build.dateTime.value}" />
+								<replace file="target/classes/phoenixCloud.properties" token="${build.dateTime}" value="${build.dateTime.value}" />
+								<property environment="env" />
+								<echo message="JOB_NAME - BUILD_NUMBER : ${env.JOB_NAME} - ${env.BUILD_NUMBER}" />
+								<replace file="target/classes/phoenixCloud.properties" token="${build.JOB_NAME}" value="${env.JOB_NAME}" />
+								<replace file="target/classes/phoenixCloud.properties" token="${build.BUILD_NUMBER}" value="${env.BUILD_NUMBER}" />
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
-		<!-- 
-		<resources>
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.properties</include>
-				</includes> 
-			</resource>
-		</resources>
-		-->
+		<!-- <resources> <resource> <directory>src/main/java</directory> <includes> 
+			<include>**/*.properties</include> </includes> </resource> </resources> -->
 	</build>
 
 </project>

@@ -5,6 +5,11 @@ vi /etc/sysconfig/i18n
 LANG="en_US.UTF-8"
 重启服务器，之后再通过winscp进行拷贝
 
+拷贝完后，要执行
+chown -R tomcat:tomcat /bookfile
+chown -R tomcat:tomcat /resfile
+否则已上传书籍或资源将无法被更新
+
 2.数据库修改
 1）ctrl_db
 UPDATE pub_server_addr SET DB_SER_IP='180.97.46.46',BOOK_SER_IP='180.97.46.46',BOOK_SER_PORT='8082',BOOK_DIR='/bookfile',RES_DIR='/resfile',APP_SER_IP='180.97.46.46' WHERE NET_TYPE='IN_NET';
