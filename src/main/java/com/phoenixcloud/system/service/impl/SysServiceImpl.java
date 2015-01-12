@@ -5,6 +5,11 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +44,13 @@ import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.dao.ctrl.SysStaffPurviewDao;
 import com.phoenixcloud.dao.ctrl.SysStaffRegCodeDao;
 import com.phoenixcloud.system.service.ISysService;
+import com.phoenixcloud.util.ClientHelper;
 import com.phoenixcloud.util.MiscUtils;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+
+import javax.net.ssl.*;
 
 @Service
 public class SysServiceImpl implements ISysService{
@@ -349,18 +360,73 @@ public class SysServiceImpl implements ISysService{
 	private boolean isResServerAvailable(String schema, String host, int port, String cxtName){
 		String uri = schema + "://" + host + ":" + port + "/" + cxtName;
 		MiscUtils.getLogger().info("URL: " + uri);
+		
 		boolean isAvailable = false;
-
-		try {
-			HttpGet httpGet = new HttpGet(uri);
-			HttpClient client = new DefaultHttpClient();
-			HttpResponse resp = client.execute(httpGet);
-			if (resp.getStatusLine().getStatusCode() == 200) {
-				isAvailable = true;
+		
+		if ("https".equals(schema)) {
+//			try {
+//				SSLContext sslCtx = SSLContext.getInstance("SSL");
+//				TrustManager[ ] trustMgr = new TrustManager[] {
+//					new X509TrustManager() {
+//
+//						@Override
+//						public void checkClientTrusted(X509Certificate[] arg0,
+//								String arg1) throws CertificateException {
+//							// TODO Auto-generated method stub
+//						}
+//
+//						@Override
+//						public void checkServerTrusted(X509Certificate[] arg0,
+//								String arg1) throws CertificateException {
+//							// TODO Auto-generated method stub
+//						}
+//
+//						@Override
+//						public X509Certificate[] getAcceptedIssuers() {
+//							// TODO Auto-generated method stub
+//							return null;
+//						}
+//					}
+//				};
+//				sslCtx.init(null, // key manager
+//						trustMgr, // trust manager
+//						new SecureRandom()); // random number generator
+//				URL url = new URL(uri);
+//				HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+//				conn.setDoInput(true);
+//				conn.setRequestMethod("GET");
+//				conn.connect();
+//				if (conn.getResponseCode() == 200) {
+//					isAvailable = true;
+//				}
+//				conn.disconnect();
+//			} catch (Exception e) {
+//				MiscUtils.getLogger().info(e.toString());
+//			}
+			try {
+				Client client = ClientHelper.createClient();
+				WebResource webRes = client.resource(uri);
+				
+				ClientResponse rsp = webRes.get(ClientResponse.class);
+				if (rsp.getStatus() == 200) {
+					isAvailable = true;
+				}
+			} catch (Exception e) {
+				MiscUtils.getLogger().info(e.toString());
 			}
-		} catch (Exception e) {
-			MiscUtils.getLogger().info(e.toString());
+		} else {
+			try {
+				HttpGet httpGet = new HttpGet(uri);
+				HttpClient client = new DefaultHttpClient();
+				HttpResponse resp = client.execute(httpGet);
+				if (resp.getStatusLine().getStatusCode() == 200) {
+					isAvailable = true;
+				}
+			} catch (Exception e) {
+				MiscUtils.getLogger().info(e.toString());
+			}
 		}
+		
 		
 		return isAvailable;
 	}

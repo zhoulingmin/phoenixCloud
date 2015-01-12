@@ -45,7 +45,7 @@ PubOrg org = orgDao.find(curStaff.getOrgId().toString());
 			</div>
 			<div class="widget-content" style="margin-left:20px">
 				<div class="line_info margin_top_5">
-					<font color="black">操作失败！</font>
+					<font color="black"><s:property value="errInfo"/></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<input class="btn btn-primary" style="margin-top:10px;width:28px;" onclick="history.back();return false;" value="返回" />
