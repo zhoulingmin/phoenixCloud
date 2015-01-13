@@ -159,6 +159,7 @@ select{
 						<th>资源名称</th>
 						<th>格式</th>
 						<th>是否上传</th>
+						<th>是否加密</th>
 						<th>审核状态</th>
 						<th>关联页码</th>
 						<th>备注</th>
@@ -196,6 +197,7 @@ select{
 						<td><%=res.getName() %></td>
 						<td><%=fmDdv.getValue() %></td>
 						<td><%if (res.getIsUpload() == (byte)0) { %>未上传<%} else { %>已上传<%} %></td>
+						<td><%if (res.getIsEncrypted() == 0) { %>未加密<%} else { %>加密<%} %></td>
 						<td><%=auditStatus %></td>
 						<td><%=relatedPages %></td>
 						<td><%=res.getNotes() %></td>

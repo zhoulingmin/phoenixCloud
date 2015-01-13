@@ -48,6 +48,11 @@ if ((Byte)vs.findValue("bookRes.isUpload") == (byte)1) {
 	isUpload = "已上传";
 }
 
+String isEncrypted = "未加密";
+if ((Integer)vs.findValue("bookRes.isEncrypted") == 1) {
+	isEncrypted = "加密";
+}
+
 String parentResName = "无";
 RBookRe parentRes = resDao.find(vs.findString("bookRes.parentResId"));
 if (parentRes != null) {
@@ -122,6 +127,10 @@ if (ddvFmt != null) {
 				<div class="line_info margin_top_5">
 					<font class="blue">是否上传: </font>
 					<font color="black"><%=isUpload %></font>
+				</div>
+				<div class="line_info margin_top_5">
+					<font class="blue">是否加密: </font>
+					<font color="black"><%=isEncrypted %></font>
 				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">创建时间: </font>
