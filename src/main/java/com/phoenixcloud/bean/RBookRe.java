@@ -77,6 +77,9 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="UPDATE_TIME", nullable=false)
 	private Date updateTime;
+	
+	@Column(name="IS_ENCRYPTED", nullable=false)
+	private int isEncrypted = 0;
 
 	public RBookRe() {
 	}
@@ -261,6 +264,14 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 		}
 		
 		return localPath;
+	}
+
+	public int getIsEncrypted() {
+		return isEncrypted;
+	}
+
+	public void setIsEncrypted(int isEncrypted) {
+		this.isEncrypted = isEncrypted;
 	}
 
 }

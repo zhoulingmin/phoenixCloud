@@ -215,17 +215,22 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 		baseURL.append(phoenixProp.getProperty("res_server_appname"));
 		baseURL.append("/rest/res/");
 
-		StringBuffer suffixURL = new StringBuffer();
-		suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
+		StringBuffer suffixURLBuf = new StringBuffer();
+		suffixURLBuf.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
 		
 		PubDdv ddv = ddvDao.find(res.getFormat().toString());
 		if (ddv != null) {
-			suffixURL.append("/" +  URLEncoder.encode(ddv.getValue(), "utf-8"));
+			suffixURLBuf.append("/" +  URLEncoder.encode(ddv.getValue(), "utf-8"));
 		}
 		
-		suffixURL.append("/" + URLEncoder.encode(resFileFileName, "utf-8"));
+		suffixURLBuf.append("/" + URLEncoder.encode(resFileFileName, "utf-8"));
+		String suffixURL = suffixURLBuf.toString();
 		try {
-			JSONObject retObj = upoadResToResServer(baseURL.toString() + "uploadFile" + suffixURL);
+			String action = "uploadFile";
+			if (bookRes.getIsEncrypted() == 1) {
+				action = "uploadFileAndEncrypted";
+			}
+			JSONObject retObj = upoadResToResServer(baseURL.toString() + action + suffixURL);
 			if ((Integer)retObj.get("ret") == 1) {
 				MiscUtils.getLogger().info(retObj.get("error"));
 				errInfo = "上传失败！";
@@ -244,6 +249,9 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 		String ctxName = phoenixProp.getProperty("res_server_appname");
 		
 		//res.setAllAddr(scheme + host + ":" + port + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
+		if (bookRes.getIsEncrypted() == 1) {
+			suffixURL += ".zip";
+		}
 		
 		if (inAddr != null){
 			res.setAllAddrInNet(scheme + inAddr.getBookSerIp() + ":" + inAddr.getBookSerPort() + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
@@ -256,6 +264,7 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 		res.setUpdateTime(new Date());
 		res.setIsUpload((byte)1);
 		res.setName(resFileFileName);
+		res.setIsEncrypted(bookRes.getIsEncrypted());
 		iBookService.saveBookRes(res);
 			
 		return "success";

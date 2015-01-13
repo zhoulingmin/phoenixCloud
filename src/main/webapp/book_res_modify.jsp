@@ -62,6 +62,7 @@ String pages = pgRsDao.getResRelatedPages(new java.math.BigInteger(vs.findString
 							<span class="fileinput-new">选择资源文件</span>
 							<span class="fileinput-exists">重新选择资源文件</span>
 							<input id="resFile" type="file" name="resFile">
+							<input type="checkbox" name="bookRes.isEncrypted" value="<s:property value="bookRes.isEncrypted"/>" />
 						</span>
 						<span class="fileinput-filename"></span>
 						<a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
@@ -70,7 +71,9 @@ String pages = pgRsDao.getResRelatedPages(new java.math.BigInteger(vs.findString
 						<input type="hidden" name="bookRes.isUpload" value="<s:property value="bookRes.isUpload"/>" />
 						<input type="hidden" name="bookRes.cataAddr" value="<s:property value="bookRes.cataAddr"/>" />
 						<input type="hidden" name="bookInfo.isAudit" value="-1" />
-						<input id="uploadBtn" type="submit" class="btn btn-primary" onclick="return checkfile();" name="submit" value="上传"/>						
+						<input id="uploadBtn" type="submit" class="btn btn-primary" onclick="return checkfile();" name="submit" value="上传"/>	
+						&nbsp;&nbsp;&nbsp;<input type="checkbox" style="margin-top: -4px;" name="encrptedChk" id="encrptedChk" onclick="checkEncrpted(this);">&nbsp;加密保存
+						<input type="hidden" name="bookRes.isEncrypted" id="encrptedVal" value="<s:property value="bookRes.isEncrypted"/>">		
 					</form>
 				</div>
 			</div>
@@ -145,6 +148,13 @@ function checkfile() {
 	return true;
 }
 
+function checkEncrpted(which) {
+	if (which.checked) {
+		jQuery("#encrptedVal").val(1);
+	} else {
+		jQuery("#encrptedVal").val(0);
+	}
+}
 
 function saveRes() {
 	jQuery.ajax({
@@ -173,6 +183,10 @@ $(function() {
 		jQuery("#uploadBtn").val("更新");
 	}
 	</security:phoenixSec>
+	
+	if (jQuery("#encrptedVal").val() == 1) {
+		document.getElementById("encrptedChk").checked = "true";
+	}
 });
 
 

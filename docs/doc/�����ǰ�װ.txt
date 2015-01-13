@@ -1,3 +1,15 @@
+
+|控制服务器，文件服务器 | 要安装JDK,TOMCAT
+|文件服务器             | 要安装ZIP
+|数据库服务器           | 要安装MYSQL
+
+目录:
+1.安装JDK
+2.安装TOMCAT
+3.安装MYSQL
+4.安装ZIP
+
+
 1.安装JDK
 1)卸载OPENJDK
 yum remove tzdata-java-2012j-1.el6.noarch
@@ -106,3 +118,6 @@ mysql_secure_installation
 创建非root user
 grant all privileges on *.* to 'test'@'%' identified by '123' with grant option;
 flush privileges;
+
+4.安装ZIP
+yum install zip
