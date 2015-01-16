@@ -119,6 +119,15 @@ if (ddvFmt != null) {
 					<font class="blue">资源外网全地址: </font>
 					<font color="black"><s:property value="bookRes.allAddrOutNet"/></font>
 				</div>
+				<!-- 资源预览文件地址 -->
+				<div class="margin_top_line_info margin_top_55">
+					<font class="blue">预览资源内网全地址: </font>
+					<font color="black"><s:property value="bookRes.PreviewAddrInNet"/></font>
+				</div>
+				<div class="margin_top_line_info margin_top_55">
+					<font class="blue">预览资源外网全地址: </font>
+					<font color="black"><s:property value="bookRes.PreviewAddrOutNet"/></font>
+				</div>
 				<div class="line_info margin_top_5">
 					<font class="blue">是否上传: </font>
 					<font color="black"><%=isUpload %></font>

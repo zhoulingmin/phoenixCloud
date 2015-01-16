@@ -92,7 +92,7 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 			</sec:phoenixSec>
 			<sec:phoenixSec purviewCode="RES_SEARCH_MENU">
 			<li><a href="<%=ctx %>/resour_search.jsp" target="f_r">资源查询</a></li>
-			</sec:phoenixSec>
+			</sec:phoenixSec>			
 		</ul>
 		</sec:phoenixSec>
 	</div>

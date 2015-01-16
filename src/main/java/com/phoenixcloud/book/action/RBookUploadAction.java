@@ -145,7 +145,7 @@ public class RBookUploadAction extends ActionSupport implements RequestAware, Se
 	}
 
 	public String uploadBook() throws Exception {
-		
+System.out.println("现在的操作是：上传书籍附件");
 		if (bookFile == null) {
 			errInfo = "上传文件出错！";
 			return "error";

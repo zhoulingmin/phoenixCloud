@@ -53,14 +53,48 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 	private HttpServletResponse response;
 	private SessionMap session;
 
+	//资源文件
 	private File resFile;
+	//资源预览文件
+	private File resFilePreview;
+
 	private String resFileContentType;
+	
+	//资源文件名字
 	private String resFileFileName;
+	//资源预览文件名字
+	private String resFilePreviewFileName;
 
 	private RBookRe bookRes;
 	private RBook bookInfo;
 	private String errInfo = "上传出错";
+	private String isPreview;
 	
+	
+	public File getResFilePreview() {
+		return resFilePreview;
+	}
+
+	public void setResFilePreview(File resFilePreview) {
+		this.resFilePreview = resFilePreview;
+	}
+	
+	public String getResFilePreviewFileName() {
+		return resFilePreviewFileName;
+	}
+
+	public void setResFilePreviewFileName(String resFilePreviewFileName) {
+		this.resFilePreviewFileName = resFilePreviewFileName;
+	}
+
+	public String getIsPreview() {
+		return isPreview;
+	}
+
+	public void setIsPreview(String isPreview) {
+		this.isPreview = isPreview;
+	}
+
 	public String getErrInfo() {
 		return errInfo;
 	}
@@ -160,108 +194,207 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 	}
 
 	public String uploadRes() throws Exception {
-		
-		if (resFile == null) {
-			errInfo = "上传资源出错！";
-			return "error";
-		}
-		
-		RBookRe res = iBookService.findBookRes(bookRes.getResId());
-		if (res == null) {
-			errInfo = "数据库中无法找到目标资源！";
-			return "error";
-		}
-		
-		SysStaff staff = (SysStaff)session.get("user");
-		if (staff == null) {
-			errInfo = "没有合适用户！";
-			return "error";
-		}
-		
-		RBook book = bookDao.find(bookRes.getBookId().toString());
-		if (book == null) {
-			errInfo = "没有找到相应的书籍！";
-			return "error";
-		}
-		
-		/*PubServerAddr addr = null;
-		do {
-			// 1.先根据书籍的orgId查找
-			addr = serAddrDao.findByOrgId(book.getOrgId());
-			// 2.查不到则查上层机构是否有addr
-			if (addr == null) {
-				addr = iSysService.findParentAddrByOrgId(book.getOrgId());
-			}
-			// 3.查不到则用当前账号的orgId查找
-			if (addr == null) {
-				addr = serAddrDao.findByOrgId(staff.getOrgId());
-			}
-			// 4.查不到则查上层机构是否有addr
-			if (addr == null) {
-				addr = iSysService.findParentAddrByOrgId(staff.getOrgId());
-			}
-		} while (false);*/
-		PubServerAddr inAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.IN_NET);
-		PubServerAddr outAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.OUT_NET);
-		PubServerAddr addr = iSysService.getProperAddr(inAddr, outAddr);
-		if (addr == null) {
-			//throw new Exception("没有找到对应的资源服务器！");
-			errInfo = "没有合适的资源服务器！";
-			return "error";
-		}
-		StringBuffer baseURL = new StringBuffer();
-		baseURL.append(phoenixProp.getProperty("protocol_file_transfer") + "://");
-		baseURL.append(addr.getBookSerIp() + ":" + addr.getBookSerPort() + "/");
-		baseURL.append(phoenixProp.getProperty("res_server_appname"));
-		baseURL.append("/rest/res/");
-
-		StringBuffer suffixURL = new StringBuffer();
-		suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
-		
-		PubDdv ddv = ddvDao.find(res.getFormat().toString());
-		if (ddv != null) {
-			suffixURL.append("/" +  URLEncoder.encode(ddv.getValue(), "utf-8"));
-		}
-		
-		suffixURL.append("/" + URLEncoder.encode(resFileFileName, "utf-8"));
-		try {
-			JSONObject retObj = upoadResToResServer(baseURL.toString() + "uploadFile" + suffixURL);
-			if ((Integer)retObj.get("ret") == 1) {
-				MiscUtils.getLogger().info(retObj.get("error"));
-				errInfo = "上传失败！";
+System.out.println("isPreview^^^^^^^^^^"+isPreview);
+		//上传资源附件
+		if(isPreview.equals("false"))			
+		{
+System.out.println("现在的操作是：上传资源附件");
+			if (resFile == null) {
+				errInfo = "上传资源出错！";
 				return "error";
 			}
-		} catch (Exception e) {
-			MiscUtils.getLogger().info(e.toString());
-			errInfo = "无法连接资源服务器！";
-			return "error";
-		}
-		
-		//HttpServletRequest req = ServletActionContext.getRequest();
-		String scheme = phoenixProp.getProperty("protocol_file_transfer") + "://";
-		//String host = req.getServerName();
-		//int port = addr.getBookSerPort();
-		String ctxName = phoenixProp.getProperty("res_server_appname");
-		
-		//res.setAllAddr(scheme + host + ":" + port + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
-		
-		if (inAddr != null){
-			res.setAllAddrInNet(scheme + inAddr.getBookSerIp() + ":" + inAddr.getBookSerPort() + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
-		}
-		
-		if (outAddr != null){
-			res.setAllAddrOutNet(scheme + outAddr.getBookSerIp() + ":" + outAddr.getBookSerPort() + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
-		}
-		
-		res.setUpdateTime(new Date());
-		res.setIsUpload((byte)1);
-		res.setName(resFileFileName);
-		iBookService.saveBookRes(res);
 			
-		return "success";
+			RBookRe res = iBookService.findBookRes(bookRes.getResId());
+			if (res == null) {
+				errInfo = "数据库中无法找到目标资源！";
+				return "error";
+			}
+			
+			SysStaff staff = (SysStaff)session.get("user");
+			if (staff == null) {
+				errInfo = "没有合适用户！";
+				return "error";
+			}
+			
+			RBook book = bookDao.find(bookRes.getBookId().toString());
+			if (book == null) {
+				errInfo = "没有找到相应的书籍！";
+				return "error";
+			}
+			
+			/*PubServerAddr addr = null;
+			do {
+				// 1.先根据书籍的orgId查找
+				addr = serAddrDao.findByOrgId(book.getOrgId());
+				// 2.查不到则查上层机构是否有addr
+				if (addr == null) {
+					addr = iSysService.findParentAddrByOrgId(book.getOrgId());
+				}
+				// 3.查不到则用当前账号的orgId查找
+				if (addr == null) {
+					addr = serAddrDao.findByOrgId(staff.getOrgId());
+				}
+				// 4.查不到则查上层机构是否有addr
+				if (addr == null) {
+					addr = iSysService.findParentAddrByOrgId(staff.getOrgId());
+				}
+			} while (false);*/
+			PubServerAddr inAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.IN_NET);
+			PubServerAddr outAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.OUT_NET);
+			PubServerAddr addr = iSysService.getProperAddr(inAddr, outAddr);
+			if (addr == null) {
+				//throw new Exception("没有找到对应的资源服务器！");
+				errInfo = "没有合适的资源服务器！";
+				return "error";
+			}
+			StringBuffer baseURL = new StringBuffer();
+			baseURL.append(phoenixProp.getProperty("protocol_file_transfer") + "://");
+			baseURL.append(addr.getBookSerIp() + ":" + addr.getBookSerPort() + "/");
+			baseURL.append(phoenixProp.getProperty("res_server_appname"));
+			baseURL.append("/rest/res/");
+	
+			StringBuffer suffixURL = new StringBuffer();
+			suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
+			
+			PubDdv ddv = ddvDao.find(res.getFormat().toString());
+			if (ddv != null) {
+				suffixURL.append("/" +  URLEncoder.encode(ddv.getValue(), "utf-8"));
+			}
+			
+			suffixURL.append("/" + URLEncoder.encode(resFileFileName, "utf-8"));
+			try {
+				JSONObject retObj = upoadResToResServer(baseURL.toString() + "uploadFile" + suffixURL);
+				if ((Integer)retObj.get("ret") == 1) {
+					MiscUtils.getLogger().info(retObj.get("error"));
+					errInfo = "上传失败！";
+					return "error";
+				}
+			} catch (Exception e) {
+				MiscUtils.getLogger().info(e.toString());
+				errInfo = "无法连接资源服务器！";
+				return "error";
+			}
+			
+			//HttpServletRequest req = ServletActionContext.getRequest();
+			String scheme = phoenixProp.getProperty("protocol_file_transfer") + "://";
+			//String host = req.getServerName();
+			//int port = addr.getBookSerPort();
+			String ctxName = phoenixProp.getProperty("res_server_appname");
+			
+			//res.setAllAddr(scheme + host + ":" + port + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
+			
+			
+			if (inAddr != null){
+				//资源文件地址
+				res.setAllAddrInNet(scheme + inAddr.getBookSerIp() + ":" + inAddr.getBookSerPort() + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
+			}
+			
+			if (outAddr != null){
+				//资源文件地址
+				res.setAllAddrOutNet(scheme + outAddr.getBookSerIp() + ":" + outAddr.getBookSerPort() + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
+			}		
+			
+			res.setUpdateTime(new Date());
+			res.setIsUpload((byte)1);
+			res.setName(resFileFileName);
+			iBookService.saveBookRes(res);
+				
+			return "success";
+		} else {
+			//上传资源预览文件
+System.out.println("现在的操作是：上传资源预览文件");			
+			if (resFilePreview == null) {
+				errInfo = "上传资源出错！";
+				return "error";
+			}
+			
+			RBookRe res = iBookService.findBookRes(bookRes.getResId());
+			if (res == null) {
+				errInfo = "数据库中无法找到目标资源！";
+				return "error";
+			}
+			
+			SysStaff staff = (SysStaff)session.get("user");
+			if (staff == null) {
+				errInfo = "没有合适用户！";
+				return "error";
+			}
+			
+			RBook book = bookDao.find(bookRes.getBookId().toString());
+			if (book == null) {
+				errInfo = "没有找到相应的书籍！";
+				return "error";
+			}
+			
+			
+			PubServerAddr inAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.IN_NET);
+			PubServerAddr outAddr = serAddrDao.findByOrgId(book.getOrgId(), Constants.OUT_NET);
+			PubServerAddr addr = iSysService.getProperAddr(inAddr, outAddr);
+			if (addr == null) {
+				//throw new Exception("没有找到对应的资源服务器！");
+				errInfo = "没有合适的资源服务器！";
+				return "error";
+			}
+			StringBuffer baseURL = new StringBuffer();
+			baseURL.append(phoenixProp.getProperty("protocol_file_transfer") + "://");
+			baseURL.append(addr.getBookSerIp() + ":" + addr.getBookSerPort() + "/");
+			baseURL.append(phoenixProp.getProperty("res_server_appname"));
+			baseURL.append("/rest/res/");
+	
+			StringBuffer suffixURL = new StringBuffer();
+			suffixURL.append("/" + URLEncoder.encode(book.getBookNo(), "utf-8"));
+			
+			PubDdv ddv = ddvDao.find(res.getFormat().toString());
+			if (ddv != null) {
+				suffixURL.append("/" +  URLEncoder.encode(ddv.getValue(), "utf-8"));
+			}
+			
+			
+			////将资源预览文件保存到Preview文件夹下
+			suffixURL.append("/" + URLEncoder.encode("preview", "utf-8"));
+			
+			
+			suffixURL.append("/" + URLEncoder.encode(resFilePreviewFileName, "utf-8"));
+			try {
+				JSONObject retObj = upoadResPreviewToResServer(baseURL.toString() + "uploadFile" + suffixURL);
+				if ((Integer)retObj.get("ret") == 1) {
+					MiscUtils.getLogger().info(retObj.get("error"));
+					errInfo = "上传失败！";
+					return "error";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				MiscUtils.getLogger().info(e.toString());
+				errInfo = "无法连接资源服务器！";
+				return "error";
+			}
+			
+			String scheme = phoenixProp.getProperty("protocol_file_transfer") + "://";
+			String ctxName = phoenixProp.getProperty("res_server_appname");
+			
+			
+			if (inAddr != null){
+				//资源预览文件地址
+System.out.println("PreviewAddrInNet>>>>>>>>>>>"+scheme + inAddr.getBookSerIp() + ":" + inAddr.getBookSerPort() + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);				
+				res.setPreviewAddrInNet(scheme + inAddr.getBookSerIp() + ":" + inAddr.getBookSerPort() + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
+			}
+			
+			if (outAddr != null){
+				//资源预览文件地址
+System.out.println("PreviewAddrOutNet>>>>>>>>>>>"+scheme + outAddr.getBookSerIp() + ":" + outAddr.getBookSerPort() + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);				
+				res.setPreviewAddrOutNet(scheme + outAddr.getBookSerIp() + ":" + outAddr.getBookSerPort() + "/" + ctxName +  "/rest/res/downloadFile" + suffixURL);
+			}		
+			
+			iBookService.saveBookRes(res);
+				
+			return "success";
+		}
 	}
-
+	
+	
+	//上传资源文件到文件服务器
 	private JSONObject upoadResToResServer(String url) throws Exception {
+System.out.println("现在的操作是：上传资源文件到文件服务器");		
 		MiscUtils.getLogger().info("URL: " + url);
 		Client client = null;
 		if (url.startsWith("https")) {
@@ -320,6 +453,28 @@ public class RBookResUploadAction extends ActionSupport implements RequestAware,
 		
 		return JSONObject.fromObject(responseObj);
 	}
+	
+	//上传资源预览文件到文件服务器
+	private JSONObject upoadResPreviewToResServer(String url) throws Exception {
+System.out.println("现在的操作是：上传资源预览文件到文件服务器");		
+		MiscUtils.getLogger().info("URL: " + url);
+		Client client = null;
+		if (url.startsWith("https")) {
+			client = ClientHelper.createClient();
+		} else {
+			client = new Client();
+		}
+		WebResource webRes = client.resource(url);
+		webRes.accept(MediaType.APPLICATION_JSON);
+		client.setChunkedEncodingSize(1024);
+		String contentDisposition = "attachment; filename=\"" + resFilePreviewFileName + "\"";
+		String responseObj = webRes.type(MediaType.APPLICATION_OCTET_STREAM)
+			.header("Content-Disposition", contentDisposition)
+			.post(String.class, new FileInputStream(resFilePreview));
+		
+		return JSONObject.fromObject(responseObj);
+	}
+
 	
 	@Override
 	public void setServletResponse(HttpServletResponse response) {

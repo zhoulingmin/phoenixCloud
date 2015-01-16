@@ -6,6 +6,7 @@
 <%@taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%@page import="java.util.*" %>
 <%@page import="java.text.*" %>
+<%@page import="com.phoenixcloud.common.PhoenixProperties" %>
 <%@page import="com.opensymphony.xwork2.util.*"%>
 <%@taglib uri="/struts-tags" prefix="s" %>
 <%
@@ -24,6 +25,8 @@ if (ddv != null) {
 RBookPageResDao pgRsDao = (RBookPageResDao)SpringUtils.getBean("RBookPageResDao");
 String pages = pgRsDao.getResRelatedPages(new java.math.BigInteger(vs.findString("bookRes.resId")));
 
+PhoenixProperties phoenixProp = PhoenixProperties.getInstance();
+String suffixName = phoenixProp.getProperty("preview_suffix_name", "swf");
 %>
 
 <!doctype html>
@@ -58,13 +61,22 @@ String pages = pgRsDao.getResRelatedPages(new java.math.BigInteger(vs.findString
 			<div class="widget-content">
 				<div class="fileinput fileinput-new" data-provides="fileinput">
 					<form id="uploadResFrm" action="<%=ctx%>/book/uploadBookResNew.do" onsubmit="checkfile()" method="POST" enctype="multipart/form-data">
+						<!-- 上传资源文件 -->
 						<span class="btn btn-default btn-file">
 							<span class="fileinput-new">选择资源文件</span>
 							<span class="fileinput-exists">重新选择资源文件</span>
 							<input id="resFile" type="file" name="resFile">
 						</span>
+						<!-- 上传资源预览文件 
+						<span class="btn btn-default btn-file">
+							<span class="fileinput-new">选择资源预览文件</span>
+							<span class="fileinput-exists">重新选择资源预览文件</span>
+							<input id="resFile" type="file" name="resFile">
+						</span>
+						-->
 						<span class="fileinput-filename"></span>
 						<a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+						<input type="hidden" name="isPreview" value="false" />
 						<input type="hidden" name="bookRes.bookId" value="<s:property value="bookRes.bookId"/>" />
 						<input type="hidden" name="bookRes.resId" value="<s:property value="bookRes.resId"/>" />
 						<input type="hidden" name="bookRes.isUpload" value="<s:property value="bookRes.isUpload"/>" />
@@ -76,7 +88,36 @@ String pages = pgRsDao.getResRelatedPages(new java.math.BigInteger(vs.findString
 			</div>
 		</div>
 		</security:phoenixSec>
-
+		
+		
+		<!-- 上传资源预览文件-->
+		<security:phoenixSec purviewCode="RES_PREVIEW_UPLOAD">
+		<div class="widget-box">
+			<div class="widget-content">
+				<div class="fileinput fileinput-new" data-provides="fileinput">
+					<form id="uploadResFrm" action="<%=ctx%>/book/uploadBookResNew.do" onsubmit="checkfilepreview()" method="POST" enctype="multipart/form-data">
+						<span class="btn btn-default btn-file">
+							<span class="fileinput-new">选择资源预览文件</span>
+							<span class="fileinput-exists">重新选择资源预览文件</span>
+							<input id="resFilePreview" type="file" name="resFilePreview">
+						</span>
+						<span class="fileinput-filename"></span>
+						<a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+						<input type="hidden" name="isPreview" value="true" />
+						<input type="hidden" name="bookRes.bookId" value="<s:property value="bookRes.bookId"/>" />
+						<input type="hidden" name="bookRes.resId" value="<s:property value="bookRes.resId"/>" />
+						<input type="hidden" name="bookRes.isUpload" value="<s:property value="bookRes.isUpload"/>" />
+						<input type="hidden" name="bookRes.cataAddr" value="<s:property value="bookRes.cataAddr"/>" />
+						<input type="hidden" name="bookInfo.isAudit" value="-1" />
+						<input id="uploadPreviewBtn" type="submit" class="btn btn-primary" onclick="return checkfilepreview();" name="submit" value="上传"/>						
+					</form>
+				</div>
+			</div>
+		</div>
+		</security:phoenixSec>
+		 
+		 
+		 
 		<div class="widget-box">
 			<div class="widget-title">
 				<span class="icon"><i class="icon-align-justify"></i></span>
@@ -146,6 +187,22 @@ function checkfile() {
 }
 
 
+function checkfilepreview() {
+	if(jQuery("#resFilePreview").val().length == 0) {
+		alert("请先选择文件！");
+		return false;
+	}
+	
+	//资源预览文件只能上传swf文件
+	if (jQuery("#resFilePreview").val().lastIndexOf("<%=suffixName%>") == -1) {
+		alert("请选择<%=suffixName%>格式的文件！");
+		return false;
+	}
+	
+	return true;
+}
+
+
 function saveRes() {
 	jQuery.ajax({
 		url: "<%=ctx%>/book/bookRes_saveRes.do",
@@ -171,6 +228,8 @@ $(function() {
 	var isUpload = jQuery("input[name='bookRes.isUpload']")[0].value;
 	if (isUpload != null && isUpload == 1) {
 		jQuery("#uploadBtn").val("更新");
+		//如果资源预览文件已上传，上传------>更新
+		jQuery("#uploadPreviewBtn").val("更新");
 	}
 	</security:phoenixSec>
 });

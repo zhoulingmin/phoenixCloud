@@ -211,9 +211,12 @@ select{
 							</security:phoenixSec>
 							<%if (res.getIsUpload() == (byte)1) {%>
 							<security:phoenixSec purviewCode="RES_DOWNLOAD">
-							<a class="tip-top" title="下载" href="#" onclick="return downloadRes('<%=res.getAllAddrInNet()%>','<%=res.getAllAddrOutNet()%>','<%=schema%>','<%=inHost%>','<%=inHostPort%>','<%=outHost%>','<%=outHostPort%>','<%=resCtx%>')"><i class="icon-download-alt"></i></a>
+							<a class="tip-top" title="下载资源" href="#" onclick="return downloadRes('<%=res.getAllAddrInNet()%>','<%=res.getAllAddrOutNet()%>','<%=schema%>','<%=inHost%>','<%=inHostPort%>','<%=outHost%>','<%=outHostPort%>','<%=resCtx%>')"><i class="icon-download-alt"></i></a>
 							</security:phoenixSec>
 							<%} %>
+							<security:phoenixSec purviewCode="RES_DOWNLOAD">
+							<a class="tip-top" title="下载资源预览文件" href="#" onclick="return downloadResPreview('<%=res.getPreviewAddrInNet()%>','<%=res.getPreviewAddrOutNet()%>','<%=schema%>','<%=inHost%>','<%=inHostPort%>','<%=outHost%>','<%=outHostPort%>','<%=resCtx%>')"><i class="icon-download-alt"></i></a>
+							</security:phoenixSec>
 						</td>
 					</tr>
 					<%}
@@ -408,6 +411,47 @@ function downloadRes(inAddr,outAddr,schema,inHost,inHostPort,outHost,outHostPort
 	}
 	return false;
 }
+
+
+//下载资源预览文件
+function downloadResPreview(inAddr,outAddr,schema,inHost,inHostPort,outHost,outHostPort,resCtx) {
+	var isAvailable = false;
+	if (outAddr != null) {
+		//alert(inAddr);
+		//alert(outAddr);
+		var outURI = schema + "://" + outHost + ":" + outHostPort + "/" + resCtx + "/"; // "/" 后缀必须加上
+		jQuery.ajax({
+			url: outURI,
+			type: "GET",
+			timeout: 3000,
+			async: false,
+			headers: {Origin:"*"}, // used for cross domain access
+			statusCode: {
+				200: function() {
+					isAvailable = true;
+					window.location.href = outAddr;
+				}
+			}
+		});
+	}
+	if (!isAvailable && inAddr != null) {
+		var inURI = schema + "://" + inHost + ":" + inHostPort + "/" + resCtx + "/"; // "/" 后缀必须加上
+		jQuery.ajax({
+			url: inURI,
+			type: "GET",
+			timeout: 3000,
+			async: false,
+			headers: {Origin:"*"}, // used for cross domain access
+			statusCode: {
+				200: function() {
+					window.location.href = inAddr;
+				}
+			}
+		});
+	}
+	return false;
+}
+
 </script>
 
 </html>
