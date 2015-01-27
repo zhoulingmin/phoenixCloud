@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="book" extends="struts-default" namespace="/book">
+		<action name="uploadBook" class="bookUploadAction" method="uploadBook">
+			<result name="success" type="redirect">/book/book_editBook.do?bookInfo.bookId=${bookId}</result>
+		</action>
+
+		<action name="uploadBookCoverPic" class="bookUploadAction" method="uploadBookCover">
+			<result name="success">/book_cover_image.jsp?bookId=${bookId}</result>
+			<result name="error">/upload_error.jsp</result>
+		</action>
+		
+		<action name="downloadBook" class="bookMgmtAction" method="downloadBook">
+			<result name="success" type="redirect">${downloadUrl}</result>
+			<result name="error">/download_error.jsp</result>	
+		</action>
+		
+		<action name="downloadRes" class="bookResMgmtAction" method="downloadRes">
+			<result name="success" type="redirect">${downloadUrl}</result>
+			<result name="error">/download_error.jsp</result>	
+		</action>
+		
+		<action name="showBookConver" class="bookMgmtAction" method="showCover"></action>
+		
+		<action name="uploadBookRes" class="bookResUploadAction" method="uploadRes">
+			<result name="success" type="redirect">/book/bookRes_editRes.do?mode=${bookInfo.isAudit}&amp;bookRes.resId=${bookRes.resId}</result>
+		</action>
+		
+		<action name="batchUploadBookRes" class="bookResUploadAction" method="batchUploadBookRes">
+		</action>
+		
+		<action name="searchBook" class="bookMgmtAction" method="searchBook">
+			<result name="editSearch">/book_getAll.jsp</result>
+			<result name="querySearch">/book_searchBook.jsp</result>
+		</action>
+		
+		<action name="searchBookNew" class="bookMgmtAction" method="searchBookNew">
+			<result name="zhizuo">/book_zhizuo.jsp</result>
+			<result name="audit">/book_audit.jsp</result>
+			<result name="release">/book_release.jsp</result>
+			<result name="querySearch">/book_query.jsp</result>
+		</action>
+		
+		<action name="searchBookNewForResMake" class="bookMgmtAction" method="searchBookNew">
+			<result name="querySearch">/resour_make.jsp</result>
+		</action>
+		
+		<action name="searchRes" class="bookResMgmtAction" method="searchRes">
+			<result name="editSearch">/bookRes_getAll.jsp</result>
+			<result name="querySearch">/bookRes_queryAll.jsp</result>
+		</action>
+		
+		<action name="modifyBook" class="bookMgmtAction" method="editBook">
+			<result name="success">/book_modify.jsp</result>		
+		</action>
+		
+		<action name="uploadBookNew" class="bookUploadAction" method="uploadBook">
+			<result name="success" type="redirect">/book/modifyBook.do?bookInfo.bookId=${bookId}</result>
+			<result name="error">/upload_error.jsp</result>
+		</action>
+		
+		<action name="uploadBookResNew" class="bookResUploadAction" method="uploadRes">
+			<result name="success" type="redirect">/book/modifyBookRes.do?mode=${bookInfo.isAudit}&amp;bookRes.resId=${bookRes.resId}</result>
+			<result name="error">/upload_error.jsp</result>
+		</action>
+		
+		<action name="viewBook" class="bookMgmtAction" method="viewBook">
+			<result name="success">/book_info.jsp</result>
+		</action>
+		
+		<action name="bookDire" class="bookDireMgmtAction" method="getAll">
+			<result name="success">/book_dire.jsp</result>
+		</action>
+		
+		<action name="bookDireQuery" class="bookDireMgmtAction" method="getAll">
+			<result name="success">/book_dire_query.jsp</result>
+		</action>
+		
+		<action name="searchResByPages" class="bookResMgmtAction" method="searchResByPage">
+			<result name="book_zhizuo">/book_res_zhizuo.jsp</result>
+			<result name="book_audit">/book_audit_res_query.jsp</result>
+			<result name="book_release">/book_release_res_query.jsp</result>
+			<result name="success">/book_audit_res_query.jsp</result>
+		</action>
+		
+		<action name="modifyBookRes" class="bookResMgmtAction" method="editRes">
+			<result name="success">/book_res_modify.jsp</result>
+		</action>
+		
+		<action name="bookRes" class="bookResMgmtAction" method="getAll">
+			<result name="success">/book_res_zhizuo.jsp</result>
+		</action>
+		
+		<action name="bookResQuery" class="bookResMgmtAction" method="getAll">
+			<result name="success">/book_query_res_query.jsp</result>
+		</action>
+		
+		<action name="addRes" class="bookResMgmtAction" method="addRes"></action>
+		
+		<action name="viewRes" class="bookResMgmtAction" method="viewRes">
+			<result name="success">/book_res_info.jsp</result>
+			<!-- <result name="res_preview">/book_res_preview.jsp</result> -->
+		</action>
+		
+		<action name="searchResNew" class="bookResMgmtAction" method="searchResNew">
+			<result name="search">/resour_search.jsp</result>
+			<result name="audit">/resour_audit.jsp</result>
+			<result name="release">/resour_release.jsp</result>
+		</action>
+		
+		<action name="*_*" class="{1}MgmtAction" method="{2}" >
+			<result name="success">/{1}_{2}.jsp</result>
+		</action>
+	</package>
+</struts>
