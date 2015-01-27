@@ -2,7 +2,8 @@
 SQLyog 企业版 - MySQL GUI v8.14 
 MySQL - 5.1.72-community : Database - res_db
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -136,6 +137,8 @@ CREATE TABLE `r_book_res` (
   `CATA_ADDR` varchar(255) DEFAULT NULL COMMENT '参照PUB_DDV表',
   `ALL_ADDR_IN_NET` text,
   `ALL_ADDR_OUT_NET` text,
+  `PREVIEW_ADDR_IN_NET` TEXT;
+  `PREVIEW_ADDR_OUT_NET` TEXT;
   `IS_UPLOAD` tinyint(1) NOT NULL COMMENT '1：是，0：否',
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,

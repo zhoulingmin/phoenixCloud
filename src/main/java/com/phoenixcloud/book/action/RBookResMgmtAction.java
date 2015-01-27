@@ -310,12 +310,11 @@ public class RBookResMgmtAction extends ActionSupport implements RequestAware,Se
 	}
 	
 	public String viewRes() throws Exception{
-		bookRes = iBookService.findBookRes(bookRes.getResId());
+		bookRes = iBookService.findBookRes(bookRes.getResId());			
 		if (bookRes == null) {
 			throw new Exception("Not found the resource by id:" + bookRes.getResId());
-		}
-		
-		return "success";
+		}		
+			return "success";		
 	}
 	
 	public String saveRes() {

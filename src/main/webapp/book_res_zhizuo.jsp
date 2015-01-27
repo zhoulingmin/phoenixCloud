@@ -9,6 +9,7 @@
 
 <%
 String ctx = request.getContextPath();
+//System.out.print("工程全路径："+ctx);
 
 SysStaff staff = (SysStaff)session.getAttribute("user");
 PubOrgDao orgDao = (PubOrgDao)SpringUtils.getBean(PubOrgDao.class);
@@ -119,6 +120,9 @@ white-space:nowrap;
 				<security:phoenixSec purviewCode="RES_UPLOAD">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="uploadRes" onclick="uploadRes();" value="上传资源附件"/>
 				</security:phoenixSec>
+				<security:phoenixSec purviewCode="RES_PREVIEW_UPLOAD">
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="uploadResPreview" onclick="uploadResPreview();" value="上传资源预览文件"/>
+				</security:phoenixSec>
 				<security:phoenixSec purviewCode="RES_COMMIT_AUDIT">
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-primary" name="commitRes" onclick="commitRes();" value="提交审核"/>
 				</security:phoenixSec>
@@ -193,13 +197,23 @@ white-space:nowrap;
 	
 								<%if (res.getIsUpload() == (byte)1) {%>
 								<security:phoenixSec purviewCode="RES_DOWNLOAD">
-								<a class="tip-top" title="下载" href="#" onclick="return downloadRes('<%=res.getAllAddrInNet()%>','<%=res.getAllAddrOutNet()%>','<%=schema%>','<%=inHost%>','<%=inHostPort%>','<%=outHost%>','<%=outHostPort%>','<%=resCtx%>')"><i class="icon-download-alt"></i></a>
+								<a class="tip-top" title="下载资源" href="#" onclick="return downloadRes('<%=res.getAllAddrInNet()%>','<%=res.getAllAddrOutNet()%>','<%=schema%>','<%=inHost%>','<%=inHostPort%>','<%=outHost%>','<%=outHostPort%>','<%=resCtx%>')"><i class="icon-download-alt"></i></a>
 								</security:phoenixSec>
 								<%} %>
+								
+								<security:phoenixSec purviewCode="RES_DOWNLOAD">
+								<a class="tip-top" title="资源预览" href="#" onclick="return downloadResPreview('<%=res.getPreviewAddrInNet()%>','<%=res.getPreviewAddrOutNet()%>','<%=schema%>','<%=inHost%>','<%=inHostPort%>','<%=outHost%>','<%=outHostPort%>','<%=resCtx%>')"><i class="icon-eye-open"></i></a>
+								</security:phoenixSec>
 								
 								<security:phoenixSec purviewCode="RES_COMMIT_AUDIT">
 								<a name="commitRes" class="tip-top" title="提交审核" href="#"><i class="icon-arrow-up"></i></a>
 								</security:phoenixSec>
+								
+								<!-- 查看资源预览文件 
+								<security:phoenixSec purviewCode="RES_DETAIL">
+								<a cla1ss="tip-top" title="资源预览" href="<%=ctx%>/book/viewRes.do?bookRes.resId=0"><i class="icon-eye-open"></i></a>
+								</security:phoenixSec>
+								-->
 								
 								<security:phoenixSec purviewCode="RES_REMOVE">
 								<a name="removeRes" class="tip-top" title="删除" href="#"><i class="icon-remove"></i></a>
@@ -207,7 +221,7 @@ white-space:nowrap;
 							<% }else { %>
 								<%if (res.getIsUpload() == (byte)1) {%>
 								<security:phoenixSec purviewCode="RES_DOWNLOAD">
-								<a class="tip-top" title="下载" href="#" onclick="return downloadRes('<%=res.getAllAddrInNet()%>','<%=res.getAllAddrOutNet()%>','<%=schema%>','<%=inHost%>','<%=inHostPort%>','<%=outHost%>','<%=outHostPort%>','<%=resCtx%>')"><i class="icon-download-alt"></i></a>
+								<a class="tip-top" title="下载资源" href="#" onclick="return downloadRes('<%=res.getAllAddrInNet()%>','<%=res.getAllAddrOutNet()%>','<%=schema%>','<%=inHost%>','<%=inHostPort%>','<%=outHost%>','<%=outHostPort%>','<%=resCtx%>')"><i class="icon-download-alt"></i></a>
 								</security:phoenixSec>
 								<%} %>
 							<%} %>
@@ -289,6 +303,17 @@ function uploadRes() {
 	var checkedItems = jQuery("#bookResTblBody").find("input:checked");
 	if (checkedItems == null || checkedItems.length != 1) {
 		batchUploadRes();
+		return;
+	}
+	
+	window.location.href = "<%=ctx%>/book/modifyBookRes.do?mode=-1&bookRes.resId=" + checkedItems[0].value;
+}
+
+//上传资源预览文件
+function uploadResPreview() {
+	var checkedItems = jQuery("#bookResTblBody").find("input:checked");
+	if (checkedItems == null || checkedItems.length != 1) {
+		alert("请选择一个资源后重试！");
 		return;
 	}
 	
@@ -486,9 +511,53 @@ jQuery(document).ready(function() {
 	});
 });
 
+//下载资源文件
 function downloadRes(inAddr,outAddr,schema,inHost,inHostPort,outHost,outHostPort,resCtx) {
 	var isAvailable = false;
+	//alert(inAddr);
+	//alert(outAddr);
 	if (outAddr != null) {
+		var outURI = schema + "://" + outHost + ":" + outHostPort + "/" + resCtx + "/"; // "/" 后缀必须加上
+		//alert(outURI);
+		jQuery.ajax({
+			url: outURI,
+			type: "GET",
+			timeout: 3000,
+			async: false,
+			headers: {Origin:"*"}, // used for cross domain access
+			statusCode: {
+				200: function() {
+					isAvailable = true;
+					window.location.href = outAddr;
+				}
+			}
+		});
+	}
+	if (!isAvailable && inAddr != null) {
+		var inURI = schema + "://" + inHost + ":" + inHostPort + "/" + resCtx + "/"; // "/" 后缀必须加上
+		jQuery.ajax({
+			url: inURI,
+			type: "GET",
+			timeout: 3000,
+			async: false,
+			headers: {Origin:"*"}, // used for cross domain access
+			statusCode: {
+				200: function() {
+					window.location.href = inAddr;
+				}
+			}
+		});
+	}
+	return false;
+}
+
+
+//下载资源预览文件
+function downloadResPreview(inAddr,outAddr,schema,inHost,inHostPort,outHost,outHostPort,resCtx) {
+	var isAvailable = false;
+	if (outAddr != null) {
+		//alert(inAddr);
+		//alert(outAddr);
 		var outURI = schema + "://" + outHost + ":" + outHostPort + "/" + resCtx + "/"; // "/" 后缀必须加上
 		jQuery.ajax({
 			url: outURI,

@@ -33,6 +33,15 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 	
 	@Column(name="ALL_ADDR_OUT_NET")
 	private String allAddrOutNet = "";
+	
+	@Column(name="PREVIEW_ADDR_IN_NET")
+	private String previewAddrInNet = "";
+	
+	@Column(name="PREVIEW_ADDR_OUT_NET")
+	private String previewAddrOutNet = "";	
+	
+	//@Column(name="IS_ENCRYPTED")
+	//private BigInteger isEncrypted = BigInteger.ZERO;
 
 	@Column(name="AUDIT_STAFF_ID")
 	private BigInteger auditStaffId = BigInteger.ZERO;
@@ -103,6 +112,22 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 
 	public void setAllAddrOutNet(String allAddrOutNet) {
 		this.allAddrOutNet = allAddrOutNet;
+	}
+
+	public String getPreviewAddrInNet() {
+		return previewAddrInNet;
+	}
+
+	public void setPreviewAddrInNet(String previewAddrInNet) {
+		this.previewAddrInNet = previewAddrInNet;
+	}
+
+	public String getPreviewAddrOutNet() {
+		return previewAddrOutNet;
+	}
+
+	public void setPreviewAddrOutNet(String previewAddrOutNet) {
+		this.previewAddrOutNet = previewAddrOutNet;
 	}
 
 	public BigInteger getAuditStaffId() {
@@ -262,5 +287,13 @@ public class RBookRe extends AbstractModel<String> implements Serializable {
 		
 		return localPath;
 	}
+/*
+	public BigInteger getIsEncrypted() {
+		return isEncrypted;
+	}
 
+	public void setIsEncrypted(BigInteger isEncrypted) {
+		this.isEncrypted = isEncrypted;
+	}
+	*/
 }
