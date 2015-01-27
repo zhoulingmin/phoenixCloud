@@ -73,4 +73,12 @@ public class PhoenixProperties extends Properties {
 			return false;
 		}
 	}
+	
+	public static String getBuildDate() {
+		return phoenixProperties.getProperty("buildDateTime");
+	}
+
+	public static String getBuildTag() {
+		return phoenixProperties.getProperty("buildtag");
+	}
 }

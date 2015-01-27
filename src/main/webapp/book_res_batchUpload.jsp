@@ -90,7 +90,9 @@ String fileSizeMarker = "${fileSize_}";
 						<%for (PubDdv format : formatList) { %>
 							<option value="<%=format.getDdvId()%>"><%=format.getValue() %></option>
 						<%} %>
-						</select>					
+						</select>		
+						&nbsp;&nbsp;&nbsp;<input type="checkbox" style="margin-top: -4px;" name="encrptedChk" id="encrptedChk" onclick="checkEncrpted(this);">&nbsp;加密保存
+						<input type="hidden" name="bookRes.isEncrypted" id="encrptedVal" value="0">
 					</div>
 				</div>
 				
@@ -132,6 +134,14 @@ function checkfile() {
 
 function saveRes() {
 	jQuery(".start:eq(0)").trigger("click");
+}
+
+function checkEncrpted(which) {
+	if (which.checked) {
+		jQuery("#encrptedVal").val(1);
+	} else {
+		jQuery("#encrptedVal").val(0);
+	}
 }
 
 $(function() {

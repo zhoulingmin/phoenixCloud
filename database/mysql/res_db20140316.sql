@@ -132,6 +132,7 @@ CREATE TABLE `r_book_res` (
   `BOOK_ID` bigint(12) NOT NULL,
   `NAME` varchar(60) NOT NULL,
   `FORMAT` bigint(12) NOT NULL,
+  `IS_ENCRYPTED` INT NOT NULL,
   `PARENT_RES_ID` bigint(12) DEFAULT NULL,
   `IP_ADDR` varchar(15) DEFAULT NULL,
   `CATA_ADDR` varchar(255) DEFAULT NULL COMMENT '参照PUB_DDV表',

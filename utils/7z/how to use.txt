@@ -1,0 +1,13 @@
+1. 命令及实例 
+a 添加文件到压缩档案。
+7za a archive1.zip subdir\ ：增加subdir文件夹下的所有的文件和子文件夹到archive1.zip中，archived1.zip中的文件名包含subdir\前缀。
+
+7za a archive2.zip .\subdir\* ：增加subdir文件夹下的所有的文件和子文件夹到archive1.zip中，archived2.zip中的文件名不包含subdir\前缀。
+
+cd /D c:\dir1\ 
+7za a c:\archive3.zip dir2\dir3\ ：archiive3.zip中的文件名将包含dir2\dir3\前缀，但是不包含c:\dir1前缀。
+
+7za a Files.7z *.txt -r ： 增加当前文件夹及其子文件夹下的所有的txt文件到Files.7z中。
+
+2. 加密压缩
+7za a -p123 test.zip .\files.txt

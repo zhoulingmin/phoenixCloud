@@ -19,6 +19,12 @@ public class PubServerAddrDao extends AbstractCtrlDao<PubServerAddr> {
 		Query query = entityManager.createQuery("select psa from PubServerAddr psa where psa.deleteState = 0 and psa.orgId = ?1 and psa.netType = ?2 order by psa.updateTime desc");
 		query.setParameter(1, orgId);
 		query.setParameter(2, netType);
-		return getSingleResultOrNull(query);
+		PubServerAddr addr = getSingleResultOrNull(query);
+		if (addr == null) {
+			query = entityManager.createQuery("select psa from PubServerAddr psa where psa.deleteState = 0 and psa.orgId = 1 and psa.netType = ?1 order by psa.updateTime desc");
+			query.setParameter(1, netType);
+			addr = getSingleResultOrNull(query);
+		}
+		return addr;
 	}
 }
