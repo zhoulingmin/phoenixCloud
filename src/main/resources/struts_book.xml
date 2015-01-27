@@ -101,6 +101,7 @@
 		
 		<action name="viewRes" class="bookResMgmtAction" method="viewRes">
 			<result name="success">/book_res_info.jsp</result>
+			<!-- <result name="res_preview">/book_res_preview.jsp</result> -->
 		</action>
 		
 		<action name="searchResNew" class="bookResMgmtAction" method="searchResNew">
