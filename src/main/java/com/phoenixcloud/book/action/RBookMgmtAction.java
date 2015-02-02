@@ -5,9 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +27,7 @@ import net.sf.json.JsonConfig;
 import net.sf.json.processors.JsonBeanProcessor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
@@ -36,6 +43,8 @@ import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.PubPress;
 import com.phoenixcloud.bean.PubServerAddr;
 import com.phoenixcloud.bean.RBook;
+import com.phoenixcloud.bean.RBookLog;
+import com.phoenixcloud.bean.SysLog;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.book.service.IRBookMgmtService;
 import com.phoenixcloud.common.Constants;
@@ -44,7 +53,9 @@ import com.phoenixcloud.dao.ctrl.PubDdvDao;
 import com.phoenixcloud.dao.ctrl.PubOrgDao;
 import com.phoenixcloud.dao.ctrl.PubPressDao;
 import com.phoenixcloud.dao.ctrl.PubServerAddrDao;
+import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.dao.res.RBookDao;
+import com.phoenixcloud.dao.res.RBookLogDao;
 import com.phoenixcloud.system.service.ISysService;
 import com.phoenixcloud.util.ClientHelper;
 import com.phoenixcloud.util.MiscUtils;
@@ -73,11 +84,94 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 	@Autowired
 	private PubServerAddrDao serAddrDao;
 	
+	
 	private byte flag;
 	private RBook bookInfo;
 	private String bookIdArr; // used to remove book
 	private String dataType;
 	private String downloadUrl;
+	
+	//zgl
+	@Autowired
+	private SysStaffDao staffDao;
+	@Autowired
+	private RBookLogDao rBookLogDao;
+	private String bookName;
+	private String starffName;
+	private String startTime;
+	private String endTime;
+	private int logType;
+	private int nowPage;
+	private int pageSize;
+	private String  logId;
+	
+	
+	public String getLogId() {
+		return logId;
+	}
+
+	public void setLogId(String logId) {
+		this.logId = logId;
+	}
+
+	public String getBookName() {
+		return bookName;
+	}
+
+	public void setBookName(String bookName) {
+		this.bookName = bookName;
+	}
+
+	public String getStarffName() {
+		return starffName;
+	}
+
+	public void setStarffName(String starffName) {
+		this.starffName = starffName;
+	}
+
+	
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	public int getLogType() {
+		return logType;
+	}
+
+	public void setLogType(int logType) {
+		this.logType = logType;
+	}
+
+	public int getNowPage() {
+		return nowPage;
+	}
+
+	public void setNowPage(int nowPage) {
+		this.nowPage = nowPage;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	//zgl
+	
 	
 	private String errInfo = "";
 	
@@ -249,6 +343,167 @@ public class RBookMgmtAction extends ActionSupport implements RequestAware, Serv
 		return null;
 	}
 	
+	
+	//zgl查询书籍日志的
+		public String getloglist() throws ParseException{
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			response.setContentType("text/html");
+			response.setCharacterEncoding("utf-8");
+			
+			String  hql="select  rBookLog from RBookLog rBookLog where rBookLog.deleteState=0 ";
+			if(bookName.length()>0 && starffName.length()>0){
+				SysStaff sysStaff=staffDao.findByCode(starffName);
+				RBook rBook=bookDao.findBookName(bookName);
+				if(rBook!=null || rBook!=null){
+					if(bookName.length()!=0){
+						hql+=" and rBookLog.bookId="+BigInteger.valueOf(Integer.parseInt(rBook.getBookId()));
+					}
+					if(sysStaff.getStaffId()!=null){
+						hql+=" and rBookLog.staffId="+sysStaff.getStaffId();
+					}
+					if(startTime.length()!=0){
+						hql+=" and rBookLog.createTime>DATE('"+ df.format(DateFormat.getDateInstance().parse(startTime))+"')";
+					}
+					if(endTime.length()!=0){
+						hql+=" and rBookLog.createTime<DATE('"+ df.format(DateFormat.getDateInstance().parse(endTime))+"')";
+					}
+					if(logType!=0){
+					   hql+=" and rBookLog.logTypeId="+  BigInteger.valueOf(logType);
+					}
+					hql+=" ORDER BY logId";
+				}
+				else{
+					hql+=" 1>1 ";
+				}
+			}
+			if(bookName.length()>0 && starffName.length()==0 ){
+				RBook rBook=bookDao.findBookName(bookName);
+				if(rBook!=null){
+					if(bookName.length()!=0){
+						hql+=" and rBookLog.bookId="+BigInteger.valueOf(Integer.parseInt(rBook.getBookId()));
+					}
+					if(startTime.length()!=0){
+						hql+=" and rBookLog.createTime>DATE('"+ df.format(DateFormat.getDateInstance().parse(startTime))+"')";
+					}
+					if(endTime.length()!=0){
+						hql+=" and rBookLog.createTime<DATE('"+ df.format(DateFormat.getDateInstance().parse(endTime))+"')";
+					}
+					if(logType!=0){
+					   hql+=" and rBookLog.logTypeId="+  BigInteger.valueOf(logType);
+					}
+					hql+=" ORDER BY logId";
+				}else{
+					hql+="1>1";
+				}
+				
+			}
+            if(bookName.length()==0 && starffName.length()>0 ){
+				SysStaff sysStaff=staffDao.findByCode(starffName);
+				if(sysStaff!=null){
+					if(sysStaff.getStaffId()!=null){
+						hql+=" and rBookLog.staffId="+sysStaff.getStaffId();
+					}
+					if(startTime.length()!=0){
+						hql+=" and rBookLog.createTime>DATE('"+ df.format(DateFormat.getDateInstance().parse(startTime))+"')";
+					}
+					if(endTime.length()!=0){
+						hql+=" and rBookLog.createTime<DATE('"+ df.format(DateFormat.getDateInstance().parse(endTime))+"')";
+					}
+					if(logType!=0){
+					   hql+=" and rBookLog.logTypeId="+  BigInteger.valueOf(logType);
+					}
+					hql+=" ORDER BY logId";
+				}
+				else{
+					hql+="1>1";
+				}
+			}
+            if(bookName.length()==0 && starffName.length()==0 ){
+            	if(startTime.length()!=0){
+ 		    		hql+=" and rBookLog.createTime>DATE('"+ df.format(DateFormat.getDateInstance().parse(startTime))+"')";
+ 				}
+ 				if(endTime.length()!=0){
+ 					hql+=" and rBookLog.createTime<DATE('"+ df.format(DateFormat.getDateInstance().parse(endTime))+"')";
+ 				}
+ 				if(endTime.length()!=0){
+ 					hql+=" and rBookLog.createTime<DATE('"+ df.format(DateFormat.getDateInstance().parse(endTime))+"')";
+ 				}
+ 				if(logType!=0){
+ 					   hql+=" and rBookLog.logTypeId="+  BigInteger.valueOf(logType);
+ 				}
+ 				hql+=" ORDER BY logId";
+ 			}
+			
+		    List<RBookLog> LogList = null;//查询总数
+			List<RBookLog> logBookList=null;//查询列表
+		    LogList=rBookLogDao.findByMany(hql);
+			int  count=LogList.size();
+			int nowPages=(nowPage-1)*pageSize;
+			logBookList=rBookLogDao.findByManyfenye(hql, nowPages, pageSize);
+			List<Object> bookLogList = new ArrayList<Object>();
+			for (RBookLog bookLog : logBookList) {
+				SysStaff sysstaff =staffDao.find(bookLog.getStaffId().toString());
+				RBook rBook=bookDao.finddelBook(bookLog.getBookId().toString());
+				PubDdv pubDdv=ddvDao.find(bookLog.getLogTypeId().toString());
+			
+				Object[] o = new Object[7];
+				o[0] =bookLog.getId();
+				o[1] =rBook.getName().toString();
+     			o[2] =sysstaff.getName();
+     			o[3] =pubDdv.getValue();
+     			o[4] =bookLog.getContent().subSequence(0, 27).toString().concat("...");
+                o[5] =sdf.format(bookLog.getCreateTime());
+     			o[6] =bookLog.getNotes().subSequence(0, 20).toString().concat("...");
+
+     			bookLogList.add(o);
+      			o=null;
+			}
+			
+			Map<String, Object> map=new HashMap<String, Object>();
+			map.put("count", count);
+	     	map.put("bookLogList",bookLogList);
+	     	JSONObject jo = JSONObject.fromObject(map);
+ 	 		try {
+ 	 			ServletActionContext.getResponse().getOutputStream()
+ 	 					.write(jo.toString().getBytes("utf-8"));
+ 	 		} catch (UnsupportedEncodingException e) {
+ 	 			e.printStackTrace();
+ 	 		} catch (IOException e) {
+ 	 			e.printStackTrace();
+ 	 		}
+		    
+			return null;
+		
+    }
+    //日志详细信息
+	public String viewBookLog() throws Exception{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		RBookLog rBookLog = rBookLogDao.find(logId);
+		if (rBookLog == null) {
+			throw new Exception("没有找到相应的日志！");
+		}
+		
+		
+		SysStaff sysstaff =staffDao.find(rBookLog.getStaffId().toString());
+		RBook rBook=bookDao.finddelBook(rBookLog.getBookId().toString());
+		PubDdv pubDdv=ddvDao.find(rBookLog.getLogTypeId().toString());
+	
+		Object[] booklog=new Object[8];
+		booklog[0] =rBookLog.getId();           //编号
+		booklog[1] =rBook.getName().toString(); //书名
+		booklog[2] =sysstaff.getName();         //用户名
+		booklog[3] =pubDdv.getValue();          //操作类型
+		String content=rBookLog.getContent();          //内容
+		booklog[4]=content.substring(0, content.indexOf("记录。")+2);//操作方法
+		booklog[5] =sdf.format(rBookLog.getCreateTime());//操作时间
+		booklog[6] =rBookLog.getNotes().toString().substring
+		(11,rBookLog.getNotes().toString().indexOf("。"));//获取地址
+		booklog[7]=content.substring(content.indexOf("记录。")+3,content.length() );//操作内容
+		ServletActionContext.getContext().getValueStack().set("booklog", booklog);
+		return "success";
+	}
+	//zgl
 	public String getDataType() {
 		return dataType;
 	}

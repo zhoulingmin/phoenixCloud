@@ -94,6 +94,17 @@ SysStaff staff = (SysStaff)session.getAttribute("user");
 			<li><a href="<%=ctx %>/resour_search.jsp" target="f_r">资源查询</a></li>
 			</sec:phoenixSec>
 		</ul>
+		<h3>
+			<a href="#">日志管理</a>
+		</h3>
+		<ul>
+			<sec:phoenixSec purviewCode="LOG_SYSTEMLOG_MENU">
+			  <li><a href="<%=ctx %>/log_system.jsp" target="f_r">系统日志</a></li>
+			</sec:phoenixSec>
+			<sec:phoenixSec purviewCode="LOG_BOOKLOG_MENU">
+			  <li><a href="<%=ctx %>/log_book.jsp" target="f_r">书籍日志</a></li>
+			</sec:phoenixSec>
+		</ul>
 		</sec:phoenixSec>
 	</div>
 </body>

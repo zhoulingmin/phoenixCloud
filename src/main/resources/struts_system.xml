@@ -3,6 +3,15 @@
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<package name="system" extends="struts-default" namespace="/system">
+	     <interceptors> 
+         	<interceptor name="logsystem" class="com.phoenixcloud.interceptors.LogSystemInterceptor" /> 
+			<interceptor-stack name="systemInterceptor"> 
+			   <interceptor-ref name="logsystem">
+			      <param name="excludeMethods">editUser,searchHw,getAllUserJson,getAllPur,getPurByStaff,getlogJson</param>
+			   </interceptor-ref> 
+			   <interceptor-ref name="defaultStack"></interceptor-ref> 
+			</interceptor-stack> 
+		</interceptors> 
 		<action name="editUser" class="systemMgmtAction" method="editUser">
 			<result name="success">/user_info.jsp</result>
 		</action>
@@ -16,31 +25,50 @@
 			<result name="Expired">/login.jsp?reason=Expired</result>
 			<result name="clientUser">/login.jsp?reason=clientUser</result>
 			<result name="login">/login.jsp</result>
+			<interceptor-ref name="systemInterceptor"></interceptor-ref>
 		</action>
 		<action name="getAuthHw" class="systemMgmtAction" method="getAllHw">
 			<result name="success">/sq_info.jsp</result>
+			<interceptor-ref name="systemInterceptor"></interceptor-ref>
 		</action>
 		<action name="register" class="com.phoenixcloud.user.action.LoginAction" method="register">
 			<result name="success" type="redirect">/register.jsp?reason=success</result>
 			<result name="existed" type="redirect">/register.jsp?reason=existed</result>
+			<interceptor-ref name="systemInterceptor"></interceptor-ref>
 		</action>
 		
-		<action name="getAllUser" class="systemMgmtAction" method="getAllUserJson"></action>
+		<action name="getAllUser" class="systemMgmtAction" method="getAllUserJson">
+		   <interceptor-ref name="systemInterceptor"></interceptor-ref>
+		</action>
 		
-		<action name="saveSelf" class="systemMgmtAction" method="saveSelf"></action>
+		<action name="saveSelf" class="systemMgmtAction" method="saveSelf">
+		    <interceptor-ref name="systemInterceptor"></interceptor-ref>
+		</action>
 		
 		<action name="editAccount" class="systemMgmtAction" method="editUser">
 			<result name="success">/zhgl_edit.jsp</result>
 		</action>
 		
-		<action name="saveHwNum" class="systemMgmtAction" method="saveHwNum"></action>
+		<action name="saveHwNum" class="systemMgmtAction" method="saveHwNum">
+		    <interceptor-ref name="systemInterceptor"></interceptor-ref>
+		</action>
 		
 		<action name="searchHw" class="systemMgmtAction" method="searchHw">
 			<result name="success">/sq_info.jsp</result>
+			<interceptor-ref name="systemInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="*_*" class="{1}MgmtAction" method="{2}" >
 			<result name="success">/{1}_{2}.jsp</result>
+			<interceptor-ref name="systemInterceptor"></interceptor-ref>
 		</action>
+		
+		<action name="getloglist" class="systemMgmtAction" method="getloglist">
+		   <interceptor-ref name="systemInterceptor"></interceptor-ref>
+		</action>
+		<action name="viewSystemLog" class="systemMgmtAction" method="viewSystemLog">
+			<result name="success">/log_system_info.jsp</result>
+		</action>
+		
 	</package>
 </struts>

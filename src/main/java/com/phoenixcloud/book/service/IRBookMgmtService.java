@@ -36,4 +36,6 @@ public interface IRBookMgmtService {
 	void removeRegCode(String id);
 	
 	void changeResPathInfo(BigInteger bookId, String oldBookNo, String newBookNo);
+	
+	RBook findBookNo(String bookNo);
 }

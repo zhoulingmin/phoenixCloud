@@ -3,8 +3,18 @@
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<package name="agency" extends="struts-default" namespace="/agency">
+	    <interceptors> 
+         	<interceptor name="logagency" class="com.phoenixcloud.interceptors.LogAgencyInterceptor" /> 
+			<interceptor-stack name="agencyInterceptor"> 
+			   <interceptor-ref name="logagency">
+			      <param name="excludeMethods">searchCata,searchAgencyNew,getUpperTree,searchAgency,getParentTreeOfAgency,getStaff,getAgency</param>
+			   </interceptor-ref> 
+			   <interceptor-ref name="defaultStack"></interceptor-ref> 
+			</interceptor-stack> 
+		</interceptors>
 	    <action name="agencyMgmt" method="{1}" class="agencyMgmtAction">
 	    	<result name="success">/agency_mgmt.jsp</result>
+	    	<interceptor-ref name="agencyInterceptor"></interceptor-ref>
 	    </action>
 	</package>
 </struts>

@@ -100,4 +100,24 @@ public class RBookDao extends AbstractResDao<RBook>{
 		query.setParameter(1, isAudit);
 		return query.getResultList();
 	}
+	//根据书编号照书列表
+	public RBook findBookNo(String bookNo) {
+		Query query = entityManager.createQuery("select rb from RBook rb where rb.deleteState=0 and rb.bookNo = ?1");
+		query.setParameter(1, bookNo);
+		return getSingleResultOrNull(query);
+	}
+	//根据书名找书籍
+	public RBook findBookName(String bookName) {
+		String hql="select rb from RBook rb where rb.deleteState=0 and rb.name like :name";
+		Query query = entityManager.createQuery(hql);
+		String name="%"+bookName+"%";
+		query.setParameter("name",name);
+		return getSingleResultOrNull(query);
+	}
+	//找删除的书籍
+	public RBook finddelBook(String id) {
+		Query query = entityManager.createQuery("select rb from RBook rb where  rb.bookId = ?1");
+		query.setParameter(1, id);
+		return getSingleResultOrNull(query);
+	}
 }

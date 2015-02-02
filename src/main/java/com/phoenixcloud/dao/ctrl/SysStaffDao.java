@@ -7,6 +7,7 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
+import com.phoenixcloud.bean.RBook;
 import com.phoenixcloud.bean.SysStaff;
 
 @Repository
@@ -46,5 +47,11 @@ public class SysStaffDao extends AbstractCtrlDao<SysStaff> {
 		query.setParameter(1, orgId);
 		query.setParameter(2, type);
 		return query.getResultList();
+	}
+	//找删除的人物
+	public SysStaff finddelSysStaff(String id) {
+		Query query = entityManager.createQuery("select staff from SysStaff staff where  staff.staffId = ?1");
+		query.setParameter(1, id);
+		return getSingleResultOrNull(query);
 	}
 }

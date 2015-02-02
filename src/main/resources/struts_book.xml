@@ -3,6 +3,17 @@
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<package name="book" extends="struts-default" namespace="/book">
+	    
+	    <interceptors>
+			<interceptor name="logbook" class="com.phoenixcloud.interceptors.LogBookInterceptor" /> 
+			<interceptor-stack name="bookInterceptor"> 
+			   <interceptor-ref name="logbook">
+			      <param name="excludeMethods">getAll,getSubDire,editDire,getSubDire,viewBook,searchBookNew,searchBook,queryRegcode,searchResNew,editRes,viewRes</param>
+			   </interceptor-ref> 
+			   <interceptor-ref name="defaultStack"></interceptor-ref> 
+			</interceptor-stack> 
+	    </interceptors>
+	    
 		<action name="uploadBook" class="bookUploadAction" method="uploadBook">
 			<result name="success" type="redirect">/book/book_editBook.do?bookInfo.bookId=${bookId}</result>
 		</action>
@@ -10,30 +21,38 @@
 		<action name="uploadBookCoverPic" class="bookUploadAction" method="uploadBookCover">
 			<result name="success">/book_cover_image.jsp?bookId=${bookId}</result>
 			<result name="error">/upload_error.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="downloadBook" class="bookMgmtAction" method="downloadBook">
 			<result name="success" type="redirect">${downloadUrl}</result>
 			<result name="error">/download_error.jsp</result>	
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="downloadRes" class="bookResMgmtAction" method="downloadRes">
 			<result name="success" type="redirect">${downloadUrl}</result>
 			<result name="error">/download_error.jsp</result>	
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
-		<action name="showBookConver" class="bookMgmtAction" method="showCover"></action>
+		<action name="showBookConver" class="bookMgmtAction" method="showCover">
+		   <interceptor-ref name="bookInterceptor"></interceptor-ref>
+		</action>
 		
 		<action name="uploadBookRes" class="bookResUploadAction" method="uploadRes">
 			<result name="success" type="redirect">/book/bookRes_editRes.do?mode=${bookInfo.isAudit}&amp;bookRes.resId=${bookRes.resId}</result>
+		    <interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="batchUploadBookRes" class="bookResUploadAction" method="batchUploadBookRes">
+		    <interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="searchBook" class="bookMgmtAction" method="searchBook">
 			<result name="editSearch">/book_getAll.jsp</result>
 			<result name="querySearch">/book_searchBook.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="searchBookNew" class="bookMgmtAction" method="searchBookNew">
@@ -41,29 +60,34 @@
 			<result name="audit">/book_audit.jsp</result>
 			<result name="release">/book_release.jsp</result>
 			<result name="querySearch">/book_query.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="searchBookNewForResMake" class="bookMgmtAction" method="searchBookNew">
 			<result name="querySearch">/resour_make.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="searchRes" class="bookResMgmtAction" method="searchRes">
 			<result name="editSearch">/bookRes_getAll.jsp</result>
 			<result name="querySearch">/bookRes_queryAll.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="modifyBook" class="bookMgmtAction" method="editBook">
-			<result name="success">/book_modify.jsp</result>		
+			<result name="success">/book_modify.jsp</result>	
 		</action>
 		
 		<action name="uploadBookNew" class="bookUploadAction" method="uploadBook">
 			<result name="success" type="redirect">/book/modifyBook.do?bookInfo.bookId=${bookId}</result>
 			<result name="error">/upload_error.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="uploadBookResNew" class="bookResUploadAction" method="uploadRes">
 			<result name="success" type="redirect">/book/modifyBookRes.do?mode=${bookInfo.isAudit}&amp;bookRes.resId=${bookRes.resId}</result>
 			<result name="error">/upload_error.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="viewBook" class="bookMgmtAction" method="viewBook">
@@ -72,10 +96,12 @@
 		
 		<action name="bookDire" class="bookDireMgmtAction" method="getAll">
 			<result name="success">/book_dire.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="bookDireQuery" class="bookDireMgmtAction" method="getAll">
 			<result name="success">/book_dire_query.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="searchResByPages" class="bookResMgmtAction" method="searchResByPage">
@@ -83,34 +109,51 @@
 			<result name="book_audit">/book_audit_res_query.jsp</result>
 			<result name="book_release">/book_release_res_query.jsp</result>
 			<result name="success">/book_audit_res_query.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="modifyBookRes" class="bookResMgmtAction" method="editRes">
 			<result name="success">/book_res_modify.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="bookRes" class="bookResMgmtAction" method="getAll">
 			<result name="success">/book_res_zhizuo.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="bookResQuery" class="bookResMgmtAction" method="getAll">
 			<result name="success">/book_query_res_query.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
-		<action name="addRes" class="bookResMgmtAction" method="addRes"></action>
+		<action name="addRes" class="bookResMgmtAction" method="addRes">
+		    <interceptor-ref name="bookInterceptor"></interceptor-ref>
+		</action>
 		
 		<action name="viewRes" class="bookResMgmtAction" method="viewRes">
 			<result name="success">/book_res_info.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="searchResNew" class="bookResMgmtAction" method="searchResNew">
 			<result name="search">/resour_search.jsp</result>
 			<result name="audit">/resour_audit.jsp</result>
 			<result name="release">/resour_release.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
 		
 		<action name="*_*" class="{1}MgmtAction" method="{2}" >
 			<result name="success">/{1}_{2}.jsp</result>
+			<interceptor-ref name="bookInterceptor"></interceptor-ref>
 		</action>
+		
+		
+		<action name="getloglist" class="com.phoenixcloud.book.action.RBookMgmtAction" method="getloglist">
+		</action>
+		<action name="viewBookLog" class="bookMgmtAction" method="viewBookLog">
+			<result name="success">/log_book_info.jsp</result>
+		</action>
+		
 	</package>
 </struts>

@@ -163,6 +163,7 @@ td {padding-top: 2px; padding-bottom: 2px;}
 <script type="text/javascript">
 
 function searchHw() {
+alert(jQuery("#staffId").val());
 	location.href = "<%=ctx%>/system/searchHw.do?criteria.staffId=" + jQuery("#staffId").val() + "&criteria.hwType=" + jQuery("#hwType").val();
 }
 

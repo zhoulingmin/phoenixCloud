@@ -2,10 +2,16 @@ package com.phoenixcloud.system.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.RequestAware;
@@ -30,6 +37,9 @@ import com.phoenixcloud.bean.PubHw;
 import com.phoenixcloud.bean.PubHwNum;
 import com.phoenixcloud.bean.PubOrg;
 import com.phoenixcloud.bean.PubOrgCata;
+import com.phoenixcloud.bean.RBook;
+import com.phoenixcloud.bean.RBookLog;
+import com.phoenixcloud.bean.SysLog;
 import com.phoenixcloud.bean.SysPurview;
 import com.phoenixcloud.bean.SysStaff;
 import com.phoenixcloud.bean.SysStaffPurview;
@@ -39,6 +49,7 @@ import com.phoenixcloud.dao.ctrl.PubHwDao;
 import com.phoenixcloud.dao.ctrl.PubHwNumDao;
 import com.phoenixcloud.dao.ctrl.PubOrgCataDao;
 import com.phoenixcloud.dao.ctrl.PubOrgDao;
+import com.phoenixcloud.dao.ctrl.SysLogDao;
 import com.phoenixcloud.dao.ctrl.SysPurviewDao;
 import com.phoenixcloud.dao.ctrl.SysStaffDao;
 import com.phoenixcloud.dao.ctrl.SysStaffPurviewDao;
@@ -55,6 +66,7 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	private RequestMap request;
 	private HttpServletResponse response;
 	private SessionMap session;
+	
 	
 	@Resource(name="sysServiceImpl")
 	private ISysService iSysService;
@@ -84,6 +96,7 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	@Autowired
 	private SysPurviewDao sysPurDao;
 	
+
 	@Autowired
 	private SysStaffPurviewDao staffPurDao;
 	
@@ -105,7 +118,81 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 	@Autowired PubDdvDao ddvDao;
 	
 	private String staffIdArr;
-	
+	//zgl
+	@Autowired
+	private SysLogDao sysLogDao;
+	private String starttime;
+	private String endtime;
+	private String starffName;
+	private int logtype;
+	private int nowPage;
+	private int pageSize;
+	private String logId;
+    
+	public String getLogId() {
+		return logId;
+	}
+
+	public void setLogId(String logId) {
+		this.logId = logId;
+	}
+
+	public int getNowPage() {
+		return nowPage;
+	}
+
+	public void setNowPage(int nowPage) {
+		this.nowPage = nowPage;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public String getStarttime() {
+		return starttime;
+	}
+
+	public void setStarttime(String starttime) {
+		this.starttime = starttime;
+	}
+
+	public String getEndtime() {
+		return endtime;
+	}
+
+	public void setEndtime(String endtime) {
+		this.endtime = endtime;
+	}
+
+	public String getStarffName() {
+		return starffName;
+	}
+
+	public void setStarffName(String starffName) {
+		this.starffName = starffName;
+	}
+
+	public int getLogtype() {
+		return logtype;
+	}
+
+	public void setLogtype(int logtype) {
+		this.logtype = logtype;
+	}
+
+	public SysLogDao getSysLogDao() {
+		return sysLogDao;
+	}
+
+	public void setSysLogDao(SysLogDao sysLogDao) {
+		this.sysLogDao = sysLogDao;
+	}
+
 	public void setiSysService(ISysService iSysService) {
 		this.iSysService = iSysService;
 	}
@@ -331,6 +418,111 @@ public class SystemMgmtAction extends ActionSupport implements RequestAware,Serv
 		return null;
 		//request.put("staffList", staffList);
 		//return "success";
+	}
+	
+	//zgl
+	//查询系统日志的
+	public String getloglist() throws ParseException{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		response.setContentType("text/html");
+		response.setCharacterEncoding("utf-8");
+		
+		
+		String  hql="select  syslog from SysLog syslog where syslog.deleteState=0 ";
+		if(starffName.length()>0){
+			SysStaff sysStaff=staffDao.findByCode(starffName);
+			if(sysStaff!=null){
+				if(sysStaff.getStaffId()!=null){
+					hql+=" and syslog.staffId="+sysStaff.getStaffId();
+				}
+				if(starttime.length()!=0){
+					hql+=" and syslog.createTime>DATE('"+ df.format(DateFormat.getDateInstance().parse(starttime))+"')";
+				}
+				if(endtime.length()!=0){
+					hql+=" and syslog.createTime<DATE('"+ df.format(DateFormat.getDateInstance().parse(endtime))+"')";
+				}
+				if(logtype!=0){
+				   hql+=" and syslog.logTypeId="+  BigInteger.valueOf(logtype);
+				}
+				hql+=" ORDER BY logId";
+		   }
+		}
+	    if(starffName.length()==0){
+	    	if(starttime.length()!=0){
+	    		hql+=" and syslog.createTime>DATE('"+ df.format(DateFormat.getDateInstance().parse(starttime))+"')";
+			}
+			if(endtime.length()!=0){
+				hql+=" and syslog.createTime<DATE('"+ df.format(DateFormat.getDateInstance().parse(endtime))+"')";
+			}
+			if(logtype!=0){
+				   hql+=" and syslog.logTypeId="+  BigInteger.valueOf(logtype);
+				}
+			hql+=" ORDER BY logId";
+	    }
+	    
+		List<SysLog> LogList = null;//查询总数
+		List<SysLog> logSysList=null;//查询列表
+	    
+	    LogList=sysLogDao.findByMany(hql);
+		int count=LogList.size();
+		int nowPages=(nowPage-1)*pageSize;
+		logSysList=sysLogDao.findByManyfenye(hql, nowPages, pageSize);
+		
+		List<Object> sysLogList = new ArrayList<Object>();
+		for (SysLog syslog : logSysList) {
+			SysStaff sysstaff =staffDao.finddelSysStaff(syslog.getStaffId().toString());
+			PubDdv pubDdv=ddvDao.find(syslog.getLogTypeId().toString());
+			
+			Object[] o = new Object[6];
+			o[0] =syslog.getId();
+			o[1] =sysstaff.getName();
+ 			o[2] =pubDdv.getValue();
+ 			o[3] =syslog.getContent().subSequence(0, 27).toString().concat("...");
+ 			o[4] =sdf.format(syslog.getCreateTime());
+            o[5] =syslog.getNotes().subSequence(0, 20).toString().concat("...");
+            sysLogList.add(o);
+  			o=null;
+		}
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put("count",count);
+     	map.put("sysLogList",sysLogList);
+     	JSONObject jo = JSONObject.fromObject(map);
+ 		try {
+ 			ServletActionContext.getResponse().getOutputStream()
+ 					.write(jo.toString().getBytes("utf-8"));
+ 		} catch (UnsupportedEncodingException e) {
+ 			e.printStackTrace();
+ 		} catch (IOException e) {
+ 			e.printStackTrace();
+ 		}
+	    
+		return null;
+	
+	}
+	 //zgl
+	 //日志详细信息
+	public String viewSystemLog() throws Exception{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SysLog sysLog = sysLogDao.find(logId);
+		if (sysLog == null) {
+			throw new Exception("没有找到相应的日志！");
+		}
+		SysStaff sysstaff =staffDao.finddelSysStaff(sysLog.getStaffId().toString());
+		PubDdv pubDdv=ddvDao.find(sysLog.getLogTypeId().toString());
+	
+		Object[] systemlog=new Object[8];
+		systemlog[0] =sysLog.getId();             //编号
+		systemlog[1] =sysstaff.getName();         //用户名
+		systemlog[2] =pubDdv.getValue();          //操作类型
+		String content=sysLog.getContent();          //内容
+		systemlog[3]=content.substring(0, content.indexOf("记录。")+2);//操作方法
+		systemlog[4] =sdf.format(sysLog.getCreateTime());//操作时间
+		systemlog[5] =sysLog.getNotes().toString().substring
+		(11,sysLog.getNotes().toString().indexOf("。"));//获取地址
+		systemlog[6]=content.substring(content.indexOf("记录。")+3,content.length() );//操作内容
+		ServletActionContext.getContext().getValueStack().set("systemlog", systemlog);
+		return "success";
 	}
 	
 	public String getStaffIdArr() {

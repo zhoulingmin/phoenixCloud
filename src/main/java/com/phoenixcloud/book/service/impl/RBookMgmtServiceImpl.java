@@ -371,4 +371,8 @@ public class RBookMgmtServiceImpl implements IRBookMgmtService {
 			}
 		}
 	}
+	
+	public RBook findBookNo(String bookNo) {
+		return bookDao.findBookNo(bookNo);
+	}
 }
