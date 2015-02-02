@@ -7,6 +7,26 @@
 <%@page import="java.text.*" %>
 <%@page import="com.opensymphony.xwork2.util.*"%>
 <%@taglib uri="/struts-tags" prefix="s" %>
+
+<%!
+public class KindSort implements Comparator{
+	public KindSort() {
+		
+	}
+	public int compare(Object obj1, Object obj2) {
+		PubDdv ddv1 = (PubDdv)obj1, ddv2 = (PubDdv)obj2;
+		int ret = ddv1.getDdvCode().compareTo(ddv2.getDdvCode());
+		if (ret == 0) {
+			return 0;
+		} else if (ret < 0) {
+			return -1;
+		}
+		return 1;
+	}
+}
+
+%>
+
 <%
 SysStaff staff = (SysStaff)session.getAttribute("user");
 PubOrgDao orgDao = (PubOrgDao)SpringUtils.getBean(PubOrgDao.class);
@@ -20,10 +40,13 @@ List<PubDdv> classList = ddvDao.findByTblAndField("r_book", "CLASS_ID");
 List<PubDdv> kindList = ddvDao.findByTblAndField("r_book", "KIND_ID");
 List<PubDdv> cataAddrList = ddvDao.findByTblAndField("r_book", "CATA_ADDR_ID");
 
+Collections.sort(kindList, new KindSort());
+
 PubPressDao pressDao = (PubPressDao)SpringUtils.getBean(PubPressDao.class);
 List<PubPress> pressList = pressDao.getAll();
 
 %>
+
 
 <!doctype html>
 <html>
