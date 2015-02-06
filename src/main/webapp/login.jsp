@@ -9,7 +9,6 @@
 		Object user = session.getAttribute("user");
 		if (user != null) {
 			session.invalidate();
-			request.getSession();
 		}
 	}
 
